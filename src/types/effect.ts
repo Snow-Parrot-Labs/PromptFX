@@ -21,7 +21,7 @@ export type ParameterCurve = 'linear' | 'exponential' | 'logarithmic'
 export interface DSPNode {
   id: string
   type: DSPNodeType
-  params: Record<string, number | string>
+  params: Record<string, number | string | undefined>
 }
 
 // Connection between nodes

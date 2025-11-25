@@ -11,4 +11,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split Tone.js into its own chunk (large audio library)
+          tone: ['tone'],
+          // Split React into vendor chunk
+          'react-vendor': ['react', 'react-dom'],
+          // Split state management
+          zustand: ['zustand'],
+        },
+      },
+    },
+  },
 })

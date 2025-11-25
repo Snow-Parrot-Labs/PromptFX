@@ -1,0 +1,33 @@
+{
+  "name": "promptfx-server",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.2",
+    "@types/node": "^24.0.0",
+    "eslint": "^9.28.0",
+    "tsx": "^4.20.3",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.33.1",
+    "vitest": "^4.0.13"
+  }
+}

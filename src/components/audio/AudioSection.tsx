@@ -3,85 +3,67 @@ import { FileUploader } from './FileUploader'
 import { Waveform } from './Waveform'
 import { Transport } from './Transport'
 import { TestToneGenerator } from './TestToneGenerator'
+import { LiveInput } from './LiveInput'
+import { OutputControls } from './OutputControls'
+import { ExportAudio } from './ExportAudio'
 
 export function AudioSection(): React.JSX.Element {
-  const { source, bypassEffect, toggleBypass, setSource, fileInfo, testToneActive } =
-    useAudioStore()
-
-  const handleSourceChange = (newSource: 'file' | 'live' | 'tone'): void => {
-    if (source === newSource) return
-    setSource(newSource)
-  }
+  const { source, fileInfo, testToneActive, liveInputEnabled } = useAudioStore()
 
   return (
     <section className="p-6 border-t border-[--color-border] bg-[--color-bg-secondary]">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-medium text-[--color-text-primary]">Audio</h2>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={toggleBypass}
-            className={`px-3 py-1.5 text-sm rounded font-medium transition-colors ${
-              bypassEffect
-                ? 'bg-[--color-warning] text-black'
-                : 'bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary]'
-            }`}
-          >
-            {bypassEffect ? 'Bypassed' : 'Bypass'}
-          </button>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Source Selector */}
-        <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-4">
-          <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">Source</h3>
-          <div className="flex gap-2 mb-4">
-            <button
-              onClick={() => {
-                handleSourceChange('file')
-              }}
-              className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${
-                source === 'file' || (fileInfo !== null && !testToneActive)
-                  ? 'bg-[--color-accent-primary] text-white'
-                  : 'bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary]'
-              }`}
-            >
-              File
-            </button>
-            <button
-              onClick={() => {
-                handleSourceChange('live')
-              }}
-              className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${
-                source === 'live'
-                  ? 'bg-[--color-accent-primary] text-white'
-                  : 'bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary]'
-              }`}
-            >
-              Live
-            </button>
-            <button
-              onClick={() => {
-                handleSourceChange('tone')
-              }}
-              className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${
-                source === 'tone' || testToneActive
-                  ? 'bg-[--color-accent-primary] text-white'
-                  : 'bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary]'
-              }`}
-            >
-              Tone
-            </button>
+        {/* Source Controls */}
+        <div className="space-y-4">
+          {/* Live Input */}
+          <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-4">
+            <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">Live Input</h3>
+            <LiveInput />
           </div>
 
           {/* Test Tone Generator */}
-          <TestToneGenerator />
+          <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-4">
+            <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">Test Tone</h3>
+            <TestToneGenerator />
+          </div>
         </div>
 
         {/* Waveform / File Upload Area */}
         <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-4 lg:col-span-2">
-          <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">Waveform</h3>
-          {fileInfo ? (
+          <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">
+            {liveInputEnabled
+              ? 'Live Input Active'
+              : testToneActive
+                ? 'Test Tone Active'
+                : 'Audio File'}
+          </h3>
+          {liveInputEnabled ? (
+            <div className="h-24 bg-[--color-bg-tertiary] rounded-lg flex items-center justify-center">
+              <div className="text-center">
+                <div className="flex items-center gap-2 text-green-500">
+                  <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-sm font-medium">Microphone Active</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Audio is routed through effects in real-time
+                </p>
+              </div>
+            </div>
+          ) : testToneActive ? (
+            <div className="h-24 bg-[--color-bg-tertiary] rounded-lg flex items-center justify-center">
+              <div className="text-center">
+                <div className="flex items-center gap-2 text-blue-500">
+                  <span className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+                  <span className="text-sm font-medium">Test Tone Active</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Sine wave routed through effects</p>
+              </div>
+            </div>
+          ) : fileInfo !== null ? (
             <div className="space-y-3">
               <div className="h-24 bg-[--color-bg-tertiary] rounded-lg overflow-hidden">
                 <Waveform />
@@ -95,8 +77,16 @@ export function AudioSection(): React.JSX.Element {
       </div>
 
       {/* Transport Controls */}
+      {source === 'file' && fileInfo !== null && (
+        <div className="mt-6 flex items-center gap-4">
+          <Transport />
+          <ExportAudio />
+        </div>
+      )}
+
+      {/* Output Controls */}
       <div className="mt-6">
-        <Transport />
+        <OutputControls />
       </div>
 
       {/* Level Meters */}

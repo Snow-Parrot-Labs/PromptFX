@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { useAudioStore, useUIStore } from '@/stores'
 import { useAudioEngine } from '@/hooks'
 import { SUPPORTED_FORMATS, MAX_FILE_SIZE, SUPPORTED_EXTENSIONS } from '@/types/audio'
+import { toast } from '@/components/ui'
 
 export function FileUploader(): React.JSX.Element {
   const { fileInfo } = useAudioStore()
@@ -30,15 +31,18 @@ export function FileUploader(): React.JSX.Element {
     async (file: File) => {
       const error = validateFile(file)
       if (error !== null) {
-        setGlobalError(error)
+        toast.error(error)
         return
       }
 
       setIsFileUploading(true)
       try {
         await loadFile(file)
+        toast.success(`Loaded "${file.name}"`)
       } catch (err) {
-        setGlobalError(err instanceof Error ? err.message : 'Failed to load audio file')
+        const message = err instanceof Error ? err.message : 'Failed to load audio file'
+        toast.error(message)
+        setGlobalError(message)
       } finally {
         setIsFileUploading(false)
       }

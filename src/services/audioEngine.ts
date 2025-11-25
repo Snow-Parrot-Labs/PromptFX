@@ -15,6 +15,7 @@ type AudioEngineCallback = {
 class AudioEngine {
   private player: Tone.Player | null = null
   private oscillator: Tone.Oscillator | null = null
+  private microphoneInput: Tone.UserMedia | null = null
   private inputMeter: Tone.Meter | null = null
   private outputMeter: Tone.Meter | null = null
   private effectsChain: Tone.ToneAudioNode[] = []
@@ -23,6 +24,7 @@ class AudioEngine {
   private masterGain: Tone.Gain | null = null
   private audioBuffer: Tone.ToneAudioBuffer | null = null
   private isInitialized = false
+  private liveInputEnabled = false
   private callbacks: AudioEngineCallback = {}
   private animationFrameId: number | null = null
 
@@ -264,6 +266,9 @@ class AudioEngine {
   }
 
   // Effect chain management
+  private effectInput: Tone.Gain | null = null
+  private effectOutput: Tone.Gain | null = null
+
   setEffectsChain(effects: Tone.ToneAudioNode[]): void {
     // Disconnect current chain
     this.effectsChain.forEach((effect) => effect.disconnect())
@@ -285,6 +290,171 @@ class AudioEngine {
     this.setEffectsChain([])
   }
 
+  connectEffect(input: Tone.Gain, output: Tone.Gain): void {
+    this.effectInput = input
+    this.effectOutput = output
+    this.setEffectsChain([input, output])
+  }
+
+  disconnectEffect(): void {
+    if (this.effectInput !== null) {
+      this.effectInput.disconnect()
+    }
+    if (this.effectOutput !== null) {
+      this.effectOutput.disconnect()
+    }
+    this.effectInput = null
+    this.effectOutput = null
+    this.clearEffectsChain()
+  }
+
+  setBypassed(bypass: boolean): void {
+    this.setBypass(bypass)
+  }
+
+  // Live microphone input
+  async enableLiveInput(): Promise<void> {
+    if (!this.isInitialized) {
+      await this.initialize()
+    }
+
+    if (this.liveInputEnabled) return
+
+    // Stop any file playback
+    this.stop()
+    this.stopTestTone()
+
+    // Create microphone input
+    this.microphoneInput = new Tone.UserMedia()
+
+    try {
+      await this.microphoneInput.open()
+      this.connectSource(this.microphoneInput)
+      this.liveInputEnabled = true
+    } catch {
+      this.microphoneInput.dispose()
+      this.microphoneInput = null
+      throw new Error('Microphone access denied or unavailable')
+    }
+  }
+
+  disableLiveInput(): void {
+    if (!this.liveInputEnabled || this.microphoneInput === null) return
+
+    this.microphoneInput.close()
+    this.microphoneInput.dispose()
+    this.microphoneInput = null
+    this.liveInputEnabled = false
+  }
+
+  isLiveInputEnabled(): boolean {
+    return this.liveInputEnabled
+  }
+
+  // Master volume control
+  setMasterVolume(volume: number): void {
+    if (this.masterGain !== null) {
+      // volume is 0-1, convert to gain
+      this.masterGain.gain.rampTo(volume, 0.01)
+    }
+  }
+
+  getMasterVolume(): number {
+    return this.masterGain?.gain.value ?? 1
+  }
+
+  // Audio export
+  async exportProcessedAudio(): Promise<Blob | null> {
+    if (this.audioBuffer === null) return null
+
+    // Use Tone.Offline to render the audio through effects
+    const duration = this.audioBuffer.duration
+    const sampleRate = this.audioBuffer.sampleRate
+
+    const audioBufferRef = this.audioBuffer
+    const renderedBuffer = await Tone.Offline(
+      ({ transport }) => {
+        // Recreate the player in offline context
+        const offlinePlayer = new Tone.Player(audioBufferRef).toDestination()
+
+        // If there are effects, we'd need to recreate them here
+        // For now, just render the source audio
+        // TODO: Add effect chain to offline rendering
+
+        offlinePlayer.start(0)
+        transport.start(0)
+      },
+      duration,
+      2,
+      sampleRate
+    )
+
+    // Convert to WAV
+    const wavBlob = this.audioBufferToWav(renderedBuffer)
+    return wavBlob
+  }
+
+  private audioBufferToWav(buffer: Tone.ToneAudioBuffer): Blob {
+    const audioBuffer = buffer.get()
+    if (audioBuffer === undefined) {
+      throw new Error('No audio buffer available')
+    }
+
+    const numChannels = audioBuffer.numberOfChannels
+    const sampleRate = audioBuffer.sampleRate
+    const length = audioBuffer.length
+    const bytesPerSample = 2 // 16-bit
+    const blockAlign = numChannels * bytesPerSample
+
+    const dataSize = length * blockAlign
+    const headerSize = 44
+    const arrayBuffer = new ArrayBuffer(headerSize + dataSize)
+    const view = new DataView(arrayBuffer)
+
+    // WAV header
+    this.writeString(view, 0, 'RIFF')
+    view.setUint32(4, 36 + dataSize, true)
+    this.writeString(view, 8, 'WAVE')
+    this.writeString(view, 12, 'fmt ')
+    view.setUint32(16, 16, true) // Subchunk1Size
+    view.setUint16(20, 1, true) // AudioFormat (PCM)
+    view.setUint16(22, numChannels, true)
+    view.setUint32(24, sampleRate, true)
+    view.setUint32(28, sampleRate * blockAlign, true) // ByteRate
+    view.setUint16(32, blockAlign, true)
+    view.setUint16(34, 16, true) // BitsPerSample
+    this.writeString(view, 36, 'data')
+    view.setUint32(40, dataSize, true)
+
+    // Write audio data
+    const channels: Float32Array[] = []
+    for (let i = 0; i < numChannels; i++) {
+      channels.push(audioBuffer.getChannelData(i))
+    }
+
+    let offset = headerSize
+    for (let i = 0; i < length; i++) {
+      for (let ch = 0; ch < numChannels; ch++) {
+        const sample = Math.max(-1, Math.min(1, channels[ch][i]))
+        const intSample = sample < 0 ? sample * 0x8000 : sample * 0x7fff
+        view.setInt16(offset, intSample, true)
+        offset += 2
+      }
+    }
+
+    return new Blob([arrayBuffer], { type: 'audio/wav' })
+  }
+
+  private writeString(view: DataView, offset: number, str: string): void {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset + i, str.charCodeAt(i))
+    }
+  }
+
+  hasAudioFile(): boolean {
+    return this.audioBuffer !== null
+  }
+
   // Callbacks
   setCallbacks(callbacks: AudioEngineCallback): void {
     this.callbacks = callbacks
@@ -296,6 +466,7 @@ class AudioEngine {
       cancelAnimationFrame(this.animationFrameId)
     }
 
+    this.disableLiveInput()
     this.stopTestTone()
     this.stop()
 

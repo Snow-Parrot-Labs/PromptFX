@@ -1,5 +1,12 @@
 import { create } from 'zustand'
 import type { EffectDefinition } from '@/types/effect'
+import { api } from '@/services/api'
+import { toast } from '@/components/ui'
+
+interface GenerateOptions {
+  complexity?: 'simple' | 'moderate' | 'complex'
+  style?: string
+}
 
 interface EffectState {
   // Current effect
@@ -18,6 +25,9 @@ interface EffectState {
   setGenerationError: (error: string | null) => void
   clearEffect: () => void
   reset: () => void
+
+  // API Actions
+  generateEffect: (prompt: string, options?: GenerateOptions) => Promise<void>
 }
 
 const initialState = {
@@ -71,6 +81,30 @@ export const useEffectStore = create<EffectState>((set) => ({
 
   reset: () => {
     set(initialState)
+  },
+
+  generateEffect: async (prompt, options) => {
+    set({ isGenerating: true, generationError: null })
+
+    const request = options !== undefined ? { prompt, options } : { prompt }
+    const response = await api.generateEffect(request)
+
+    if (response.success && response.data) {
+      set({
+        definition: response.data,
+        parameterValues: extractDefaultValues(response.data),
+        isGenerating: false,
+        generationError: null,
+      })
+      toast.success(`Generated "${response.data.name}"`)
+    } else {
+      const errorMessage = response.error?.message ?? 'Failed to generate effect'
+      set({
+        isGenerating: false,
+        generationError: errorMessage,
+      })
+      toast.error(errorMessage)
+    }
   },
 }))
 

@@ -22,6 +22,11 @@ interface AudioState {
   testToneActive: boolean
   testToneFrequency: TestToneFrequency
 
+  // Live input
+  liveInputEnabled: boolean
+  liveInputError: string | null
+  masterVolume: number
+
   // Actions
   setSource: (source: AudioSourceType) => void
   setFileInfo: (info: AudioFileInfo | null) => void
@@ -34,6 +39,9 @@ interface AudioState {
   toggleBypass: () => void
   setTestToneActive: (active: boolean) => void
   setTestToneFrequency: (freq: TestToneFrequency) => void
+  setLiveInputEnabled: (enabled: boolean) => void
+  setLiveInputError: (error: string | null) => void
+  setMasterVolume: (volume: number) => void
   reset: () => void
 }
 
@@ -53,6 +61,9 @@ const initialState = {
   bypassEffect: false,
   testToneActive: false,
   testToneFrequency: 1000 as TestToneFrequency,
+  liveInputEnabled: false,
+  liveInputError: null as string | null,
+  masterVolume: 1,
 }
 
 export const useAudioStore = create<AudioState>((set) => ({
@@ -90,6 +101,15 @@ export const useAudioStore = create<AudioState>((set) => ({
   },
   setTestToneFrequency: (testToneFrequency) => {
     set({ testToneFrequency })
+  },
+  setLiveInputEnabled: (liveInputEnabled) => {
+    set({ liveInputEnabled, liveInputError: null })
+  },
+  setLiveInputError: (liveInputError) => {
+    set({ liveInputError })
+  },
+  setMasterVolume: (masterVolume) => {
+    set({ masterVolume })
   },
   reset: () => {
     set(initialState)

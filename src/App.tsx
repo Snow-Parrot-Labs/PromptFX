@@ -1,4 +1,5 @@
 import { Header, PromptSection, EffectSection, AudioSection } from '@/components'
+import { ToastContainer } from '@/components/ui'
 
 function App(): React.JSX.Element {
   return (
@@ -9,6 +10,7 @@ function App(): React.JSX.Element {
         <EffectSection />
         <AudioSection />
       </main>
+      <ToastContainer />
     </div>
   )
 }
