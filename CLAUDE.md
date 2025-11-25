@@ -245,11 +245,18 @@ import './EffectPanel.css';
 | gain | level |
 | panner | pan |
 
+## Audio Specifications
+
+- **Sample Rate:** 44.1kHz
+- **Channels:** Stereo (2-channel)
+- **Max Upload:** 256MB
+- **Formats:** WAV, MP3, AIFF
+
 ## Testing Audio
 
 For testing effects without microphone:
-1. Use the included test audio files in `/public/audio/`
-2. Or upload any WAV/MP3/ file
+1. Use the built-in **Test Tone Generator** (1kHz default, selectable frequencies)
+2. Or upload any WAV/MP3/AIFF file (max 256MB)
 3. A/B comparison toggle for before/after
 
 ## Troubleshooting

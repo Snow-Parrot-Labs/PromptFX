@@ -66,6 +66,7 @@
 | API Framework | Express.js | Simple, well-documented, middleware ecosystem |
 | AI Integration | Anthropic Claude API | Strong reasoning, structured output |
 | File Handling | Multer + FFmpeg | Robust upload handling, format conversion |
+| Hosting | Vercel | Frontend + serverless backend |
 | Build Tool | Vite | Fast HMR, optimized builds |
 
 ---
@@ -633,7 +634,7 @@ interface Preset {
 ### POST /api/audio/upload
 
 **Request:** `multipart/form-data`
-- `file`: Audio file (max 50MB)
+- `file`: Audio file (max 256MB)
 
 **Response:**
 ```typescript

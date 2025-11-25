@@ -82,8 +82,9 @@ PromptFX bridges this gap by allowing users to describe effects in plain English
 **Description:** Users can upload audio files, process them through the effect, and export the result.
 
 **Supported Formats (MVP):**
-- Input: WAV, MP3, AIFF
+- Input: WAV, MP3, AIFF (max 256MB)
 - Output: WAV (lossless)
+- Processing: Stereo (2-channel) at 44.1kHz
 
 **Requirements:**
 - File upload interface (drag-and-drop + file picker)
@@ -231,7 +232,6 @@ PromptFX bridges this gap by allowing users to describe effects in plain English
 
 1. Should the AI explain what it created (educational component)?
 2. How much control should users have to manually edit the generated DSP?
-3. Should we support stereo effects from MVP or start with mono?
 
 ---
 

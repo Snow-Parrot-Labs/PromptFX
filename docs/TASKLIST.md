@@ -64,8 +64,16 @@ This is the master tasklist for building PromptFX. Tasks are organized by phase 
 - [ ] Wire up Transport to audioStore actions
 - [ ] Add playhead position indicator to Waveform
 
-### 2.4 Basic Audio Test
-- [ ] Add test audio file to `public/audio/`
+### 2.4 Test Tone Generator
+- [ ] Create `src/components/audio/TestToneGenerator.tsx`
+- [ ] Implement 1kHz sine wave generator using Tone.js Oscillator
+- [ ] Add frequency selector (100Hz, 440Hz, 1kHz, 10kHz)
+- [ ] Add on/off toggle button
+- [ ] Route test tone through effect chain
+- [ ] Add visual indicator when tone is active
+
+### 2.5 Basic Audio Test
+- [ ] Verify test tone generator works and routes through effects
 - [ ] Verify file loads and plays correctly
 - [ ] Verify waveform displays correctly
 - [ ] Verify transport controls work
