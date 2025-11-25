@@ -7,70 +7,70 @@ This is the master tasklist for building PromptFX. Tasks are organized by phase 
 ## Phase 1: Project Foundation
 
 ### 1.1 Project Setup
-- [ ] Initialize Vite project with React + TypeScript template
-- [ ] Configure TypeScript (`tsconfig.json`) with strict mode
-- [ ] Set up ESLint with `@typescript-eslint` and React plugins
-- [ ] Configure Prettier for code formatting
-- [ ] Set up Husky + lint-staged for pre-commit hooks
-- [ ] Install and configure Tailwind CSS
-- [ ] Set up path aliases (`@/` → `src/`)
-- [ ] Create directory structure per TECHNICAL_DESIGN.md
-- [ ] Add `.env.example` with required environment variables
+- [x] Initialize Vite project with React + TypeScript template
+- [x] Configure TypeScript (`tsconfig.json`) with strict mode
+- [x] Set up ESLint with `@typescript-eslint` and React plugins
+- [x] Configure Prettier for code formatting
+- [x] Set up Husky + lint-staged for pre-commit hooks
+- [x] Install and configure Tailwind CSS
+- [x] Set up path aliases (`@/` → `src/`)
+- [x] Create directory structure per TECHNICAL_DESIGN.md
+- [x] Add `.env.example` with required environment variables
 
 ### 1.2 Type Definitions
-- [ ] Create `src/types/effect.ts` - EffectDefinition, DSPNode, Connection, UIControl interfaces
-- [ ] Create `src/types/audio.ts` - AudioState, AudioSource types
-- [ ] Create `src/types/api.ts` - API request/response types
+- [x] Create `src/types/effect.ts` - EffectDefinition, DSPNode, Connection, UIControl interfaces
+- [x] Create `src/types/audio.ts` - AudioState, AudioSource types
+- [x] Create `src/types/api.ts` - API request/response types
 
 ### 1.3 State Management Setup
-- [ ] Install Zustand
-- [ ] Create `src/stores/audioStore.ts` with initial state and actions
-- [ ] Create `src/stores/effectStore.ts` with initial state and actions
-- [ ] Create `src/stores/uiStore.ts` for loading/error states
+- [x] Install Zustand
+- [x] Create `src/stores/audioStore.ts` with initial state and actions
+- [x] Create `src/stores/effectStore.ts` with initial state and actions
+- [x] Create `src/stores/uiStore.ts` for loading/error states
 
 ### 1.4 Basic Layout & Styling
-- [ ] Create `App.tsx` with main layout structure
-- [ ] Create `Header` component with logo placeholder
-- [ ] Create `PromptSection` container component
-- [ ] Create `EffectSection` container component
-- [ ] Create `AudioSection` container component
-- [ ] Set up global styles and Tailwind theme (dark mode, audio-app aesthetic)
+- [x] Create `App.tsx` with main layout structure
+- [x] Create `Header` component with logo placeholder
+- [x] Create `PromptSection` container component
+- [x] Create `EffectSection` container component
+- [x] Create `AudioSection` container component
+- [x] Set up global styles and Tailwind theme (dark mode, audio-app aesthetic)
 
 ---
 
 ## Phase 2: Audio Engine Foundation
 
 ### 2.1 Core Audio Engine
-- [ ] Install Tone.js
-- [ ] Create `src/services/audioEngine.ts` class
-- [ ] Implement `initialize()` - create AudioContext on user gesture
-- [ ] Implement `loadAudioFile(file: File)` - decode audio to buffer
-- [ ] Implement `play()`, `pause()`, `stop()`, `seek(time)` methods
-- [ ] Implement `getWaveformData()` for visualization
-- [ ] Implement `getInputLevel()` / `getOutputLevel()` for meters
-- [ ] Add bypass toggle functionality
+- [x] Install Tone.js
+- [x] Create `src/services/audioEngine.ts` class
+- [x] Implement `initialize()` - create AudioContext on user gesture
+- [x] Implement `loadAudioFile(file: File)` - decode audio to buffer
+- [x] Implement `play()`, `pause()`, `stop()`, `seek(time)` methods
+- [x] Implement `getWaveformData()` for visualization
+- [x] Implement `getInputLevel()` / `getOutputLevel()` for meters
+- [x] Add bypass toggle functionality
 
 ### 2.2 Audio Hook
-- [ ] Create `src/hooks/useAudioEngine.ts`
-- [ ] Connect hook to audioStore
-- [ ] Handle AudioContext state (suspended/running)
-- [ ] Implement cleanup on unmount
+- [x] Create `src/hooks/useAudioEngine.ts`
+- [x] Connect hook to audioStore
+- [x] Handle AudioContext state (suspended/running)
+- [x] Implement cleanup on unmount
 
 ### 2.3 File Upload & Playback UI
-- [ ] Create `src/components/audio/FileUploader.tsx` - drag & drop + file picker
-- [ ] Validate file types (WAV, MP3, AIFF) and size limits
-- [ ] Create `src/components/audio/Waveform.tsx` - canvas-based waveform display
-- [ ] Create `src/components/audio/Transport.tsx` - play/pause/stop buttons + time display
-- [ ] Wire up Transport to audioStore actions
-- [ ] Add playhead position indicator to Waveform
+- [x] Create `src/components/audio/FileUploader.tsx` - drag & drop + file picker
+- [x] Validate file types (WAV, MP3, AIFF) and size limits
+- [x] Create `src/components/audio/Waveform.tsx` - canvas-based waveform display
+- [x] Create `src/components/audio/Transport.tsx` - play/pause/stop buttons + time display
+- [x] Wire up Transport to audioStore actions
+- [x] Add playhead position indicator to Waveform
 
 ### 2.4 Test Tone Generator
-- [ ] Create `src/components/audio/TestToneGenerator.tsx`
-- [ ] Implement 1kHz sine wave generator using Tone.js Oscillator
-- [ ] Add frequency selector (100Hz, 440Hz, 1kHz, 10kHz)
-- [ ] Add on/off toggle button
-- [ ] Route test tone through effect chain
-- [ ] Add visual indicator when tone is active
+- [x] Create `src/components/audio/TestToneGenerator.tsx`
+- [x] Implement 1kHz sine wave generator using Tone.js Oscillator
+- [x] Add frequency selector (100Hz, 440Hz, 1kHz, 10kHz)
+- [x] Add on/off toggle button
+- [x] Route test tone through effect chain
+- [x] Add visual indicator when tone is active
 
 ### 2.5 Basic Audio Test
 - [ ] Verify test tone generator works and routes through effects
