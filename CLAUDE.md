@@ -8,6 +8,17 @@ PromptFX is a web-based AI-powered audio effect generator. Users describe effect
 
 - `docs/PRD.md` - Product requirements and MVP scope
 - `docs/TECHNICAL_DESIGN.md` - Architecture, schemas, and implementation details
+- `docs/TASKLIST.md` - **Development tasklist - ALWAYS check this before starting work**
+
+## Important: Task Tracking
+
+**Before starting any development work, ALWAYS:**
+1. Read `docs/TASKLIST.md` to understand current progress
+2. Identify which phase and tasks are in progress
+3. Mark tasks as complete (`[x]`) when finished
+4. Follow task dependencies - don't skip ahead
+
+This ensures consistent progress and prevents duplicate or out-of-order work.
 
 ## Tech Stack
 
