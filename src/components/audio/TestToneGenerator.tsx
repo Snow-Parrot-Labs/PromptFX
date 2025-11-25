@@ -7,57 +7,54 @@ export function TestToneGenerator(): React.JSX.Element {
 
   const formatFrequency = (freq: number): string => {
     if (freq >= 1000) {
-      return `${String(freq / 1000)}kHz`
+      return `${String(freq / 1000)}k`
     }
-    return `${String(freq)}Hz`
+    return String(freq)
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-[--color-text-secondary]">Test Tone</span>
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
         <button
+          type="button"
           onClick={() => {
             setTestToneActive(!testToneActive)
           }}
-          className={`relative w-12 h-6 rounded-full transition-colors ${
-            testToneActive ? 'bg-[--color-accent-primary]' : 'bg-[--color-bg-tertiary]'
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-colors ${
+            testToneActive
+              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-[--color-bg-tertiary] hover:bg-[--color-bg-panel] text-[--color-text-secondary]'
           }`}
         >
-          <span
-            className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${
-              testToneActive ? 'left-7' : 'left-1'
-            }`}
-          />
+          <svg
+            className={`w-3.5 h-3.5 ${testToneActive ? 'animate-pulse' : ''}`}
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M3.24 6.15C2.51 6.43 2 7.17 2 8v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H8.3l8.26-3.34a.5.5 0 0 0 .3-.64l-.34-.87a.5.5 0 0 0-.64-.3L3.24 6.15zM7 20a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm10-3a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+          </svg>
+          {testToneActive ? 'Stop' : 'Tone'}
         </button>
       </div>
 
       {testToneActive && (
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           {TEST_TONE_FREQUENCIES.map((freq) => (
             <button
               key={freq}
+              type="button"
               onClick={() => {
                 setTestToneFrequency(freq)
               }}
-              className={`flex-1 px-2 py-1.5 text-xs rounded transition-colors ${
+              className={`px-1.5 py-0.5 text-[10px] rounded transition-colors ${
                 testToneFrequency === freq
-                  ? 'bg-[--color-accent-primary] text-white'
-                  : 'bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary]'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-[--color-bg-tertiary] text-[--color-text-muted] hover:text-white'
               }`}
             >
               {formatFrequency(freq)}
             </button>
           ))}
-        </div>
-      )}
-
-      {testToneActive && (
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-[--color-success] animate-pulse" />
-          <span className="text-xs text-[--color-text-muted]">
-            Generating {formatFrequency(testToneFrequency)} sine wave
-          </span>
         </div>
       )}
     </div>

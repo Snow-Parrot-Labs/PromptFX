@@ -39,6 +39,139 @@ export const connectionSchema = z.object({
   }),
 })
 
+// Position (percentage-based for absolute positioning)
+export const positionSchema = z.object({
+  x: z.number().min(0).max(100),
+  y: z.number().min(0).max(100),
+})
+
+// Panel Design (rack unit styling)
+export const panelDesignSchema = z.object({
+  rackUnits: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)]),
+  primaryColor: z.string(),
+  accentColor: z.string(),
+  textColor: z.string(),
+})
+
+// Control Style
+export const controlColorThemeSchema = z.enum(['amber', 'cyan', 'green', 'red', 'white', 'purple'])
+export const controlSizeSchema = z.enum(['sm', 'md', 'lg'])
+export const indicatorStyleSchema = z.enum(['line', 'dot', 'arc'])
+
+export const controlStyleSchema = z.object({
+  color: controlColorThemeSchema.optional(),
+  size: controlSizeSchema.optional(),
+  indicator: indicatorStyleSchema.optional(),
+})
+
+// Artwork Elements
+export const gradientElementSchema = z.object({
+  type: z.literal('gradient'),
+  colors: z.array(z.string()).min(2),
+  direction: z.enum(['horizontal', 'vertical', 'diagonal', 'radial']),
+})
+
+export const stripeElementSchema = z.object({
+  type: z.literal('stripe'),
+  position: z.object({
+    x: z.number(),
+    y: z.number(),
+    width: z.number(),
+    height: z.number(),
+  }),
+  color: z.string(),
+})
+
+export const glowElementSchema = z.object({
+  type: z.literal('glow'),
+  position: positionSchema,
+  color: z.string(),
+  radius: z.number(),
+  opacity: z.number().min(0).max(1),
+})
+
+export const lineElementSchema = z.object({
+  type: z.literal('line'),
+  from: positionSchema,
+  to: positionSchema,
+  color: z.string(),
+  thickness: z.number().min(1),
+})
+
+export const circleElementSchema = z.object({
+  type: z.literal('circle'),
+  position: positionSchema,
+  radius: z.number(),
+  color: z.string(),
+  filled: z.boolean().optional(),
+})
+
+export const rectElementSchema = z.object({
+  type: z.literal('rect'),
+  position: z.object({
+    x: z.number(),
+    y: z.number(),
+    width: z.number(),
+    height: z.number(),
+  }),
+  color: z.string(),
+  borderRadius: z.number().optional(),
+})
+
+export const artworkElementSchema = z.discriminatedUnion('type', [
+  gradientElementSchema,
+  stripeElementSchema,
+  glowElementSchema,
+  lineElementSchema,
+  circleElementSchema,
+  rectElementSchema,
+])
+
+// Brand Label
+export const labelStyleSchema = z.enum(['engraved', 'embossed', 'chrome', 'neon'])
+
+export const brandLabelSchema = z.object({
+  text: z.string(),
+  position: positionSchema,
+  style: labelStyleSchema,
+})
+
+// Artwork Definition
+export const artworkSchema = z.object({
+  background: gradientElementSchema.optional(),
+  elements: z.array(artworkElementSchema).optional(),
+  brandLabel: brandLabelSchema.optional(),
+})
+
+// Decoration Types
+export const ledColorSchema = z.enum(['green', 'amber', 'red', 'blue'])
+
+export const ledDecorationSchema = z.object({
+  type: z.literal('led'),
+  position: positionSchema,
+  color: ledColorSchema,
+})
+
+export const vuMeterDecorationSchema = z.object({
+  type: z.literal('vuMeter'),
+  position: positionSchema,
+  segments: z.number().min(3).max(12),
+  orientation: z.enum(['horizontal', 'vertical']).optional(),
+})
+
+export const labelDecorationSchema = z.object({
+  type: z.literal('label'),
+  position: positionSchema,
+  text: z.string(),
+  size: z.enum(['xs', 'sm', 'md']).optional(),
+})
+
+export const decorationSchema = z.discriminatedUnion('type', [
+  ledDecorationSchema,
+  vuMeterDecorationSchema,
+  labelDecorationSchema,
+])
+
 // UI Control Configs
 export const knobConfigSchema = z.object({
   min: z.number(),
@@ -79,12 +212,19 @@ export const uiControlSchema = z.object({
     param: z.string(),
   }),
   config: z.union([knobConfigSchema, sliderConfigSchema, switchConfigSchema, selectConfigSchema]),
+  // New creative positioning/styling fields (optional for backwards compat)
+  position: positionSchema.optional(),
+  style: controlStyleSchema.optional(),
 })
 
 // UI Definition
 export const uiDefinitionSchema = z.object({
-  layout: z.enum(['horizontal', 'vertical', 'grid']),
+  layout: z.enum(['horizontal', 'vertical', 'grid', 'absolute']),
   controls: z.array(uiControlSchema),
+  // New creative GUI fields (optional for backwards compat)
+  panelDesign: panelDesignSchema.optional(),
+  artwork: artworkSchema.optional(),
+  decorations: z.array(decorationSchema).optional(),
 })
 
 // Complete Effect Definition

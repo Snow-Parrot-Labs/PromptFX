@@ -30,6 +30,126 @@ export interface Connection {
   to: { nodeId: string; input?: number }
 }
 
+// Position (percentage-based for absolute positioning)
+export interface Position {
+  x: number // 0-100%
+  y: number // 0-100%
+}
+
+// Panel Design (rack unit styling)
+export interface PanelDesign {
+  rackUnits: 1 | 2 | 3 | 4
+  primaryColor: string
+  accentColor: string
+  textColor: string
+}
+
+// Control Style (visual styling for controls)
+export type ControlColorTheme = 'amber' | 'cyan' | 'green' | 'red' | 'white' | 'purple'
+export type ControlSize = 'sm' | 'md' | 'lg'
+export type IndicatorStyle = 'line' | 'dot' | 'arc'
+
+export interface ControlStyle {
+  color?: ControlColorTheme
+  size?: ControlSize
+  indicator?: IndicatorStyle
+}
+
+// Artwork Elements
+export type ArtworkElementType = 'gradient' | 'stripe' | 'glow' | 'line' | 'circle' | 'rect'
+
+export interface GradientElement {
+  type: 'gradient'
+  colors: string[]
+  direction: 'horizontal' | 'vertical' | 'diagonal' | 'radial'
+}
+
+export interface StripeElement {
+  type: 'stripe'
+  position: { x: number; y: number; width: number; height: number }
+  color: string
+}
+
+export interface GlowElement {
+  type: 'glow'
+  position: Position
+  color: string
+  radius: number
+  opacity: number
+}
+
+export interface LineElement {
+  type: 'line'
+  from: Position
+  to: Position
+  color: string
+  thickness: number
+}
+
+export interface CircleElement {
+  type: 'circle'
+  position: Position
+  radius: number
+  color: string
+  filled?: boolean
+}
+
+export interface RectElement {
+  type: 'rect'
+  position: { x: number; y: number; width: number; height: number }
+  color: string
+  borderRadius?: number
+}
+
+export type ArtworkElement =
+  | GradientElement
+  | StripeElement
+  | GlowElement
+  | LineElement
+  | CircleElement
+  | RectElement
+
+// Brand Label (effect name styling)
+export type LabelStyle = 'engraved' | 'embossed' | 'chrome' | 'neon'
+
+export interface BrandLabel {
+  text: string
+  position: Position
+  style: LabelStyle
+}
+
+// Artwork Definition
+export interface Artwork {
+  background?: GradientElement
+  elements?: ArtworkElement[]
+  brandLabel?: BrandLabel
+}
+
+// Decoration Types (LEDs, meters, labels)
+export type DecorationLEDColor = 'green' | 'amber' | 'red' | 'blue'
+
+export interface LEDDecoration {
+  type: 'led'
+  position: Position
+  color: DecorationLEDColor
+}
+
+export interface VUMeterDecoration {
+  type: 'vuMeter'
+  position: Position
+  segments: number
+  orientation?: 'horizontal' | 'vertical'
+}
+
+export interface LabelDecoration {
+  type: 'label'
+  position: Position
+  text: string
+  size?: 'xs' | 'sm' | 'md'
+}
+
+export type Decoration = LEDDecoration | VUMeterDecoration | LabelDecoration
+
 // UI Control Types
 export type UIControlType = 'knob' | 'slider' | 'button' | 'switch' | 'select'
 
@@ -80,11 +200,18 @@ export interface UIControl {
   label: string
   binding: ControlBinding
   config: ControlConfig
+  // New creative positioning/styling fields (optional for backwards compat)
+  position?: Position
+  style?: ControlStyle
 }
 
 export interface UIDefinition {
-  layout: 'horizontal' | 'vertical' | 'grid'
+  layout: 'horizontal' | 'vertical' | 'grid' | 'absolute'
   controls: UIControl[]
+  // New creative GUI fields (optional for backwards compat)
+  panelDesign?: PanelDesign
+  artwork?: Artwork
+  decorations?: Decoration[]
 }
 
 // Effect Metadata

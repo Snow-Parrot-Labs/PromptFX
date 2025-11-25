@@ -8,6 +8,7 @@ import type {
 } from '@/types/effect'
 import { EffectHeader } from './EffectHeader'
 import { ControlRenderer } from './ControlRenderer'
+import { CreativePanel } from './CreativePanel'
 
 interface EffectPanelProps {
   definition: EffectDefinition
@@ -31,6 +32,18 @@ export function EffectPanel({
 }: EffectPanelProps): React.JSX.Element {
   const { ui } = definition
 
+  // Use CreativePanel for absolute layout (new AI-generated effects)
+  if (ui.layout === 'absolute') {
+    return (
+      <CreativePanel
+        definition={definition}
+        parameterValues={parameterValues}
+        onParameterChange={onParameterChange}
+      />
+    )
+  }
+
+  // Legacy layout for backwards compatibility
   const layoutClass =
     ui.layout === 'grid'
       ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'

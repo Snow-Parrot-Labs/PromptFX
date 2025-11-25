@@ -1,14 +1,15 @@
-import { Header, PromptSection, EffectSection, AudioSection } from '@/components'
+import { Header } from '@/components'
+import { LeftPanel, CenterRack, RightPanel } from '@/components/layout'
 import { ToastContainer } from '@/components/ui'
 
 function App(): React.JSX.Element {
   return (
-    <div className="min-h-screen flex flex-col bg-[--color-bg-primary]">
+    <div className="h-screen flex flex-col bg-[--color-bg-primary] overflow-hidden">
       <Header />
-      <main className="flex-1 flex flex-col">
-        <PromptSection />
-        <EffectSection />
-        <AudioSection />
+      <main className="flex-1 flex overflow-hidden">
+        <LeftPanel />
+        <CenterRack />
+        <RightPanel />
       </main>
       <ToastContainer />
     </div>

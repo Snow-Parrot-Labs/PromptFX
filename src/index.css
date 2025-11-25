@@ -29,6 +29,33 @@
   --color-waveform: #6366f1;
   --color-playhead: #f8fafc;
 
+  /* Rack hardware */
+  --color-rack-rail: #1a1a1a;
+  --color-rack-hole: #0d0d0d;
+  --color-rack-screw: #4a4a4a;
+  --color-rack-screw-slot: #2a2a2a;
+
+  /* Panel styling */
+  --color-panel-bevel-light: #2a2a34;
+  --color-panel-bevel-dark: #141418;
+
+  /* LED colors */
+  --color-led-off: #1a1a1a;
+  --color-led-green: #22c55e;
+  --color-led-green-glow: rgba(34, 197, 94, 0.5);
+  --color-led-amber: #f59e0b;
+  --color-led-amber-glow: rgba(245, 158, 11, 0.5);
+  --color-led-red: #ef4444;
+  --color-led-red-glow: rgba(239, 68, 68, 0.5);
+  --color-led-blue: #3b82f6;
+  --color-led-blue-glow: rgba(59, 130, 246, 0.5);
+
+  /* Control color themes */
+  --color-knob-warm: #f59e0b;
+  --color-knob-cool: #3b82f6;
+  --color-knob-neutral: #94a3b8;
+  --color-knob-hot: #ef4444;
+
   /* Fonts */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -131,4 +158,74 @@ body {
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Rack rail pattern */
+.rack-rail {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-rack-hole) 0px,
+    var(--color-rack-hole) 4px,
+    var(--color-rack-rail) 4px,
+    var(--color-rack-rail) 44px
+  );
+}
+
+/* Panel bevel effect */
+.panel-bevel {
+  box-shadow:
+    inset 2px 2px 4px var(--color-panel-bevel-light),
+    inset -2px -2px 4px var(--color-panel-bevel-dark),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* LED glow animation */
+@keyframes led-pulse {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px var(--glow-color));
+  }
+  50% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 3px var(--glow-color));
+  }
+}
+
+.led-pulse {
+  animation: led-pulse 1.5s ease-in-out infinite;
+}
+
+/* Engraved text effect */
+.text-engraved {
+  color: #0a0a0f;
+  text-shadow:
+    1px 1px 1px rgba(255, 255, 255, 0.1),
+    -1px -1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Embossed text effect */
+.text-embossed {
+  color: var(--color-text-secondary);
+  text-shadow:
+    1px 1px 2px rgba(0, 0, 0, 0.5),
+    -1px -1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Screw head decoration */
+.screw-head {
+  background: radial-gradient(
+    circle at 30% 30%,
+    #5a5a5a 0%,
+    var(--color-rack-screw) 50%,
+    #2a2a2a 100%
+  );
+}
+
+/* No-scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -6,66 +6,98 @@ const anthropic = new Anthropic({
   apiKey: config.ANTHROPIC_API_KEY,
 })
 
-const SYSTEM_PROMPT = `You are an expert audio DSP engineer and UI designer. Your task is to generate audio effect definitions based on user descriptions.
+const SYSTEM_PROMPT = `You are an expert audio DSP engineer and creative UI designer specializing in rack-mounted audio gear. Generate unique, visually stunning effect units that look like professional studio equipment.
 
-You must respond with a valid JSON object that defines an audio effect with:
-1. DSP processing nodes and their connections
-2. UI controls (knobs, sliders, switches, selects) that map to node parameters
+IMPORTANT: You are designing a CREATIVE, UNIQUE rack-mount effect panel. Each effect should have its own visual identity.
 
-Available DSP node types:
-- input: Audio input (required, exactly one)
-- output: Audio output (required, exactly one)
-- delay: Delay effect (params: time 0-2000ms, feedback 0-1, mix 0-1)
-- reverb: Reverb effect (params: decay 0.1-10s, preDelay 0-100ms, mix 0-1)
-- filter: Filter effect (params: type lowpass|highpass|bandpass|notch, frequency 20-20000Hz, Q 0.1-20)
-- distortion: Distortion effect (params: type soft|hard|foldback|bitcrush, amount 0-1, mix 0-1)
-- gain: Volume control (params: gain -60 to +12 dB)
-- compressor: Dynamics (params: threshold -60 to 0dB, ratio 1-20, attack 0-1000ms, release 0-3000ms)
-- chorus: Modulation (params: rate 0.1-10Hz, depth 0-1, mix 0-1)
-- tremolo: Amplitude modulation (params: rate 0.1-20Hz, depth 0-1, shape sine|square|triangle)
-- panner: Stereo panning (params: pan -1 to 1)
+## DSP Node Types (params MUST be an object, even if empty: "params": {})
+- input: Audio input (required, params: {})
+- output: Audio output (required, params: {})
+- delay: params: { time: 0-2000, feedback: 0-1, mix: 0-1 }
+- reverb: params: { decay: 0.1-10, preDelay: 0-100, mix: 0-1 }
+- filter: params: { type: "lowpass"|"highpass"|"bandpass"|"notch", frequency: 20-20000, Q: 0.1-20 }
+- distortion: params: { type: "soft"|"hard"|"foldback"|"bitcrush", amount: 0-1, mix: 0-1 }
+- gain: params: { gain: -60 to 12 }
+- compressor: params: { threshold: -60 to 0, ratio: 1-20, attack: 0-1000, release: 0-3000 }
+- chorus: params: { rate: 0.1-10, depth: 0-1, mix: 0-1 }
+- tremolo: params: { rate: 0.1-20, depth: 0-1, shape: "sine"|"square"|"triangle" }
+- panner: params: { pan: -1 to 1 }
 
-UI control types:
-- knob: Rotary control with min/max/default/step/unit/curve(linear|exponential|logarithmic)
-- slider: Linear control with min/max/default/step/unit/orientation(horizontal|vertical)
-- switch: Toggle with default boolean, onLabel, offLabel
-- select: Dropdown with options array [{value, label}] and default
+## Connection Format (MUST use objects with nodeId):
+{ "from": { "nodeId": "sourceNodeId" }, "to": { "nodeId": "targetNodeId" } }
 
-Response format (JSON only, no markdown):
+## UI Controls (position x,y are 0-100%)
+- knob: style.color: amber|cyan|green|red|white|purple, style.size: sm|md|lg
+- slider: orientation: horizontal|vertical
+- switch: onLabel, offLabel
+
+## COMPLETE EXAMPLE (follow this structure exactly):
 {
-  "name": "Effect Name",
-  "description": "Brief description of what this effect does",
+  "name": "Warm Delay",
+  "description": "Analog-style delay with tape warmth",
   "nodes": [
     { "id": "input", "type": "input", "params": {} },
-    { "id": "uniqueId", "type": "nodeType", "params": { "paramName": defaultValue } },
+    { "id": "delay1", "type": "delay", "params": { "time": 300, "feedback": 0.4, "mix": 0.5 } },
+    { "id": "filter1", "type": "filter", "params": { "type": "lowpass", "frequency": 3000, "Q": 1 } },
     { "id": "output", "type": "output", "params": {} }
   ],
   "connections": [
-    { "from": { "nodeId": "input" }, "to": { "nodeId": "nextNode" } },
-    { "from": { "nodeId": "lastProcessingNode" }, "to": { "nodeId": "output" } }
+    { "from": { "nodeId": "input" }, "to": { "nodeId": "delay1" } },
+    { "from": { "nodeId": "delay1" }, "to": { "nodeId": "filter1" } },
+    { "from": { "nodeId": "filter1" }, "to": { "nodeId": "output" } }
   ],
   "ui": {
-    "layout": "horizontal",
+    "layout": "absolute",
+    "panelDesign": {
+      "rackUnits": 2,
+      "primaryColor": "#1a1a2e",
+      "accentColor": "#f59e0b",
+      "textColor": "#e5e5e5"
+    },
+    "artwork": {
+      "background": { "type": "gradient", "colors": ["#1a1a2e", "#0f0f1a"], "direction": "vertical" },
+      "elements": [
+        { "type": "stripe", "position": { "x": 0, "y": 85, "width": 100, "height": 15 }, "color": "#0a0a12" },
+        { "type": "glow", "position": { "x": 25, "y": 50 }, "color": "#f59e0b", "radius": 15, "opacity": 0.15 }
+      ],
+      "brandLabel": { "text": "WARM-DELAY", "position": { "x": 50, "y": 10 }, "style": "embossed" }
+    },
     "controls": [
       {
-        "id": "controlId",
-        "type": "knob",
-        "label": "Control Label",
-        "binding": { "nodeId": "targetNode", "param": "paramName" },
-        "config": { "min": 0, "max": 100, "default": 50, "unit": "%" }
+        "id": "time", "type": "knob", "label": "TIME",
+        "position": { "x": 25, "y": 50 },
+        "style": { "color": "amber", "size": "lg", "indicator": "line" },
+        "binding": { "nodeId": "delay1", "param": "time" },
+        "config": { "min": 0, "max": 2000, "default": 300, "unit": "ms" }
+      },
+      {
+        "id": "feedback", "type": "knob", "label": "FEEDBACK",
+        "position": { "x": 50, "y": 50 },
+        "style": { "color": "amber", "size": "lg", "indicator": "line" },
+        "binding": { "nodeId": "delay1", "param": "feedback" },
+        "config": { "min": 0, "max": 1, "default": 0.4 }
+      },
+      {
+        "id": "mix", "type": "knob", "label": "MIX",
+        "position": { "x": 75, "y": 50 },
+        "style": { "color": "white", "size": "md", "indicator": "line" },
+        "binding": { "nodeId": "delay1", "param": "mix" },
+        "config": { "min": 0, "max": 1, "default": 0.5 }
       }
+    ],
+    "decorations": [
+      { "type": "led", "position": { "x": 92, "y": 10 }, "color": "green" }
     ]
   }
 }
 
-Guidelines:
-- Always include exactly one input and one output node
-- Create logical signal flow from input to output
-- Include 3-6 UI controls for moderate complexity
-- Use appropriate parameter ranges for each node type
-- Make controls intuitive and musical
-- Name controls clearly (e.g., "Delay Time", "Feedback", "Mix")
-- Use exponential curves for frequency controls, linear for most others`
+## Creative Guidelines
+1. EVERY effect needs unique panel colors (warm=amber/red, cold=cyan/blue)
+2. Position controls intentionally across the panel (x: 15-85%, y: 35-75%)
+3. Use brandLabel for a cool hardware name (e.g., "NEBULA-VERB", "TAPE-CRUSH")
+4. Add visual elements: stripes, glows behind knobs
+5. Include at least one LED indicator
+6. Use lg knobs for main controls, sm/md for secondary`
 
 export interface GenerateEffectOptions {
   complexity?: 'simple' | 'moderate' | 'complex'
