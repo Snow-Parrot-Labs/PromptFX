@@ -20,11 +20,16 @@ export function TestToneGenerator(): React.JSX.Element {
           onClick={() => {
             setTestToneActive(!testToneActive)
           }}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-all ${
             testToneActive
-              ? 'bg-blue-600 hover:bg-blue-700 text-white'
-              : 'bg-[--color-bg-tertiary] hover:bg-[--color-bg-panel] text-[--color-text-secondary]'
+              ? 'btn-mechanical-lit text-[--color-led-blue]'
+              : 'btn-mechanical text-[--color-text-secondary]'
           }`}
+          style={{
+            boxShadow: testToneActive
+              ? 'inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(90, 122, 154, 0.4)'
+              : undefined,
+          }}
         >
           <svg
             className={`w-3.5 h-3.5 ${testToneActive ? 'animate-pulse' : ''}`}
@@ -46,10 +51,10 @@ export function TestToneGenerator(): React.JSX.Element {
               onClick={() => {
                 setTestToneFrequency(freq)
               }}
-              className={`px-1.5 py-0.5 text-[10px] rounded transition-colors ${
+              className={`px-1.5 py-0.5 text-[10px] rounded transition-all ${
                 testToneFrequency === freq
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-[--color-bg-tertiary] text-[--color-text-muted] hover:text-white'
+                  ? 'btn-mechanical-lit text-[--color-led-blue]'
+                  : 'btn-mechanical text-[--color-text-muted]'
               }`}
             >
               {formatFrequency(freq)}

@@ -6,26 +6,27 @@ interface LEDIndicatorProps {
   size?: 'sm' | 'md'
 }
 
+// Vintage jewel indicator lens colors - warm incandescent style
 const LED_COLORS: Record<DecorationLEDColor, { on: string; off: string; glow: string }> = {
   green: {
-    on: '#22c55e',
-    off: '#0f3d1a',
-    glow: 'rgba(34, 197, 94, 0.6)',
+    on: '#5a9a5a',
+    off: '#1a2a1a',
+    glow: 'rgba(90, 154, 90, 0.5)',
   },
   amber: {
-    on: '#f59e0b',
-    off: '#3d2a05',
-    glow: 'rgba(245, 158, 11, 0.6)',
+    on: '#c4923a',
+    off: '#2a2010',
+    glow: 'rgba(196, 146, 58, 0.5)',
   },
   red: {
-    on: '#ef4444',
-    off: '#3d1414',
-    glow: 'rgba(239, 68, 68, 0.6)',
+    on: '#b54a4a',
+    off: '#2a1414',
+    glow: 'rgba(181, 74, 74, 0.5)',
   },
   blue: {
-    on: '#3b82f6',
-    off: '#142a4d',
-    glow: 'rgba(59, 130, 246, 0.6)',
+    on: '#5a7a9a',
+    off: '#141a24',
+    glow: 'rgba(90, 122, 154, 0.5)',
   },
 }
 
@@ -45,8 +46,9 @@ export function LEDIndicator({
           ? `radial-gradient(circle at 30% 30%, ${colors.on} 0%, ${colors.on}cc 60%, ${colors.on}88 100%)`
           : colors.off,
         boxShadow: active
-          ? `0 0 8px ${colors.glow}, inset 0 1px 2px rgba(255,255,255,0.3)`
-          : 'inset 0 1px 2px rgba(0,0,0,0.5)',
+          ? `0 0 6px ${colors.glow}, 0 0 12px ${colors.glow}, inset 0 1px 2px rgba(255,255,255,0.25)`
+          : 'inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.03)',
+        border: '1px solid rgba(0,0,0,0.3)',
       }}
     />
   )

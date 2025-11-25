@@ -82,7 +82,7 @@ export function CreativePanel({
 
       {/* Bottom info strip */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-6 flex items-center justify-between px-4"
+        className="absolute bottom-0 left-0 right-0 h-6 flex items-center justify-between px-4 pointer-events-none"
         style={{
           background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 100%)',
         }}

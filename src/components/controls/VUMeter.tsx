@@ -11,11 +11,12 @@ export function VUMeter({
 }: VUMeterProps): React.JSX.Element {
   const activeSegments = Math.round(level * segments)
 
+  // Vintage VU meter colors - warm incandescent style
   const getSegmentColor = (index: number): string => {
     const percentage = index / segments
-    if (percentage > 0.85) return '#ef4444' // Red
-    if (percentage > 0.7) return '#f59e0b' // Amber
-    return '#22c55e' // Green
+    if (percentage > 0.85) return '#b54a4a' // Warm red
+    if (percentage > 0.7) return '#c4923a' // Amber
+    return '#5a9a5a' // Warm green
   }
 
   const segmentArray = Array.from({ length: segments }, (_, i) => i)
@@ -31,7 +32,7 @@ export function VUMeter({
               background:
                 i < activeSegments
                   ? getSegmentColor(i)
-                  : 'linear-gradient(180deg, #1a1a24 0%, #0f0f15 100%)',
+                  : 'linear-gradient(180deg, #1a1610 0%, #0d0c0a 100%)',
               boxShadow:
                 i < activeSegments
                   ? `0 0 4px ${getSegmentColor(i)}66`
@@ -53,7 +54,7 @@ export function VUMeter({
             background:
               i < activeSegments
                 ? getSegmentColor(i)
-                : 'linear-gradient(180deg, #1a1a24 0%, #0f0f15 100%)',
+                : 'linear-gradient(180deg, #1a1610 0%, #0d0c0a 100%)',
             boxShadow:
               i < activeSegments
                 ? `0 0 4px ${getSegmentColor(i)}66`

@@ -12,13 +12,6 @@ export function Header(): React.JSX.Element {
         <span className="text-xs text-[--color-text-muted] hidden md:inline">
           AI-Powered Audio Effects
         </span>
-        {/* Status indicator */}
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-[--color-led-green]" />
-          <span className="text-[10px] text-[--color-text-muted] uppercase tracking-wide">
-            Ready
-          </span>
-        </div>
       </div>
     </header>
   )

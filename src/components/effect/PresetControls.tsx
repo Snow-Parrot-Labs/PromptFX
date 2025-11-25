@@ -59,7 +59,7 @@ export function PresetControls(): React.JSX.Element {
           setShowSaveDialog(true)
         }}
         disabled={definition === null}
-        className="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-600 text-gray-200 rounded-lg transition-colors flex items-center gap-1.5"
+        className="px-3 py-1.5 text-sm btn-mechanical disabled:opacity-50 disabled:cursor-not-allowed text-[--color-text-secondary] rounded transition-all flex items-center gap-1.5"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -79,7 +79,11 @@ export function PresetControls(): React.JSX.Element {
           onClick={() => {
             setShowPresetList(!showPresetList)
           }}
-          className="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors flex items-center gap-1.5"
+          className={`px-3 py-1.5 text-sm rounded transition-all flex items-center gap-1.5 ${
+            showPresetList
+              ? 'btn-mechanical-lit text-[--color-accent-primary]'
+              : 'btn-mechanical text-[--color-text-secondary]'
+          }`}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -91,7 +95,7 @@ export function PresetControls(): React.JSX.Element {
           </svg>
           Load
           {presets.length > 0 && (
-            <span className="ml-1 px-1.5 py-0.5 text-xs bg-blue-600 rounded-full">
+            <span className="ml-1 px-1.5 py-0.5 text-xs bg-[--color-accent-secondary] text-[--color-text-primary] rounded-full">
               {presets.length}
             </span>
           )}
@@ -99,14 +103,16 @@ export function PresetControls(): React.JSX.Element {
 
         {/* Preset List Dropdown */}
         {showPresetList && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-[--color-bg-panel] border border-[--color-border] rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto">
             {presets.length === 0 ? (
-              <div className="p-3 text-sm text-gray-500 text-center">No saved presets</div>
+              <div className="p-3 text-sm text-[--color-text-muted] text-center">
+                No saved presets
+              </div>
             ) : (
               presets.map((preset) => (
                 <div
                   key={preset.id}
-                  className="flex items-center justify-between p-2 hover:bg-gray-700 border-b border-gray-700 last:border-b-0"
+                  className="flex items-center justify-between p-2 hover:bg-[--color-bg-tertiary] border-b border-[--color-border] last:border-b-0"
                 >
                   <button
                     type="button"
@@ -115,8 +121,8 @@ export function PresetControls(): React.JSX.Element {
                     }}
                     className="flex-1 text-left"
                   >
-                    <div className="text-sm text-white">{preset.name}</div>
-                    <div className="text-xs text-gray-500">{preset.effect.name}</div>
+                    <div className="text-sm text-[--color-text-primary]">{preset.name}</div>
+                    <div className="text-xs text-[--color-text-muted]">{preset.effect.name}</div>
                   </button>
                   <div className="flex gap-1">
                     <button
@@ -124,7 +130,7 @@ export function PresetControls(): React.JSX.Element {
                       onClick={() => {
                         exportPreset(preset.id)
                       }}
-                      className="p-1 text-gray-400 hover:text-white"
+                      className="p-1 text-[--color-text-muted] hover:text-[--color-text-primary] transition-colors"
                       title="Export"
                     >
                       <svg
@@ -146,7 +152,7 @@ export function PresetControls(): React.JSX.Element {
                       onClick={() => {
                         deletePreset(preset.id)
                       }}
-                      className="p-1 text-gray-400 hover:text-red-500"
+                      className="p-1 text-[--color-text-muted] hover:text-[--color-error] transition-colors"
                       title="Delete"
                     >
                       <svg
@@ -168,13 +174,13 @@ export function PresetControls(): React.JSX.Element {
               ))
             )}
             {presets.length > 0 && (
-              <div className="p-2 border-t border-gray-600">
+              <div className="p-2 border-t border-[--color-border]">
                 <button
                   type="button"
                   onClick={() => {
                     exportAllPresets()
                   }}
-                  className="w-full px-3 py-1.5 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors"
+                  className="w-full px-3 py-1.5 text-xs btn-mechanical text-[--color-text-muted] rounded transition-all"
                 >
                   Export All Presets
                 </button>
@@ -190,7 +196,7 @@ export function PresetControls(): React.JSX.Element {
         onClick={() => {
           fileInputRef.current?.click()
         }}
-        className="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition-colors flex items-center gap-1.5"
+        className="px-3 py-1.5 text-sm btn-mechanical text-[--color-text-secondary] rounded transition-all flex items-center gap-1.5"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -214,9 +220,9 @@ export function PresetControls(): React.JSX.Element {
 
       {/* Save Dialog */}
       {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-xl p-6 w-80 shadow-2xl">
-            <h3 className="text-lg font-medium text-white mb-4">Save Preset</h3>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-[--color-bg-panel] border border-[--color-border] rounded-xl p-6 w-80 shadow-2xl panel-bevel">
+            <h3 className="text-lg font-medium text-[--color-text-primary] mb-4">Save Preset</h3>
             <input
               type="text"
               value={presetName}
@@ -224,7 +230,7 @@ export function PresetControls(): React.JSX.Element {
                 setPresetName(e.target.value)
               }}
               placeholder="Preset name..."
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+              className="w-full px-3 py-2 bg-[--color-bg-tertiary] border border-[--color-border] rounded-lg text-[--color-text-primary] placeholder-[--color-text-muted] focus:outline-none focus:ring-1 focus:ring-[--color-accent-primary] mb-4"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -239,7 +245,7 @@ export function PresetControls(): React.JSX.Element {
                   setShowSaveDialog(false)
                   setPresetName('')
                 }}
-                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-[--color-text-muted] hover:text-[--color-text-primary] transition-colors"
               >
                 Cancel
               </button>
@@ -247,7 +253,7 @@ export function PresetControls(): React.JSX.Element {
                 type="button"
                 onClick={handleSave}
                 disabled={presetName.trim() === ''}
-                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 text-white rounded-lg transition-colors"
+                className="px-4 py-2 text-sm btn-mechanical disabled:opacity-50 disabled:cursor-not-allowed text-[--color-text-secondary] rounded transition-all"
               >
                 Save
               </button>

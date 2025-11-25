@@ -46,7 +46,7 @@ function GradientBackground({ gradient }: { gradient: GradientElement }): React.
 
   return (
     <div
-      className="absolute inset-0"
+      className="absolute inset-0 pointer-events-none"
       style={{
         background: getGradientStyle(),
       }}
@@ -59,7 +59,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
     case 'stripe':
       return (
         <div
-          className="absolute"
+          className="absolute pointer-events-none"
           style={{
             left: `${element.position.x.toString()}%`,
             top: `${element.position.y.toString()}%`,
@@ -95,7 +95,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
 
       return (
         <div
-          className="absolute origin-left"
+          className="absolute origin-left pointer-events-none"
           style={{
             left: `${element.from.x.toString()}%`,
             top: `${element.from.y.toString()}%`,
@@ -111,7 +111,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
     case 'circle':
       return (
         <div
-          className="absolute rounded-full"
+          className="absolute rounded-full pointer-events-none"
           style={{
             left: `${element.position.x.toString()}%`,
             top: `${element.position.y.toString()}%`,
@@ -127,7 +127,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
     case 'rect':
       return (
         <div
-          className="absolute"
+          className="absolute pointer-events-none"
           style={{
             left: `${element.position.x.toString()}%`,
             top: `${element.position.y.toString()}%`,
@@ -199,7 +199,7 @@ function BrandLabel({ text, position, style }: BrandLabelProps): React.JSX.Eleme
   }
 
   return (
-    <div className="absolute uppercase tracking-widest" style={getTextStyle()}>
+    <div className="absolute uppercase tracking-widest pointer-events-none" style={getTextStyle()}>
       {text}
     </div>
   )

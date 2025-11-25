@@ -30,12 +30,12 @@ export function Transport(): React.JSX.Element {
         </span>
       </div>
 
-      {/* Transport buttons */}
+      {/* Transport buttons - vintage reel-to-reel style */}
       <div className="flex items-center gap-2">
         {/* Stop */}
         <button
           onClick={stop}
-          className="w-10 h-10 rounded-full bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary] flex items-center justify-center transition-colors"
+          className="w-10 h-10 rounded-full btn-mechanical text-[--color-text-secondary] hover:text-[--color-text-primary] flex items-center justify-center transition-all"
           title="Stop"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -46,11 +46,16 @@ export function Transport(): React.JSX.Element {
         {/* Play/Pause */}
         <button
           onClick={() => void handlePlayPause()}
-          className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
+          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
             isPlaying
-              ? 'bg-[--color-accent-primary] text-white glow-accent'
-              : 'bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary]'
+              ? 'btn-mechanical-lit text-[--color-accent-primary]'
+              : 'btn-mechanical text-[--color-text-secondary] hover:text-[--color-text-primary]'
           }`}
+          style={{
+            boxShadow: isPlaying
+              ? 'inset 0 2px 4px rgba(0,0,0,0.5), 0 0 12px rgba(196, 163, 90, 0.3)'
+              : undefined,
+          }}
           title={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
@@ -69,11 +74,16 @@ export function Transport(): React.JSX.Element {
           onClick={() => {
             setIsLooping(!isLooping)
           }}
-          className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
             isLooping
-              ? 'bg-[--color-accent-primary] text-white'
-              : 'bg-[--color-bg-tertiary] text-[--color-text-secondary] hover:text-[--color-text-primary]'
+              ? 'btn-mechanical-lit text-[--color-accent-primary]'
+              : 'btn-mechanical text-[--color-text-secondary] hover:text-[--color-text-primary]'
           }`}
+          style={{
+            boxShadow: isLooping
+              ? 'inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(196, 163, 90, 0.25)'
+              : undefined,
+          }}
           title={isLooping ? 'Loop On' : 'Loop Off'}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

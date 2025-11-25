@@ -75,7 +75,7 @@ export function LeftPanel(): React.JSX.Element {
                 void handleRandomEffect()
               }}
               disabled={isDisabled}
-              className="flex items-center gap-1 px-2 py-0.5 text-[10px] bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:text-gray-500 text-white rounded-full transition-colors"
+              className="flex items-center gap-1 px-2 py-1 text-[10px] btn-mechanical disabled:opacity-50 disabled:cursor-not-allowed text-[--color-text-secondary] rounded transition-all"
             >
               {isLoadingRandom ? (
                 <span className="flex items-center gap-1">
@@ -131,10 +131,10 @@ export function LeftPanel(): React.JSX.Element {
                 onClick={() => {
                   setComplexity(option.value)
                 }}
-                className={`px-2 py-1.5 rounded text-xs font-medium transition-colors ${
+                className={`px-2 py-1.5 rounded text-xs font-medium transition-all ${
                   complexity === option.value
-                    ? 'bg-[--color-accent-primary] text-white'
-                    : 'bg-[--color-bg-tertiary] text-[--color-text-muted] hover:bg-[--color-bg-panel]'
+                    ? 'btn-mechanical-lit text-[--color-accent-primary]'
+                    : 'btn-mechanical text-[--color-text-muted]'
                 }`}
                 disabled={isDisabled}
               >
@@ -159,7 +159,12 @@ export function LeftPanel(): React.JSX.Element {
         <button
           type="submit"
           disabled={prompt.trim().length < 3 || isDisabled}
-          className="w-full py-2.5 px-4 bg-[--color-accent-primary] hover:bg-[--color-accent-secondary] disabled:bg-gray-700 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 px-4 btn-mechanical disabled:opacity-50 disabled:cursor-not-allowed text-[--color-text-primary] text-sm font-medium rounded transition-all flex items-center justify-center gap-2 border-[--color-accent-secondary] hover:border-[--color-accent-primary]"
+          style={{
+            boxShadow: isGenerating
+              ? 'inset 0 2px 4px rgba(0,0,0,0.5), 0 0 12px rgba(196, 163, 90, 0.3)'
+              : undefined,
+          }}
         >
           {isGenerating ? (
             <>

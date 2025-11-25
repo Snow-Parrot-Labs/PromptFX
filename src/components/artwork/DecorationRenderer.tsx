@@ -29,7 +29,7 @@ function DecorationItem({ decoration, levels }: DecorationItemProps): React.JSX.
     case 'led':
       return (
         <div
-          className="absolute"
+          className="absolute pointer-events-none"
           style={{
             left: `${decoration.position.x.toString()}%`,
             top: `${decoration.position.y.toString()}%`,
@@ -43,7 +43,7 @@ function DecorationItem({ decoration, levels }: DecorationItemProps): React.JSX.
     case 'vuMeter':
       return (
         <div
-          className="absolute"
+          className="absolute pointer-events-none"
           style={{
             left: `${decoration.position.x.toString()}%`,
             top: `${decoration.position.y.toString()}%`,
@@ -66,7 +66,7 @@ function DecorationItem({ decoration, levels }: DecorationItemProps): React.JSX.
       }
       return (
         <div
-          className={`absolute ${sizeClasses[decoration.size ?? 'sm']} font-medium text-[--color-text-muted] uppercase tracking-wider`}
+          className={`absolute pointer-events-none ${sizeClasses[decoration.size ?? 'sm']} font-medium text-[--color-text-muted] uppercase tracking-wider`}
           style={{
             left: `${decoration.position.x.toString()}%`,
             top: `${decoration.position.y.toString()}%`,

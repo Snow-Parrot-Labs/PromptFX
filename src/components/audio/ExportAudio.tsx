@@ -46,7 +46,12 @@ export function ExportAudio(): React.JSX.Element {
         void handleExport()
       }}
       disabled={!hasAudio || isExporting}
-      className="px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:text-gray-500 text-white rounded-lg transition-colors flex items-center gap-1.5"
+      className="px-3 py-1.5 text-sm btn-mechanical disabled:opacity-50 disabled:cursor-not-allowed text-[--color-text-secondary] rounded transition-all flex items-center gap-1.5"
+      style={{
+        boxShadow: isExporting
+          ? 'inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(90, 154, 90, 0.3)'
+          : undefined,
+      }}
     >
       {isExporting ? (
         <>

@@ -48,11 +48,16 @@ export function LiveInput(): React.JSX.Element {
           onClick={() => {
             void handleToggleLiveInput()
           }}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-all ${
             liveInputEnabled
-              ? 'bg-red-600 hover:bg-red-700 text-white'
-              : 'bg-[--color-bg-tertiary] hover:bg-[--color-bg-panel] text-[--color-text-secondary]'
+              ? 'btn-mechanical-lit text-[--color-error]'
+              : 'btn-mechanical text-[--color-text-secondary]'
           }`}
+          style={{
+            boxShadow: liveInputEnabled
+              ? 'inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(181, 74, 74, 0.4)'
+              : undefined,
+          }}
         >
           <svg
             className={`w-3.5 h-3.5 ${liveInputEnabled ? 'animate-pulse' : ''}`}
@@ -75,10 +80,10 @@ export function LiveInput(): React.JSX.Element {
             <div
               className={`h-full transition-all duration-75 ${
                 inputLevel > 0.8
-                  ? 'bg-red-500'
+                  ? 'bg-[--color-meter-red]'
                   : inputLevel > 0.5
-                    ? 'bg-yellow-500'
-                    : 'bg-green-500'
+                    ? 'bg-[--color-meter-yellow]'
+                    : 'bg-[--color-meter-green]'
               }`}
               style={{ width: `${(inputLevel * 100).toString()}%` }}
             />

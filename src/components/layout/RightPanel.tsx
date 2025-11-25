@@ -26,19 +26,30 @@ export function RightPanel(): React.JSX.Element {
         <h2 className="text-sm font-semibold text-[--color-text-primary] uppercase tracking-wider">
           Audio
         </h2>
-        {/* Bypass Toggle */}
+        {/* Bypass Toggle - vintage lit button with red bulb glow */}
         <button
           type="button"
           onClick={() => {
             toggleBypass()
           }}
-          className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-            bypassEffect
-              ? 'bg-yellow-600 text-white'
-              : 'bg-[--color-bg-tertiary] text-[--color-text-muted] hover:bg-[--color-bg-panel]'
-          }`}
+          className="relative px-3 py-1.5 rounded text-xs font-medium tracking-wide transition-all btn-mechanical text-[--color-text-muted] overflow-hidden"
+          style={{
+            boxShadow: bypassEffect
+              ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 0 12px rgba(181, 74, 74, 0.4), 0 0 20px rgba(181, 74, 74, 0.2)'
+              : undefined,
+          }}
         >
-          {bypassEffect ? 'BYPASSED' : 'BYPASS'}
+          {/* Red bulb backlight glow when bypassed */}
+          {bypassEffect && (
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(ellipse at center bottom, rgba(181, 74, 74, 0.4) 0%, rgba(181, 74, 74, 0.15) 40%, transparent 70%)',
+              }}
+            />
+          )}
+          <span className={`relative z-10 ${bypassEffect ? 'text-[#e8a0a0]' : ''}`}>BYPASS</span>
         </button>
       </div>
 

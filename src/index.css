@@ -1,60 +1,73 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Colors - Dark audio app aesthetic */
-  --color-bg-primary: #0a0a0f;
-  --color-bg-secondary: #12121a;
-  --color-bg-tertiary: #1a1a24;
-  --color-bg-panel: #1e1e28;
+  /* Colors - Vintage Analog Studio Aesthetic */
+  /* Dark warm backgrounds like aged wood and metal */
+  --color-bg-primary: #0d0c0a;
+  --color-bg-secondary: #171410;
+  --color-bg-tertiary: #1f1b16;
+  --color-bg-panel: #252019;
 
-  --color-accent-primary: #6366f1;
-  --color-accent-secondary: #8b5cf6;
-  --color-accent-glow: #818cf8;
+  /* Warm amber accent like VU meter backlighting */
+  --color-accent-primary: #c4a35a;
+  --color-accent-secondary: #a68942;
+  --color-accent-glow: #d4b56a;
 
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  /* Cream/warm white text like vintage labels */
+  --color-text-primary: #e8e0d0;
+  --color-text-secondary: #a89f8f;
+  --color-text-muted: #6b6358;
 
-  --color-border: #2e2e3a;
-  --color-border-focus: #6366f1;
+  /* Borders like brushed metal edges */
+  --color-border: #3a3428;
+  --color-border-focus: #c4a35a;
 
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
+  /* Status colors - slightly desaturated for vintage feel */
+  --color-success: #5a9a5a;
+  --color-warning: #c4923a;
+  --color-error: #b54a4a;
 
-  /* Audio-specific colors */
-  --color-meter-green: #22c55e;
-  --color-meter-yellow: #eab308;
-  --color-meter-red: #ef4444;
-  --color-waveform: #6366f1;
-  --color-playhead: #f8fafc;
+  /* Audio-specific colors - vintage VU meter style */
+  --color-meter-green: #5a9a5a;
+  --color-meter-yellow: #c4a43a;
+  --color-meter-red: #b54a4a;
+  --color-waveform: #7a9a6a;
+  --color-playhead: #e8e0d0;
 
-  /* Rack hardware */
-  --color-rack-rail: #1a1a1a;
-  --color-rack-hole: #0d0d0d;
-  --color-rack-screw: #4a4a4a;
-  --color-rack-screw-slot: #2a2a2a;
+  /* Rack hardware - oxidized metal */
+  --color-rack-rail: #1a1814;
+  --color-rack-hole: #0a0908;
+  --color-rack-screw: #5a5448;
+  --color-rack-screw-slot: #2a2620;
 
-  /* Panel styling */
-  --color-panel-bevel-light: #2a2a34;
-  --color-panel-bevel-dark: #141418;
+  /* Panel styling - aged bakelite/metal */
+  --color-panel-bevel-light: #3a3428;
+  --color-panel-bevel-dark: #0d0c0a;
 
-  /* LED colors */
-  --color-led-off: #1a1a1a;
-  --color-led-green: #22c55e;
-  --color-led-green-glow: rgba(34, 197, 94, 0.5);
-  --color-led-amber: #f59e0b;
-  --color-led-amber-glow: rgba(245, 158, 11, 0.5);
-  --color-led-red: #ef4444;
-  --color-led-red-glow: rgba(239, 68, 68, 0.5);
-  --color-led-blue: #3b82f6;
-  --color-led-blue-glow: rgba(59, 130, 246, 0.5);
+  /* LED colors - warm vintage incandescent style */
+  --color-led-off: #1a1814;
+  --color-led-green: #5a9a5a;
+  --color-led-green-glow: rgba(90, 154, 90, 0.4);
+  --color-led-amber: #c4923a;
+  --color-led-amber-glow: rgba(196, 146, 58, 0.4);
+  --color-led-red: #b54a4a;
+  --color-led-red-glow: rgba(181, 74, 74, 0.4);
+  --color-led-blue: #5a7a9a;
+  --color-led-blue-glow: rgba(90, 122, 154, 0.4);
 
-  /* Control color themes */
-  --color-knob-warm: #f59e0b;
-  --color-knob-cool: #3b82f6;
-  --color-knob-neutral: #94a3b8;
-  --color-knob-hot: #ef4444;
+  /* Control color themes - bakelite and brass */
+  --color-knob-warm: #c4923a;
+  --color-knob-cool: #5a7a8a;
+  --color-knob-neutral: #8a8478;
+  --color-knob-hot: #b54a4a;
+
+  /* Material colors */
+  --color-metal-light: #6a645a;
+  --color-metal-dark: #3a3630;
+  --color-brass: #8a7a4a;
+  --color-bakelite: #2a2420;
+  --color-wood-dark: #1a1610;
+  --color-glass: rgba(200, 195, 180, 0.1);
 
   /* Fonts */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -228,4 +241,129 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Mechanical push button - like vintage console buttons */
+.btn-mechanical {
+  position: relative;
+  background: linear-gradient(180deg, #4a4438 0%, #2a2620 50%, #1a1610 100%);
+  border: 1px solid #3a3428;
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(90, 84, 72, 0.3);
+  transition: all 0.1s ease;
+}
+
+.btn-mechanical:hover {
+  background: linear-gradient(180deg, #5a5448 0%, #3a3428 50%, #2a2420 100%);
+}
+
+.btn-mechanical:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Lit mechanical button (active state) */
+.btn-mechanical-lit {
+  background: linear-gradient(180deg, #5a4a2a 0%, #3a3220 50%, #2a2610 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 200, 100, 0.15),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    0 0 12px rgba(196, 163, 90, 0.2);
+}
+
+/* Vintage rocker toggle switch */
+.toggle-rocker {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: linear-gradient(180deg, #1a1610 0%, #0d0c0a 100%);
+  border: 1px solid #3a3428;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(90, 84, 72, 0.2);
+  cursor: pointer;
+}
+
+.toggle-rocker-handle {
+  position: absolute;
+  top: 2px;
+  width: 16px;
+  height: 14px;
+  background: linear-gradient(180deg, #6a645a 0%, #4a4438 50%, #3a3428 100%);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: left 0.15s ease;
+}
+
+.toggle-rocker-handle.off {
+  left: 2px;
+}
+
+.toggle-rocker-handle.on {
+  left: 16px;
+  background: linear-gradient(180deg, #7a6a4a 0%, #5a4a3a 50%, #4a3a2a 100%);
+}
+
+/* Metal switch plate */
+.switch-plate {
+  background: linear-gradient(145deg, #4a4438 0%, #2a2620 100%);
+  border: 1px solid #5a5448;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Glass/jewel indicator lens */
+.indicator-lens {
+  background: radial-gradient(
+    ellipse at 30% 30%,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 50%
+  );
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Brushed metal texture */
+.texture-brushed-metal {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.02) 0px,
+      transparent 1px,
+      transparent 2px
+    ),
+    linear-gradient(180deg, #3a3630 0%, #2a2620 100%);
+}
+
+/* Aged wood grain */
+.texture-wood {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0px,
+      transparent 2px,
+      transparent 8px
+    ),
+    linear-gradient(180deg, #1a1610 0%, #0d0c0a 100%);
+}
+
+/* Bakelite texture */
+.texture-bakelite {
+  background: linear-gradient(145deg, #2a2420 0%, #1a1610 100%);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.03),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
 }
