@@ -81,7 +81,7 @@ export function useAudioEngine(): UseAudioEngineReturn {
   // Playback controls
   const play = useCallback(async () => {
     await initialize()
-    audioEngine.play()
+    await audioEngine.play()
     setIsPlaying(true)
   }, [initialize, setIsPlaying])
 

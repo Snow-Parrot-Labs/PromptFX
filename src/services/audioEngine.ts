@@ -1,6 +1,10 @@
 import * as Tone from 'tone'
-import type { AudioFileInfo, WaveformData, TestToneFrequency } from '@/types/audio'
-import { AUDIO_CONFIG } from '@/types/audio'
+import type {
+  AudioFileInfo,
+  WaveformData,
+  TestToneFrequency,
+  AudioInputDevice,
+} from '@/types/audio'
 
 type AudioEngineCallback = {
   onTimeUpdate?: (time: number) => void
@@ -16,6 +20,12 @@ class AudioEngine {
   private player: Tone.Player | null = null
   private oscillator: Tone.Oscillator | null = null
   private microphoneInput: Tone.UserMedia | null = null
+  private mediaStreamSource: MediaStreamAudioSourceNode | null = null
+  private currentMediaStream: MediaStream | null = null
+  private currentDeviceId: string | null = null
+  private liveInputGain: Tone.Gain | null = null // Store live input gain for reconnection
+  private activeSource: Tone.ToneAudioNode | null = null // Track current active source
+  private inputGainNode: Tone.Gain | null = null // Master input gain control
   private inputMeter: Tone.Meter | null = null
   private outputMeter: Tone.Meter | null = null
   private effectsChain: Tone.ToneAudioNode[] = []
@@ -25,6 +35,9 @@ class AudioEngine {
   private audioBuffer: Tone.ToneAudioBuffer | null = null
   private isInitialized = false
   private liveInputEnabled = false
+  private isPlayerPlaying = false
+  private playbackPosition = 0
+  private playbackStartTime = 0
   private callbacks: AudioEngineCallback = {}
   private animationFrameId: number | null = null
 
@@ -32,19 +45,18 @@ class AudioEngine {
     if (this.isInitialized) return
 
     // Start Tone.js context (must be called from user gesture)
+    // Note: latencyHint is set at context creation time, not after
     await Tone.start()
-
-    // Configure context
-    Tone.getContext().latencyHint = AUDIO_CONFIG.latencyHint
 
     // Create metering (smoothing parameter)
     this.inputMeter = new Tone.Meter(0.9)
     this.outputMeter = new Tone.Meter(0.9)
 
-    // Create gain nodes for bypass/wet/dry mixing
-    this.dryGain = new Tone.Gain(0)
-    this.wetGain = new Tone.Gain(1)
-    this.masterGain = new Tone.Gain(1)
+    // Create gain nodes
+    this.inputGainNode = new Tone.Gain(1) // Input gain control
+    this.dryGain = new Tone.Gain(0) // Bypass (dry) signal
+    this.wetGain = new Tone.Gain(1) // Processed (wet) signal
+    this.masterGain = new Tone.Gain(1) // Master output
 
     // Connect output chain
     this.wetGain.connect(this.masterGain)
@@ -79,10 +91,19 @@ class AudioEngine {
         this.callbacks.onLevelUpdate(inputLevels, outputLevels)
       }
 
-      // Update time
-      if (this.player && this.callbacks.onTimeUpdate) {
-        const currentTime = Tone.getTransport().seconds
+      // Update time for file playback
+      if (this.callbacks.onTimeUpdate) {
+        const currentTime = this.getCurrentTime()
         this.callbacks.onTimeUpdate(currentTime)
+
+        // Check if playback has reached the end
+        if (this.isPlayerPlaying && this.audioBuffer) {
+          if (currentTime >= this.audioBuffer.duration) {
+            this.isPlayerPlaying = false
+            this.playbackPosition = 0
+            this.callbacks.onPlaybackEnd?.()
+          }
+        }
       }
 
       this.animationFrameId = requestAnimationFrame(updateMeters)
@@ -120,9 +141,6 @@ class AudioEngine {
 
     // Create player
     this.player = new Tone.Player(this.audioBuffer)
-    this.player.onstop = () => {
-      this.callbacks.onPlaybackEnd?.()
-    }
 
     // Connect player through meters and effect chain
     this.connectSource(this.player)
@@ -137,57 +155,103 @@ class AudioEngine {
     }
   }
 
-  private connectSource(source: Tone.ToneAudioNode): void {
-    if (!this.inputMeter || !this.wetGain || !this.dryGain) return
+  private connectSource(source: Tone.ToneAudioNode, setAsActive = true): void {
+    if (!this.inputMeter || !this.inputGainNode || !this.wetGain || !this.dryGain) return
 
-    // Source -> Input Meter -> Effect Chain -> Wet Gain
-    // Source -> Dry Gain (for bypass)
-    source.connect(this.inputMeter)
+    // Disconnect previous source and inputGainNode connections before connecting new source
+    if (this.activeSource && this.activeSource !== source) {
+      this.activeSource.disconnect()
+    }
+    this.inputGainNode.disconnect()
 
+    // Track this as the active source for reconnection when effects change
+    if (setAsActive) {
+      this.activeSource = source
+    }
+
+    // Source -> InputGain
+    source.connect(this.inputGainNode)
+
+    // InputGain -> InputMeter (tap for level display - meter is a dead end, doesn't pass audio)
+    this.inputGainNode.connect(this.inputMeter)
+
+    // InputGain -> Effect Chain -> Wet Gain
+    // OR InputGain -> Wet Gain (if no effects)
     if (this.effectsChain.length > 0) {
       const firstEffect = this.effectsChain[0]
       const lastEffect = this.effectsChain[this.effectsChain.length - 1]
       if (firstEffect && lastEffect) {
-        source.connect(firstEffect)
+        this.inputGainNode.connect(firstEffect)
         lastEffect.connect(this.wetGain)
       }
     } else {
-      source.connect(this.wetGain)
+      // No effects - connect directly to wet gain for output
+      this.inputGainNode.connect(this.wetGain)
     }
 
-    source.connect(this.dryGain)
+    // InputGain -> Dry Gain (for bypass - unprocessed signal)
+    this.inputGainNode.connect(this.dryGain)
   }
 
-  play(): void {
+  // Reconnect the current active source (used when effect chain changes)
+  private reconnectActiveSource(): void {
+    if (this.activeSource === null) return
+
+    // Disconnect source and input gain node
+    this.activeSource.disconnect()
+    this.inputGainNode?.disconnect()
+
+    // Reconnect through new effect chain
+    this.connectSource(this.activeSource, false)
+  }
+
+  async play(): Promise<void> {
     if (!this.player || !this.audioBuffer) return
 
-    if (Tone.getTransport().state !== 'started') {
-      this.player.start()
-      Tone.getTransport().start()
+    // Don't restart if already playing
+    if (this.isPlayerPlaying) return
+
+    // Ensure audio context is running (required after user gesture)
+    if (Tone.getContext().state !== 'running') {
+      await Tone.start()
     }
+
+    // Start player from current position
+    const currentPos = this.playbackPosition
+    this.player.start(Tone.now(), currentPos)
+    this.isPlayerPlaying = true
+    this.playbackStartTime = Tone.now() - currentPos
   }
 
   pause(): void {
-    if (this.player) {
-      Tone.getTransport().pause()
+    if (this.player && this.isPlayerPlaying) {
+      // Save current position before stopping
+      this.playbackPosition = this.getCurrentTime()
+      this.player.stop()
+      this.isPlayerPlaying = false
     }
   }
 
   stop(): void {
     if (this.player) {
       this.player.stop()
-      Tone.getTransport().stop()
-      Tone.getTransport().seconds = 0
+      this.isPlayerPlaying = false
+      this.playbackPosition = 0
+      this.playbackStartTime = 0
     }
   }
 
   seek(time: number): void {
     if (this.player && this.audioBuffer) {
-      const wasPlaying = Tone.getTransport().state === 'started'
-      this.player.stop()
-      Tone.getTransport().seconds = Math.min(time, this.audioBuffer.duration)
+      const wasPlaying = this.isPlayerPlaying
+      const seekTime = Math.min(time, this.audioBuffer.duration)
+
       if (wasPlaying) {
-        this.player.start(undefined, time)
+        this.player.stop()
+        this.player.start(undefined, seekTime)
+        this.playbackStartTime = Tone.now() - seekTime
+      } else {
+        this.playbackPosition = seekTime
       }
     }
   }
@@ -258,11 +322,17 @@ class AudioEngine {
   }
 
   getCurrentTime(): number {
-    return Tone.getTransport().seconds
+    if (this.isPlayerPlaying) {
+      // Calculate current position based on when playback started
+      const elapsed = Tone.now() - this.playbackStartTime
+      const duration = this.audioBuffer?.duration ?? 0
+      return Math.min(elapsed, duration)
+    }
+    return this.playbackPosition
   }
 
   isPlaying(): boolean {
-    return Tone.getTransport().state === 'started'
+    return this.isPlayerPlaying
   }
 
   // Effect chain management
@@ -270,20 +340,13 @@ class AudioEngine {
   private effectOutput: Tone.Gain | null = null
 
   setEffectsChain(effects: Tone.ToneAudioNode[]): void {
-    // Disconnect current chain
+    // Disconnect current effect chain from wetGain
     this.effectsChain.forEach((effect) => effect.disconnect())
     this.effectsChain = effects
 
-    // Reconnect source if player exists
-    if (this.player) {
-      this.player.disconnect()
-      this.connectSource(this.player)
-    }
-
-    if (this.oscillator) {
-      this.oscillator.disconnect()
-      this.connectSource(this.oscillator)
-    }
+    // Reconnect the active source through the new effect chain
+    // This handles player, oscillator, AND live input
+    this.reconnectActiveSource()
   }
 
   clearEffectsChain(): void {
@@ -339,11 +402,16 @@ class AudioEngine {
   }
 
   disableLiveInput(): void {
-    if (!this.liveInputEnabled || this.microphoneInput === null) return
+    // Clean up Tone.UserMedia (legacy)
+    if (this.microphoneInput !== null) {
+      this.microphoneInput.close()
+      this.microphoneInput.dispose()
+      this.microphoneInput = null
+    }
 
-    this.microphoneInput.close()
-    this.microphoneInput.dispose()
-    this.microphoneInput = null
+    // Clean up native MediaStream
+    this.cleanupMediaStream()
+
     this.liveInputEnabled = false
   }
 
@@ -351,7 +419,119 @@ class AudioEngine {
     return this.liveInputEnabled
   }
 
-  // Master volume control
+  // Get available audio input devices
+  async getAudioInputDevices(): Promise<AudioInputDevice[]> {
+    try {
+      // Request permission first (needed to get device labels)
+      await navigator.mediaDevices.getUserMedia({ audio: true })
+
+      const devices = await navigator.mediaDevices.enumerateDevices()
+      const audioInputs = devices
+        .filter((device) => device.kind === 'audioinput')
+        .map((device) => ({
+          deviceId: device.deviceId,
+          label: device.label || `Microphone ${device.deviceId.slice(0, 8)}`,
+          groupId: device.groupId,
+        }))
+
+      return audioInputs
+    } catch {
+      throw new Error('Unable to access audio devices. Please check browser permissions.')
+    }
+  }
+
+  // Enable live input with specific device
+  async enableLiveInputWithDevice(deviceId: string | null): Promise<void> {
+    if (!this.isInitialized) {
+      await this.initialize()
+    }
+
+    // If already enabled with same device, do nothing
+    if (this.liveInputEnabled && this.currentDeviceId === deviceId) return
+
+    // Stop any file playback
+    this.stop()
+    this.stopTestTone()
+
+    // Disable current input first
+    this.disableLiveInput()
+
+    try {
+      // Get media stream with specific device
+      const constraints: MediaStreamConstraints = {
+        audio: deviceId !== null && deviceId !== '' ? { deviceId: { exact: deviceId } } : true,
+      }
+
+      this.currentMediaStream = await navigator.mediaDevices.getUserMedia(constraints)
+      this.currentDeviceId = deviceId
+
+      // Create audio source from stream using Tone.js context
+      const context = Tone.getContext().rawContext as AudioContext
+      this.mediaStreamSource = context.createMediaStreamSource(this.currentMediaStream)
+
+      // Create a Tone.js Gain node to interface with our routing
+      // Store it so we can reconnect when effects change
+      this.liveInputGain = new Tone.Gain(1)
+
+      // Connect native node to Tone.js node
+      this.mediaStreamSource.connect(this.liveInputGain.input as unknown as AudioNode)
+
+      // Connect through our routing (this sets activeSource)
+      this.connectSource(this.liveInputGain)
+
+      this.liveInputEnabled = true
+    } catch (error: unknown) {
+      this.cleanupMediaStream()
+      if (error instanceof Error && error.name === 'NotAllowedError') {
+        throw new Error(
+          'Microphone access denied. Please allow microphone access in your browser settings.'
+        )
+      }
+      throw new Error('Failed to access audio input device')
+    }
+  }
+
+  private cleanupMediaStream(): void {
+    // Clear active source if it was the live input (check before disposing)
+    if (this.liveInputGain !== null && this.activeSource === this.liveInputGain) {
+      this.activeSource = null
+    }
+
+    if (this.mediaStreamSource) {
+      this.mediaStreamSource.disconnect()
+      this.mediaStreamSource = null
+    }
+    if (this.currentMediaStream) {
+      this.currentMediaStream.getTracks().forEach((track) => {
+        track.stop()
+      })
+      this.currentMediaStream = null
+    }
+    if (this.liveInputGain) {
+      this.liveInputGain.disconnect()
+      this.liveInputGain.dispose()
+      this.liveInputGain = null
+    }
+    this.currentDeviceId = null
+  }
+
+  getCurrentDeviceId(): string | null {
+    return this.currentDeviceId
+  }
+
+  // Input gain control
+  setInputGain(gain: number): void {
+    if (this.inputGainNode !== null) {
+      // gain is 0-1, ramp to avoid clicks
+      this.inputGainNode.gain.rampTo(gain, 0.01)
+    }
+  }
+
+  getInputGain(): number {
+    return this.inputGainNode?.gain.value ?? 1
+  }
+
+  // Master volume control (output)
   setMasterVolume(volume: number): void {
     if (this.masterGain !== null) {
       // volume is 0-1, convert to gain
@@ -467,10 +647,12 @@ class AudioEngine {
     }
 
     this.disableLiveInput()
+    this.cleanupMediaStream()
     this.stopTestTone()
     this.stop()
 
     this.player?.dispose()
+    this.inputGainNode?.dispose()
     this.inputMeter?.dispose()
     this.outputMeter?.dispose()
     this.dryGain?.dispose()

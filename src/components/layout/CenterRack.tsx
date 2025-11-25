@@ -1,11 +1,13 @@
 import { useEffectStore } from '@/stores/effectStore'
+import { useEffectControls } from '@/hooks/useEffectControls'
 import { EffectPanel } from '@/components/effect/EffectPanel'
 import { PresetControls } from '@/components/effect/PresetControls'
 import { SkeletonEffectPanel } from '@/components/ui/Skeleton'
 import { RackRails, BlankPanel, EffectRackUnit } from '@/components/rack'
 
 export function CenterRack(): React.JSX.Element {
-  const { definition, isGenerating, parameterValues, updateParameter } = useEffectStore()
+  const { definition, isGenerating, parameterValues } = useEffectStore()
+  const { handleParameterChange } = useEffectControls()
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-[--color-bg-primary]">
@@ -54,7 +56,7 @@ export function CenterRack(): React.JSX.Element {
                 <EffectPanel
                   definition={definition}
                   parameterValues={parameterValues}
-                  onParameterChange={updateParameter}
+                  onParameterChange={handleParameterChange}
                 />
               </EffectRackUnit>
             </div>

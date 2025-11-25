@@ -1,5 +1,11 @@
 import { create } from 'zustand'
-import type { AudioSourceType, AudioFileInfo, AudioLevels, TestToneFrequency } from '@/types/audio'
+import type {
+  AudioSourceType,
+  AudioFileInfo,
+  AudioLevels,
+  TestToneFrequency,
+  AudioInputDevice,
+} from '@/types/audio'
 
 interface AudioState {
   // Source
@@ -25,7 +31,14 @@ interface AudioState {
   // Live input
   liveInputEnabled: boolean
   liveInputError: string | null
+
+  // Volume controls
+  inputGain: number
   masterVolume: number
+
+  // Audio input devices
+  audioInputDevices: AudioInputDevice[]
+  selectedInputDeviceId: string | null
 
   // Actions
   setSource: (source: AudioSourceType) => void
@@ -41,7 +54,10 @@ interface AudioState {
   setTestToneFrequency: (freq: TestToneFrequency) => void
   setLiveInputEnabled: (enabled: boolean) => void
   setLiveInputError: (error: string | null) => void
+  setInputGain: (gain: number) => void
   setMasterVolume: (volume: number) => void
+  setAudioInputDevices: (devices: AudioInputDevice[]) => void
+  setSelectedInputDeviceId: (deviceId: string | null) => void
   reset: () => void
 }
 
@@ -63,7 +79,10 @@ const initialState = {
   testToneFrequency: 1000 as TestToneFrequency,
   liveInputEnabled: false,
   liveInputError: null as string | null,
+  inputGain: 1,
   masterVolume: 1,
+  audioInputDevices: [] as AudioInputDevice[],
+  selectedInputDeviceId: null as string | null,
 }
 
 export const useAudioStore = create<AudioState>((set) => ({
@@ -108,8 +127,17 @@ export const useAudioStore = create<AudioState>((set) => ({
   setLiveInputError: (liveInputError) => {
     set({ liveInputError })
   },
+  setInputGain: (inputGain) => {
+    set({ inputGain })
+  },
   setMasterVolume: (masterVolume) => {
     set({ masterVolume })
+  },
+  setAudioInputDevices: (audioInputDevices) => {
+    set({ audioInputDevices })
+  },
+  setSelectedInputDeviceId: (selectedInputDeviceId) => {
+    set({ selectedInputDeviceId })
   },
   reset: () => {
     set(initialState)

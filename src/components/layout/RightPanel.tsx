@@ -1,23 +1,19 @@
 import { useAudioStore } from '@/stores'
+import { useAudioEngine } from '@/hooks'
 import { FileUploader } from '@/components/audio/FileUploader'
 import { Waveform } from '@/components/audio/Waveform'
 import { Transport } from '@/components/audio/Transport'
 import { TestToneGenerator } from '@/components/audio/TestToneGenerator'
 import { LiveInput } from '@/components/audio/LiveInput'
 import { ExportAudio } from '@/components/audio/ExportAudio'
+import { IOMeter } from '@/components/audio/IOMeter'
 
 export function RightPanel(): React.JSX.Element {
-  const { source, fileInfo, testToneActive, liveInputEnabled, levels, masterVolume, bypassEffect } =
-    useAudioStore()
-  const { setMasterVolume, toggleBypass } = useAudioStore()
+  const { source, fileInfo, liveInputEnabled, bypassEffect } = useAudioStore()
+  const { toggleBypass } = useAudioStore()
 
-  const outputLevel = Math.max(levels.outputLeft, levels.outputRight)
-
-  const getBarColor = (level: number): string => {
-    if (level > 0.9) return 'bg-[--color-meter-red]'
-    if (level > 0.7) return 'bg-[--color-meter-yellow]'
-    return 'bg-[--color-meter-green]'
-  }
+  // Initialize audio engine and sync state - must be in always-mounted component
+  useAudioEngine()
 
   return (
     <aside className="w-[320px] flex-shrink-0 bg-[--color-bg-secondary] border-l border-[--color-border] flex flex-col overflow-hidden">
@@ -66,98 +62,49 @@ export function RightPanel(): React.JSX.Element {
           </div>
         </div>
 
-        {/* Waveform / File Area */}
-        <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
-          <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
-            {liveInputEnabled ? 'Live Input' : testToneActive ? 'Test Tone' : 'Audio File'}
-          </h3>
-
-          {liveInputEnabled ? (
+        {/* Live Input indicator */}
+        {liveInputEnabled && (
+          <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
+            <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
+              Live Input
+            </h3>
             <div className="h-16 bg-[--color-bg-tertiary] rounded flex items-center justify-center">
               <div className="flex items-center gap-2 text-green-500">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-xs font-medium">Microphone Active</span>
               </div>
             </div>
-          ) : testToneActive ? (
-            <div className="h-16 bg-[--color-bg-tertiary] rounded flex items-center justify-center">
-              <div className="flex items-center gap-2 text-blue-500">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                <span className="text-xs font-medium">Test Tone Active</span>
+          </div>
+        )}
+
+        {/* Audio File Area - always visible unless live input */}
+        {!liveInputEnabled && (
+          <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
+            <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
+              Audio File
+            </h3>
+            {fileInfo !== null ? (
+              <div className="space-y-2">
+                <div className="h-16 bg-[--color-bg-tertiary] rounded overflow-hidden">
+                  <Waveform />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Transport />
+                </div>
+                <FileUploader />
               </div>
-            </div>
-          ) : fileInfo !== null ? (
-            <div className="space-y-2">
-              <div className="h-16 bg-[--color-bg-tertiary] rounded overflow-hidden">
-                <Waveform />
-              </div>
-              <div className="flex items-center gap-2">
-                <Transport />
-              </div>
+            ) : (
               <FileUploader />
-            </div>
-          ) : (
-            <FileUploader />
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
-        {/* Output Section */}
+        {/* I/O Levels Section */}
         <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
-          <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
-            Output
+          <h3 className="text-xs font-medium text-[--color-text-muted] mb-3 uppercase tracking-wide text-center">
+            Levels
           </h3>
-
-          {/* Master Volume */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-[--color-text-muted] w-12">Volume</span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={masterVolume}
-              onChange={(e) => {
-                setMasterVolume(parseFloat(e.target.value))
-              }}
-              className="flex-1 h-1.5 bg-[--color-bg-tertiary] rounded appearance-none cursor-pointer accent-[--color-accent-primary]"
-            />
-            <span className="text-xs text-[--color-text-muted] w-8 text-right">
-              {Math.round(masterVolume * 100)}%
-            </span>
-          </div>
-
-          {/* Output Level Meter */}
-          <div className="mt-3 flex items-center gap-3">
-            <span className="text-xs text-[--color-text-muted] w-12">Level</span>
-            <div className="flex-1 h-2 bg-[--color-bg-tertiary] rounded-full overflow-hidden">
-              <div
-                className={`h-full transition-all duration-75 ${getBarColor(outputLevel)}`}
-                style={{ width: `${(outputLevel * 100).toString()}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Stereo Meters */}
-          <div className="mt-3 flex justify-center gap-1">
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-3 h-12 bg-[--color-bg-tertiary] rounded-sm overflow-hidden flex flex-col-reverse">
-                <div
-                  className={`w-full transition-all duration-75 ${getBarColor(levels.outputLeft)}`}
-                  style={{ height: `${(levels.outputLeft * 100).toString()}%` }}
-                />
-              </div>
-              <span className="text-[10px] text-[--color-text-muted]">L</span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-3 h-12 bg-[--color-bg-tertiary] rounded-sm overflow-hidden flex flex-col-reverse">
-                <div
-                  className={`w-full transition-all duration-75 ${getBarColor(levels.outputRight)}`}
-                  style={{ height: `${(levels.outputRight * 100).toString()}%` }}
-                />
-              </div>
-              <span className="text-[10px] text-[--color-text-muted]">R</span>
-            </div>
-          </div>
+          <IOMeter />
         </div>
 
         {/* Export */}

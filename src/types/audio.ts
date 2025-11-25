@@ -55,3 +55,10 @@ export interface WaveformData {
   length: number
   duration: number
 }
+
+// Audio input device
+export interface AudioInputDevice {
+  deviceId: string
+  label: string
+  groupId: string
+}
