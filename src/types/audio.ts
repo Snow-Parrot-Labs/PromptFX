@@ -66,3 +66,10 @@ export interface AudioInputDevice {
   label: string
   groupId: string
 }
+
+// Audio output device
+export interface AudioOutputDevice {
+  deviceId: string
+  label: string
+  groupId: string
+}

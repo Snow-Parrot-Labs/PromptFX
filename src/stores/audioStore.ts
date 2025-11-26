@@ -6,6 +6,7 @@ import type {
   TestToneFrequency,
   TestToneWaveform,
   AudioInputDevice,
+  AudioOutputDevice,
 } from '@/types/audio'
 
 interface AudioState {
@@ -42,6 +43,11 @@ interface AudioState {
   audioInputDevices: AudioInputDevice[]
   selectedInputDeviceId: string | null
 
+  // Audio output devices
+  audioOutputDevices: AudioOutputDevice[]
+  selectedOutputDeviceId: string | null
+  outputDeviceSupported: boolean
+
   // Actions
   setSource: (source: AudioSourceType) => void
   setFileInfo: (info: AudioFileInfo | null) => void
@@ -61,6 +67,9 @@ interface AudioState {
   setMasterVolume: (volume: number) => void
   setAudioInputDevices: (devices: AudioInputDevice[]) => void
   setSelectedInputDeviceId: (deviceId: string | null) => void
+  setAudioOutputDevices: (devices: AudioOutputDevice[]) => void
+  setSelectedOutputDeviceId: (deviceId: string | null) => void
+  setOutputDeviceSupported: (supported: boolean) => void
   reset: () => void
 }
 
@@ -87,6 +96,9 @@ const initialState = {
   masterVolume: 1,
   audioInputDevices: [] as AudioInputDevice[],
   selectedInputDeviceId: null as string | null,
+  audioOutputDevices: [] as AudioOutputDevice[],
+  selectedOutputDeviceId: null as string | null,
+  outputDeviceSupported: true, // Assume supported until checked
 }
 
 export const useAudioStore = create<AudioState>((set) => ({
@@ -145,6 +157,15 @@ export const useAudioStore = create<AudioState>((set) => ({
   },
   setSelectedInputDeviceId: (selectedInputDeviceId) => {
     set({ selectedInputDeviceId })
+  },
+  setAudioOutputDevices: (audioOutputDevices) => {
+    set({ audioOutputDevices })
+  },
+  setSelectedOutputDeviceId: (selectedOutputDeviceId) => {
+    set({ selectedOutputDeviceId })
+  },
+  setOutputDeviceSupported: (outputDeviceSupported) => {
+    set({ outputDeviceSupported })
   },
   reset: () => {
     set(initialState)

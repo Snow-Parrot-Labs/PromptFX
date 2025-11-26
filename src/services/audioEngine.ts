@@ -5,6 +5,7 @@ import type {
   TestToneFrequency,
   TestToneWaveform,
   AudioInputDevice,
+  AudioOutputDevice,
 } from '@/types/audio'
 
 type AudioEngineCallback = {
@@ -24,6 +25,7 @@ class AudioEngine {
   private mediaStreamSource: MediaStreamAudioSourceNode | null = null
   private currentMediaStream: MediaStream | null = null
   private currentDeviceId: string | null = null
+  private currentOutputDeviceId: string | null = null
   private liveInputGain: Tone.Gain | null = null // Store live input gain for reconnection
   private activeSource: Tone.ToneAudioNode | null = null // Track current active source
   private inputGainNode: Tone.Gain | null = null // Master input gain control
@@ -524,6 +526,67 @@ class AudioEngine {
 
   getCurrentDeviceId(): string | null {
     return this.currentDeviceId
+  }
+
+  // Get available audio output devices
+  async getAudioOutputDevices(): Promise<AudioOutputDevice[]> {
+    try {
+      // Request permission first (needed to get device labels)
+      await navigator.mediaDevices.getUserMedia({ audio: true })
+
+      const devices = await navigator.mediaDevices.enumerateDevices()
+      const audioOutputs = devices
+        .filter((device) => device.kind === 'audiooutput')
+        .map((device) => ({
+          deviceId: device.deviceId,
+          label: device.label || `Speaker ${device.deviceId.slice(0, 8)}`,
+          groupId: device.groupId,
+        }))
+
+      return audioOutputs
+    } catch {
+      throw new Error('Unable to access audio devices. Please check browser permissions.')
+    }
+  }
+
+  // Check if setSinkId is supported (Safari doesn't support it)
+  supportsSinkId(): boolean {
+    try {
+      const context = Tone.getContext().rawContext as AudioContext & {
+        setSinkId?: (sinkId: string) => Promise<void>
+      }
+      return typeof context?.setSinkId === 'function'
+    } catch {
+      return false
+    }
+  }
+
+  // Set the audio output device
+  async setAudioOutputDevice(deviceId: string | null): Promise<void> {
+    if (!this.isInitialized) {
+      await this.initialize()
+    }
+
+    if (!this.supportsSinkId()) {
+      throw new Error('Output device selection is not supported in this browser')
+    }
+
+    try {
+      const context = Tone.getContext().rawContext as AudioContext & {
+        setSinkId: (sinkId: string) => Promise<void>
+      }
+      await context.setSinkId(deviceId ?? 'default')
+      this.currentOutputDeviceId = deviceId
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'NotFoundError') {
+        throw new Error('Audio output device not found. It may have been disconnected.')
+      }
+      throw new Error('Failed to set audio output device')
+    }
+  }
+
+  getCurrentOutputDeviceId(): string | null {
+    return this.currentOutputDeviceId
   }
 
   // Input gain control

@@ -4,7 +4,7 @@ import { FileUploader } from '@/components/audio/FileUploader'
 import { Waveform } from '@/components/audio/Waveform'
 import { Transport } from '@/components/audio/Transport'
 import { TestToneGenerator } from '@/components/audio/TestToneGenerator'
-import { LiveInput } from '@/components/audio/LiveInput'
+import { AudioIOSection } from '@/components/audio/AudioIOSection'
 import { ExportAudio } from '@/components/audio/ExportAudio'
 import { IOMeter } from '@/components/audio/IOMeter'
 
@@ -51,27 +51,29 @@ export function RightPanel(): React.JSX.Element {
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
-        {/* Source Selector Section */}
+        {/* Audio I/O Section */}
         <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
           <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
-            Source
+            Audio I/O
           </h3>
-          <div className="space-y-2">
-            <LiveInput />
-            <TestToneGenerator />
-          </div>
+          <AudioIOSection />
+        </div>
+
+        {/* Test Tone Section */}
+        <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
+          <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
+            Test Tone
+          </h3>
+          <TestToneGenerator />
         </div>
 
         {/* Live Input indicator */}
         {liveInputEnabled && (
           <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
-            <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
-              Live Input
-            </h3>
-            <div className="h-16 bg-[--color-bg-tertiary] rounded flex items-center justify-center">
+            <div className="h-12 bg-[--color-bg-tertiary] rounded flex items-center justify-center">
               <div className="flex items-center gap-2 text-green-500">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs font-medium">Microphone Active</span>
+                <span className="text-xs font-medium">Audio Input Active</span>
               </div>
             </div>
           </div>
