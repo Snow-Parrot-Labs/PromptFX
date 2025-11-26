@@ -1,9 +1,22 @@
 import { useAudioStore } from '@/stores'
-import { TEST_TONE_FREQUENCIES } from '@/types/audio'
+import { TEST_TONE_FREQUENCIES, TEST_TONE_WAVEFORMS, type TestToneWaveform } from '@/types/audio'
+
+const WAVEFORM_LABELS: Record<TestToneWaveform, string> = {
+  sine: 'Sin',
+  sawtooth: 'Saw',
+  square: 'Sqr',
+  triangle: 'Tri',
+}
 
 export function TestToneGenerator(): React.JSX.Element {
-  const { testToneActive, testToneFrequency, setTestToneActive, setTestToneFrequency } =
-    useAudioStore()
+  const {
+    testToneActive,
+    testToneFrequency,
+    testToneWaveform,
+    setTestToneActive,
+    setTestToneFrequency,
+    setTestToneWaveform,
+  } = useAudioStore()
 
   const formatFrequency = (freq: number): string => {
     if (freq >= 1000) {
@@ -41,7 +54,30 @@ export function TestToneGenerator(): React.JSX.Element {
         Tone
       </button>
 
-      {/* Frequency selector - always visible */}
+      {/* Waveform selector */}
+      <div className="flex items-center gap-1">
+        {TEST_TONE_WAVEFORMS.map((waveform) => (
+          <button
+            key={waveform}
+            type="button"
+            onClick={() => {
+              setTestToneWaveform(waveform)
+              if (!testToneActive) {
+                setTestToneActive(true)
+              }
+            }}
+            className={`px-1.5 py-0.5 text-[10px] rounded transition-all ${
+              testToneActive && testToneWaveform === waveform
+                ? 'btn-mechanical-lit text-[--color-led-blue]'
+                : 'btn-mechanical text-[--color-text-muted]'
+            }`}
+          >
+            {WAVEFORM_LABELS[waveform]}
+          </button>
+        ))}
+      </div>
+
+      {/* Frequency selector */}
       <div className="flex items-center gap-1">
         {TEST_TONE_FREQUENCIES.map((freq) => (
           <button

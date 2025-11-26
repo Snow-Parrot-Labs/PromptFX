@@ -4,6 +4,7 @@ import type {
   AudioFileInfo,
   AudioLevels,
   TestToneFrequency,
+  TestToneWaveform,
   AudioInputDevice,
 } from '@/types/audio'
 
@@ -27,6 +28,7 @@ interface AudioState {
   // Test tone
   testToneActive: boolean
   testToneFrequency: TestToneFrequency
+  testToneWaveform: TestToneWaveform
 
   // Live input
   liveInputEnabled: boolean
@@ -52,6 +54,7 @@ interface AudioState {
   toggleBypass: () => void
   setTestToneActive: (active: boolean) => void
   setTestToneFrequency: (freq: TestToneFrequency) => void
+  setTestToneWaveform: (waveform: TestToneWaveform) => void
   setLiveInputEnabled: (enabled: boolean) => void
   setLiveInputError: (error: string | null) => void
   setInputGain: (gain: number) => void
@@ -77,6 +80,7 @@ const initialState = {
   bypassEffect: false,
   testToneActive: false,
   testToneFrequency: 1000 as TestToneFrequency,
+  testToneWaveform: 'sine' as TestToneWaveform,
   liveInputEnabled: false,
   liveInputError: null as string | null,
   inputGain: 1,
@@ -120,6 +124,9 @@ export const useAudioStore = create<AudioState>((set) => ({
   },
   setTestToneFrequency: (testToneFrequency) => {
     set({ testToneFrequency })
+  },
+  setTestToneWaveform: (testToneWaveform) => {
+    set({ testToneWaveform })
   },
   setLiveInputEnabled: (liveInputEnabled) => {
     set({ liveInputEnabled, liveInputError: null })

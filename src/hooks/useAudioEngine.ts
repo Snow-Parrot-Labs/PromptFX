@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { useAudioStore } from '@/stores'
 import { audioEngine } from '@/services/audioEngine'
-import type { TestToneFrequency, WaveformData } from '@/types/audio'
+import type { TestToneFrequency, TestToneWaveform, WaveformData } from '@/types/audio'
 
 interface UseAudioEngineReturn {
   initialize: () => Promise<void>
@@ -27,6 +27,7 @@ export function useAudioEngine(): UseAudioEngineReturn {
     bypassEffect,
     testToneActive,
     testToneFrequency,
+    testToneWaveform,
   } = useAudioStore()
 
   const isInitializedRef = useRef(false)
@@ -102,9 +103,9 @@ export function useAudioEngine(): UseAudioEngineReturn {
 
   // Test tone controls
   const startTestTone = useCallback(
-    async (frequency: TestToneFrequency) => {
+    async (frequency: TestToneFrequency, waveform: TestToneWaveform = 'sine') => {
       await initialize()
-      audioEngine.startTestTone(frequency)
+      audioEngine.startTestTone(frequency, waveform)
       setSource('tone')
     },
     [initialize, setSource]
@@ -132,11 +133,11 @@ export function useAudioEngine(): UseAudioEngineReturn {
   // Sync test tone state
   useEffect(() => {
     if (testToneActive) {
-      void startTestTone(testToneFrequency)
+      void startTestTone(testToneFrequency, testToneWaveform)
     } else {
       stopTestTone()
     }
-  }, [testToneActive, testToneFrequency, startTestTone, stopTestTone])
+  }, [testToneActive, testToneFrequency, testToneWaveform, startTestTone, stopTestTone])
 
   // Cleanup on unmount
   useEffect(() => {

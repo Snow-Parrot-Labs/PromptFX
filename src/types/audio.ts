@@ -23,6 +23,10 @@ export const AUDIO_CONFIG = {
 export const TEST_TONE_FREQUENCIES = [100, 440, 1000, 10000] as const
 export type TestToneFrequency = (typeof TEST_TONE_FREQUENCIES)[number]
 
+// Test tone waveforms
+export const TEST_TONE_WAVEFORMS = ['sine', 'sawtooth', 'square', 'triangle'] as const
+export type TestToneWaveform = (typeof TEST_TONE_WAVEFORMS)[number]
+
 // Audio file info
 export interface AudioFileInfo {
   name: string

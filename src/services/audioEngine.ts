@@ -3,6 +3,7 @@ import type {
   AudioFileInfo,
   WaveformData,
   TestToneFrequency,
+  TestToneWaveform,
   AudioInputDevice,
 } from '@/types/audio'
 
@@ -264,18 +265,24 @@ class AudioEngine {
   }
 
   // Test tone methods
-  startTestTone(frequency: TestToneFrequency): void {
+  startTestTone(frequency: TestToneFrequency, waveform: TestToneWaveform = 'sine'): void {
     if (!this.isInitialized) return
 
     this.stopTestTone()
 
     this.oscillator = new Tone.Oscillator({
       frequency,
-      type: 'sine',
+      type: waveform,
     })
 
     this.connectSource(this.oscillator)
     this.oscillator.start()
+  }
+
+  setTestToneWaveform(waveform: TestToneWaveform): void {
+    if (this.oscillator) {
+      this.oscillator.type = waveform
+    }
   }
 
   stopTestTone(): void {
