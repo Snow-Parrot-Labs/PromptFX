@@ -15,7 +15,9 @@ export async function createEffect(
   // Validate the generated effect
   const validation = effectDefinitionSchema.safeParse(effect)
   if (!validation.success) {
-    console.error('Effect validation failed:', validation.error.errors)
+    console.error('Effect validation failed:')
+    console.error('Validation errors:', JSON.stringify(validation.error.errors, null, 2))
+    console.error('Generated effect:', JSON.stringify(effect, null, 2))
     throw createError(
       'AI generated an invalid effect structure. Please try again with a different prompt.',
       500,
