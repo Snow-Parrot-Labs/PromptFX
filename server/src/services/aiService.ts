@@ -242,11 +242,22 @@ Respond with only the JSON object, no additional text or markdown formatting.`
   try {
     // Remove any potential markdown code blocks
     let jsonText = textContent.text.trim()
+
+    // Remove markdown code fences if present
     if (jsonText.startsWith('```')) {
       jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')
     }
+
+    // Try to find JSON object in the response (in case there's extra text)
+    const jsonMatch = jsonText.match(/\{[\s\S]*\}/)
+    if (jsonMatch) {
+      jsonText = jsonMatch[0]
+    }
+
     effectData = JSON.parse(jsonText) as Record<string, unknown>
-  } catch {
+  } catch (parseError) {
+    console.error('Failed to parse AI response:', textContent.text)
+    console.error('Parse error:', parseError)
     throw new Error('Failed to parse AI response as JSON')
   }
 
