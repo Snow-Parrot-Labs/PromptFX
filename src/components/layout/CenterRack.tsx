@@ -3,7 +3,7 @@ import { useEffectControls } from '@/hooks/useEffectControls'
 import { EffectPanel } from '@/components/effect/EffectPanel'
 import { PresetControls } from '@/components/effect/PresetControls'
 import { SkeletonEffectPanel } from '@/components/ui/Skeleton'
-import { RackRails, BlankPanel, EffectRackUnit } from '@/components/rack'
+import { RackRails, BlankPanel, EffectRackUnit, SpectrumAnalyzer } from '@/components/rack'
 
 export function CenterRack(): React.JSX.Element {
   const { definition, isGenerating, parameterValues } = useEffectStore()
@@ -44,6 +44,11 @@ export function CenterRack(): React.JSX.Element {
             `,
           }}
         >
+          {/* Spectrum Analyzer - always at top */}
+          <div className="w-full max-w-4xl mb-4">
+            <SpectrumAnalyzer />
+          </div>
+
           {isGenerating ? (
             <div className="w-full max-w-4xl">
               <EffectRackUnit>

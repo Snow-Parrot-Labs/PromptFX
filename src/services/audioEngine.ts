@@ -31,6 +31,8 @@ class AudioEngine {
   private inputGainNode: Tone.Gain | null = null // Master input gain control
   private inputMeter: Tone.Meter | null = null
   private outputMeter: Tone.Meter | null = null
+  private inputAnalyser: Tone.Analyser | null = null
+  private outputAnalyser: Tone.Analyser | null = null
   private effectsChain: Tone.ToneAudioNode[] = []
   private wetGain: Tone.Gain | null = null
   private dryGain: Tone.Gain | null = null
@@ -55,6 +57,10 @@ class AudioEngine {
     this.inputMeter = new Tone.Meter(0.9)
     this.outputMeter = new Tone.Meter(0.9)
 
+    // Create FFT analyzers for spectrum display (64 bins = 32 usable frequency bands)
+    this.inputAnalyser = new Tone.Analyser('fft', 64)
+    this.outputAnalyser = new Tone.Analyser('fft', 64)
+
     // Create gain nodes
     this.inputGainNode = new Tone.Gain(1) // Input gain control
     this.dryGain = new Tone.Gain(0) // Bypass (dry) signal
@@ -65,6 +71,7 @@ class AudioEngine {
     this.wetGain.connect(this.masterGain)
     this.dryGain.connect(this.masterGain)
     this.masterGain.connect(this.outputMeter)
+    this.masterGain.connect(this.outputAnalyser) // Tap for spectrum analysis
     this.outputMeter.connect(Tone.getDestination())
 
     this.isInitialized = true
@@ -177,6 +184,11 @@ class AudioEngine {
 
     // InputGain -> InputMeter (tap for level display - meter is a dead end, doesn't pass audio)
     this.inputGainNode.connect(this.inputMeter)
+
+    // InputGain -> InputAnalyser (tap for spectrum analysis)
+    if (this.inputAnalyser) {
+      this.inputGainNode.connect(this.inputAnalyser)
+    }
 
     // InputGain -> Effect Chain -> Wet Gain
     // OR InputGain -> Wet Gain (if no effects)
@@ -613,6 +625,21 @@ class AudioEngine {
     return this.masterGain?.gain.value ?? 1
   }
 
+  // Spectrum analysis
+  getInputSpectrum(): Float32Array {
+    if (this.inputAnalyser) {
+      return this.inputAnalyser.getValue() as Float32Array
+    }
+    return new Float32Array(32)
+  }
+
+  getOutputSpectrum(): Float32Array {
+    if (this.outputAnalyser) {
+      return this.outputAnalyser.getValue() as Float32Array
+    }
+    return new Float32Array(32)
+  }
+
   // Audio export
   async exportProcessedAudio(): Promise<Blob | null> {
     if (this.audioBuffer === null) return null
@@ -725,6 +752,8 @@ class AudioEngine {
     this.inputGainNode?.dispose()
     this.inputMeter?.dispose()
     this.outputMeter?.dispose()
+    this.inputAnalyser?.dispose()
+    this.outputAnalyser?.dispose()
     this.dryGain?.dispose()
     this.wetGain?.dispose()
     this.masterGain?.dispose()
