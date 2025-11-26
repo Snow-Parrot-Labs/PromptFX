@@ -24,7 +24,7 @@ export const parameterCurveSchema = z.enum(['linear', 'exponential', 'logarithmi
 export const dspNodeSchema = z.object({
   id: z.string().min(1),
   type: dspNodeTypeSchema,
-  params: z.record(z.union([z.number(), z.string()])),
+  params: z.record(z.union([z.number(), z.string(), z.boolean()])).default({}),
 })
 
 // Connection
@@ -211,7 +211,9 @@ export const uiControlSchema = z.object({
     nodeId: z.string(),
     param: z.string(),
   }),
-  config: z.union([knobConfigSchema, sliderConfigSchema, switchConfigSchema, selectConfigSchema]),
+  config: z
+    .union([knobConfigSchema, sliderConfigSchema, switchConfigSchema, selectConfigSchema])
+    .optional(),
   // New creative positioning/styling fields (optional for backwards compat)
   position: positionSchema.optional(),
   style: controlStyleSchema.optional(),
