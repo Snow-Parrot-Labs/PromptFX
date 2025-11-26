@@ -85,19 +85,22 @@ export function RightPanel(): React.JSX.Element {
             <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
               Audio File
             </h3>
-            {fileInfo !== null ? (
-              <div className="space-y-2">
-                <div className="h-16 bg-[--color-bg-tertiary] rounded overflow-hidden">
+            <div className="space-y-2">
+              {/* Waveform area - fixed height */}
+              <div className="h-16 bg-[--color-bg-tertiary] rounded overflow-hidden flex items-center justify-center">
+                {fileInfo !== null ? (
                   <Waveform />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Transport />
-                </div>
-                <FileUploader />
+                ) : (
+                  <span className="text-[10px] text-[--color-text-tertiary]">No file loaded</span>
+                )}
               </div>
-            ) : (
+              {/* Transport controls */}
+              <div className="flex items-center gap-2">
+                <Transport />
+              </div>
+              {/* File uploader */}
               <FileUploader />
-            )}
+            </div>
           </div>
         )}
 
