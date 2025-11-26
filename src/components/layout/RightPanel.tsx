@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { useAudioStore } from '@/stores'
 import { useAudioEngine } from '@/hooks'
 import { FileUploader } from '@/components/audio/FileUploader'
@@ -7,6 +8,67 @@ import { TestToneGenerator } from '@/components/audio/TestToneGenerator'
 import { AudioIOSection } from '@/components/audio/AudioIOSection'
 import { ExportAudio } from '@/components/audio/ExportAudio'
 import { IOMeter } from '@/components/audio/IOMeter'
+import { audioEngine } from '@/services/audioEngine'
+import { toast } from '@/components/ui'
+import { SUPPORTED_FORMATS, MAX_FILE_SIZE } from '@/types/audio'
+
+function SwapFileButton(): React.JSX.Element {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const { setFileInfo, setSource, setDuration } = useAudioStore()
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!SUPPORTED_FORMATS.includes(file.type as (typeof SUPPORTED_FORMATS)[number])) {
+      toast.error('Unsupported format. Use WAV, MP3, or AIFF.')
+      return
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error('File too large. Max 256MB.')
+      return
+    }
+
+    try {
+      const fileInfo = await audioEngine.loadAudioFile(file)
+      setFileInfo(fileInfo)
+      setDuration(fileInfo.duration)
+      setSource('file')
+      toast.success(`Loaded: ${file.name}`)
+    } catch {
+      toast.error('Failed to load audio file')
+    }
+
+    // Reset input so same file can be selected again
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
+  }
+
+  return (
+    <>
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".wav,.mp3,.aiff,audio/wav,audio/mpeg,audio/aiff"
+        onChange={(e) => {
+          void handleFileChange(e)
+        }}
+        className="hidden"
+      />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="px-2 py-0.5 text-[10px] font-medium text-[--color-text-tertiary] hover:text-[--color-text-secondary] btn-mechanical rounded transition-colors"
+      >
+        Swap
+      </button>
+    </>
+  )
+}
 
 export function RightPanel(): React.JSX.Element {
   const { source, fileInfo, liveInputEnabled, bypassEffect } = useAudioStore()
@@ -82,24 +144,21 @@ export function RightPanel(): React.JSX.Element {
         {/* Audio File Area - always visible unless live input */}
         {!liveInputEnabled && (
           <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
-            <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
-              Audio File
-            </h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-medium text-[--color-text-muted] uppercase tracking-wide">
+                Audio File
+              </h3>
+              {fileInfo !== null && <SwapFileButton />}
+            </div>
             <div className="space-y-2">
-              {/* Waveform area - fixed height */}
-              <div className="h-16 bg-[--color-bg-tertiary] rounded overflow-hidden flex items-center justify-center">
-                {fileInfo !== null ? (
-                  <Waveform />
-                ) : (
-                  <span className="text-[10px] text-[--color-text-tertiary]">No file loaded</span>
-                )}
+              {/* Waveform area - fixed height, doubles as drop zone when no file */}
+              <div className="h-16 bg-[--color-bg-tertiary] rounded overflow-hidden">
+                {fileInfo !== null ? <Waveform /> : <FileUploader />}
               </div>
               {/* Transport controls */}
               <div className="flex items-center gap-2">
                 <Transport />
               </div>
-              {/* File uploader */}
-              <FileUploader />
             </div>
           </div>
         )}
