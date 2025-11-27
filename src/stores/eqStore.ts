@@ -48,21 +48,21 @@ interface EQState {
 const defaultInputEQ: EQSectionState = {
   enabled: true,
   bypassed: false,
-  highpass: { frequency: 80, Q: 0.7 },
+  highpass: { frequency: 20, Q: 0.7 },
   lowShelf: { frequency: 100, gain: 0, Q: 0.7 },
   midPeak: { frequency: 1000, gain: 0, Q: 1.0 },
   highPeak: { frequency: 8000, gain: 0, Q: 1.0 },
-  lowpass: { frequency: 12000, Q: 0.7 },
+  lowpass: { frequency: 20000, Q: 0.7 },
 }
 
 const defaultOutputEQ: EQSectionState = {
   enabled: true,
   bypassed: false,
-  highpass: { frequency: 80, Q: 0.7 },
+  highpass: { frequency: 20, Q: 0.7 },
   lowShelf: { frequency: 100, gain: 0, Q: 0.7 },
   midPeak: { frequency: 1000, gain: 0, Q: 1.0 },
   highPeak: { frequency: 8000, gain: 0, Q: 1.0 },
-  lowpass: { frequency: 12000, Q: 0.7 },
+  lowpass: { frequency: 20000, Q: 0.7 },
 }
 
 // LocalStorage persistence
