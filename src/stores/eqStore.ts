@@ -66,7 +66,8 @@ const defaultOutputEQ: EQSectionState = {
 }
 
 // LocalStorage persistence
-const STORAGE_KEY = 'promptfx-eq-state'
+// Updated key to force new defaults (HPF 20Hz, LPF 20kHz for transparent bypass)
+const STORAGE_KEY = 'promptfx-eq-state-v2'
 
 const loadPersistedState = (): {
   inputEQ: EQSectionState
