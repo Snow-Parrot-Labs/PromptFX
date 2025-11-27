@@ -250,6 +250,51 @@ import './EffectPanel.css';
 | autoWah | baseFrequency, octaves, sensitivity, Q, gain, wetDry |
 | gain | level |
 
+## Control Selection Guidelines
+
+The AI follows professional audio hardware conventions when choosing control types for generated effects.
+
+### Control Type Usage
+
+**Vertical Faders (Sliders):**
+- Mix, wet/dry, blend parameters
+- Input/output levels
+- Drive, saturation, gain
+- Any "amount" parameter (0-100%)
+
+**Knobs:**
+- Frequency parameters (cutoff, pitch, center)
+- Time parameters (delay, attack, release, decay)
+- Ratio/factor parameters (feedback, Q, depth, rate)
+
+**Switches:**
+- Bypass / on-off states
+- Mode toggles (exactly 2 options: vintage/modern, soft/hard)
+- Polarity switches
+
+**Select Dropdowns:**
+- Filter types (lowpass, highpass, bandpass, notch)
+- Distortion types (soft, hard, foldback, bitcrush)
+- Waveform shapes (3+ options)
+
+### Diversity Requirements
+
+- Complex effects (4+ controls) should use at least 3 different control types
+- Simple effects should use at least 2 different control types
+- Aim to include variety: knobs, faders, switches, selects where appropriate
+- Mix parameters should always use vertical faders
+- No effect should use >70% of one control type
+
+### Examples
+
+**Good:** [Knobs: TIME, FEEDBACK] [Fader: MIX] [Switch: BYPASS]
+- 3 control types, professional layout
+
+**Bad:** [Knobs: TIME, FEEDBACK, MIX, BYPASS, OUTPUT]
+- Only knobs, unrealistic, unprofessional
+
+**Why it matters:** Real hardware plugins (SSL, Neve, Universal Audio) use appropriate controls for each parameter type. This creates muscle memory, visual clarity, and professional aesthetics.
+
 ## Audio Specifications
 
 - **Sample Rate:** 44.1kHz

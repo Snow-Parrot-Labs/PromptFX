@@ -35,6 +35,9 @@ export function validateEffectQuality(effect: EffectDefinition): EffectQualityCh
   // Check 5: Mix/feedback relationships
   checkMixFeedbackRelationships(effect.nodes, warnings, suggestions)
 
+  // Check 6: Control diversity
+  checkControlDiversity(effect, warnings, suggestions)
+
   return {
     passed: warnings.length === 0,
     warnings,
@@ -299,4 +302,97 @@ function checkMixFeedbackRelationships(
 ): void {
   // Already covered in checkParameterSweetSpots for delay
   // This function can be extended for other effects in the future
+}
+
+/**
+ * Check control type diversity - warn if too homogeneous
+ */
+function checkControlDiversity(
+  effect: EffectDefinition,
+  warnings: string[],
+  suggestions: string[]
+): void {
+  const controls = effect.ui.controls
+  const totalControls = controls.length
+
+  if (totalControls < 3) return // Small effects are OK
+
+  // Count control types
+  const typeCounts: Record<string, number> = {}
+  for (const control of controls) {
+    typeCounts[control.type] = (typeCounts[control.type] || 0) + 1
+  }
+
+  const uniqueTypes = Object.keys(typeCounts).length
+
+  // Check if complex effects use only 1-2 control types
+  if (totalControls >= 4 && uniqueTypes < 3) {
+    warnings.push(
+      `Control variety: Complex effect (${totalControls} controls) uses only ${uniqueTypes} control type(s) - lacks variety for professional aesthetic`
+    )
+    suggestions.push(
+      'Professional effects use 3+ control types: knobs for parameters, faders for levels/mix, switches for modes, selects for multi-option parameters'
+    )
+  }
+
+  // Check if one type dominates (>70%)
+  for (const [type, count] of Object.entries(typeCounts)) {
+    const percentage = (count / totalControls) * 100
+
+    if (percentage > 70 && totalControls >= 4) {
+      warnings.push(
+        `Control variety: Effect uses ${count}/${totalControls} ${type} controls (${percentage.toFixed(0)}%) - too homogeneous`
+      )
+
+      // Suggest alternatives based on what's overused
+      if (type === 'knob') {
+        suggestions.push(
+          'Consider using vertical faders (sliders with orientation: vertical) for mix/level parameters and switches for mode toggles'
+        )
+      } else if (type === 'slider') {
+        suggestions.push(
+          'Consider using knobs for frequency/time parameters and switches for on/off states'
+        )
+      }
+    }
+  }
+
+  // Check for missing fader on mix parameter
+  const mixControls = controls.filter((c) => {
+    const label = c.label.toLowerCase()
+    return (
+      label.includes('mix') ||
+      label.includes('wet') ||
+      label.includes('dry') ||
+      label.includes('blend')
+    )
+  })
+
+  const mixFaders = mixControls.filter((c) => c.type === 'slider')
+
+  if (mixControls.length > 0 && mixFaders.length === 0) {
+    suggestions.push(
+      'Professional convention: Mix/wet/dry parameters should use vertical faders (sliders with orientation: vertical), not knobs'
+    )
+  }
+
+  // Check for level parameters not using faders
+  const levelControls = controls.filter((c) => {
+    const label = c.label.toLowerCase()
+    return (
+      label.includes('level') ||
+      label.includes('output') ||
+      label.includes('input') ||
+      label.includes('drive') ||
+      label.includes('gain')
+    )
+  })
+
+  const levelFaders = levelControls.filter((c) => c.type === 'slider')
+
+  if (levelControls.length > 0 && levelFaders.length === 0) {
+    suggestions.push(
+      'Professional convention: Level/output/input parameters should use vertical faders like mixing consoles'
+    )
+  }
 }

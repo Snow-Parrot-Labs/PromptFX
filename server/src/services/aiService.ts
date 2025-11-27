@@ -202,10 +202,8 @@ Create interfaces that look like real hardware studio gear:
 ## AUDIO ENGINEERING PRINCIPLES - Effect Ordering & Signal Flow
 
 ### Standard Effect Chain Order (Professional Studio Practice)
-```
-INPUT -> Dynamics -> EQ -> Modulation -> Time-Based -> Spatial -> OUTPUT
+INPUT flows to Dynamics, then EQ, then Modulation, then Time-Based, then Spatial, then OUTPUT
       (compressor) (filter) (chorus/tremolo) (delay) (freeverb)
-```
 
 **Why this order matters:**
 1. **Dynamics First (compressor)** - Control peaks BEFORE other processing amplifies them
@@ -217,50 +215,40 @@ INPUT -> Dynamics -> EQ -> Modulation -> Time-Based -> Spatial -> OUTPUT
 ### Common Professional Effect Chains
 
 **Vocal Chain**
-```
-input -> compressor (threshold: -18dB, ratio: 4:1)
-      -> filter (highpass, 80Hz, Q: 0.7) [remove rumble]
-      -> delay (time: 375ms, feedback: 0.35, mix: 0.25)
-      -> freeverb (roomSize: 0.65, dampening: 5000, mix: 0.2)
-      -> output
-```
+input to compressor (threshold: -18dB, ratio: 4:1)
+      to filter (highpass, 80Hz, Q: 0.7) [remove rumble]
+      to delay (time: 375ms, feedback: 0.35, mix: 0.25)
+      to freeverb (roomSize: 0.65, dampening: 5000, mix: 0.2)
+      to output
 Why: Compress dynamics, clean up lows, add rhythmic interest, place in space
 
 **Guitar Overdrive**
-```
-input -> filter (highpass, 120Hz, Q: 1.0) [tighten bass]
-      -> distortion (type: soft, amount: 0.6, mix: 0.8)
-      -> filter (lowpass, 5000Hz, Q: 0.8) [tame harshness]
-      -> delay (time: 500ms, feedback: 0.4, mix: 0.3)
-      -> output
-```
+input to filter (highpass, 120Hz, Q: 1.0) [tighten bass]
+      to distortion (type: soft, amount: 0.6, mix: 0.8)
+      to filter (lowpass, 5000Hz, Q: 0.8) [tame harshness]
+      to delay (time: 500ms, feedback: 0.4, mix: 0.3)
+      to output
 Why: Clean up first, distort, tame harshness, add space
 
 **Ambient Pad**
-```
-input -> chorus (rate: 0.5Hz, depth: 0.6, mix: 0.5) [thickness]
-      -> freeverb (roomSize: 0.85, dampening: 6000, mix: 0.7) [huge space]
-      -> filter (lowpass, 8000Hz, Q: 0.5) [gentle roll-off]
-      -> output
-```
+input to chorus (rate: 0.5Hz, depth: 0.6, mix: 0.5) [thickness]
+      to freeverb (roomSize: 0.85, dampening: 6000, mix: 0.7) [huge space]
+      to filter (lowpass, 8000Hz, Q: 0.5) [gentle roll-off]
+      to output
 Why: Thicken first, add massive space, gentle final shaping
 
 **Drum Bus Processing**
-```
-input -> filter (highpass, 40Hz, Q: 1.2) [sub cleanup]
-      -> compressor (threshold: -15dB, ratio: 6:1, attack: 30ms, release: 150ms) [glue]
-      -> distortion (type: soft, amount: 0.15, mix: 0.3) [grit]
-      -> output
-```
+input to filter (highpass, 40Hz, Q: 1.2) [sub cleanup]
+      to compressor (threshold: -15dB, ratio: 6:1, attack: 30ms, release: 150ms) [glue]
+      to distortion (type: soft, amount: 0.15, mix: 0.3) [grit]
+      to output
 Why: Clean bottom, glue together, add aggression
 
 **Lo-Fi Effect**
-```
-input -> distortion (type: bitcrush, amount: 0.5, mix: 0.7) [degradation]
-      -> filter (lowpass, 3500Hz, Q: 1.5) [telephone tone]
-      -> chorus (rate: 0.8Hz, depth: 0.4, mix: 0.35) [warble]
-      -> output
-```
+input to distortion (type: bitcrush, amount: 0.5, mix: 0.7) [degradation]
+      to filter (lowpass, 3500Hz, Q: 1.5) [telephone tone]
+      to chorus (rate: 0.8Hz, depth: 0.4, mix: 0.35) [warble]
+      to output
 Why: Degrade first, band-limit, add vintage instability
 
 ### When to Break the Rules - Creative Routing
@@ -275,13 +263,11 @@ Sometimes unconventional routing creates unique sounds:
 **Problem**: Each effect can change signal level. Too loud = clipping, too quiet = noise.
 
 **Solution**: Use gain nodes strategically
-```
-input -> gain (-3dB) [pre-distortion pad]
-      -> distortion (amount: 0.7)
-      -> gain (-6dB) [post-distortion pad]
-      -> compressor (catches peaks)
-      -> output
-```
+input to gain (-3dB) [pre-distortion pad]
+      to distortion (amount: 0.7)
+      to gain (-6dB) [post-distortion pad]
+      to compressor (catches peaks)
+      to output
 
 **Rules:**
 - Heavy distortion = add gain (-3 to -6dB) BEFORE distortion node
@@ -293,18 +279,18 @@ input -> gain (-3dB) [pre-distortion pad]
 
 1. **Reverb before EQ** - Results in muddy, unclear space (bass frequencies get reverb)
 2. **Heavy compression after distortion** - Amplifies noise and harshness
-3. **Multiple time-based effects without care** - delay -> delay -> reverb = muddy soup
+3. **Multiple time-based effects without care** - delay to delay to reverb = muddy soup
 4. **Ignoring gain staging** - Causes distortion in unexpected places
 5. **Too many effects** - Less is more; 2-4 effects is usually plenty
 6. **Competing frequencies** - delay + reverb both heavy = mud (reduce one or both)
 
 ### Genre-Specific Conventions
 
-- **Rock/Pop**: compressor -> filter (EQ) -> delay -> reverb (conventional order)
-- **Electronic/Dance**: filter -> distortion -> compressor (sidechain pumping)
-- **Ambient**: chorus -> reverb -> filter (space-heavy, dream-like)
-- **Lo-Fi/Hip-Hop**: bitcrush -> filter -> chorus (vintage texture)
-- **Metal**: highpass -> distortion -> lowpass (tight, controlled aggression)
+- **Rock/Pop**: compressor to filter (EQ) to delay to reverb (conventional order)
+- **Electronic/Dance**: filter to distortion to compressor (sidechain pumping)
+- **Ambient**: chorus to reverb to filter (space-heavy, dream-like)
+- **Lo-Fi/Hip-Hop**: bitcrush to filter to chorus (vintage texture)
+- **Metal**: highpass to distortion to lowpass (tight, controlled aggression)
 
 ## PARAMETER RELATIONSHIPS - How Controls Interact Musically
 
@@ -317,9 +303,9 @@ input -> gain (-3dB) [pre-distortion pad]
 - Example: Telephone effect = frequency 1000Hz, Q 6 (narrow focus)
 
 **Delay: time + feedback + mix** (triangle of balance)
-- Long time (>800ms) -> lower feedback (0.2-0.4) -> lower mix (0.2-0.4)
-- Short time (<400ms) -> higher feedback OK (0.4-0.6) -> higher mix OK (0.3-0.5)
-- High feedback (>0.7) -> MUST reduce mix (0.15-0.3) or becomes muddy
+- Long time (>800ms) to lower feedback (0.2-0.4) to lower mix (0.2-0.4)
+- Short time (<400ms) to higher feedback OK (0.4-0.6) to higher mix OK (0.3-0.5)
+- High feedback (>0.7) to MUST reduce mix (0.15-0.3) or becomes muddy
 - Example: Slapback = time 120ms, feedback 0.15, mix 0.4 (one clear repeat)
 - Example: Ambient = time 1200ms, feedback 0.7, mix 0.25 (lush tail, no mud)
 
@@ -338,8 +324,8 @@ input -> gain (-3dB) [pre-distortion pad]
 - Example: Smooth vocals = attack 10ms, release 300ms (catch everything, natural decay)
 
 **Reverb: roomSize + mix + dampening** (space and clarity balance)
-- Large roomSize (0.85+) -> lower mix (0.15-0.3) -> lower dampening (3000-5000Hz) = huge but clear
-- Small roomSize (0.5) -> higher mix OK (0.3-0.5) -> higher dampening (6000-8000Hz) = intimate room
+- Large roomSize (0.85+) to lower mix (0.15-0.3) to lower dampening (3000-5000Hz) = huge but clear
+- Small roomSize (0.5) to higher mix OK (0.3-0.5) to higher dampening (6000-8000Hz) = intimate room
 - Example: Vocal clarity = roomSize 0.65, dampening 5000Hz, mix 0.2 (space without washing out)
 - Example: Ambient pad = roomSize 0.9, dampening 6000Hz, mix 0.6 (massive tail, still defined)
 
@@ -451,31 +437,160 @@ input -> gain (-3dB) [pre-distortion pad]
 
 ## UI CONTROL TYPES & WHEN TO USE THEM
 
-### Rotary Knobs (type: "knob")
-- style.color: amber|cyan|green|red|white|purple
-- style.size: sm|md|lg
-- style.indicator: line|dot|arc
-USE FOR: Frequency, time, gain, mix, feedback - any continuously variable parameter
-- lg: Main effect parameters (TIME, DECAY, THRESHOLD)
-- md: Secondary parameters (TONE, COLOR, WIDTH)
-- sm: Trim adjustments, fine-tuning
+### CRITICAL: Use the right control for each parameter type!
+Real hardware uses faders for levels, knobs for parameters, switches for modes.
+We must match this for professional hardware realism.
 
 ### Vertical Faders (type: "slider", config.orientation: "vertical")
-USE FOR: Level/volume controls, wet/dry mix - parameters where you want visual feedback of level
-- Great for OUTPUT, INPUT GAIN, MIX controls
-- Reminiscent of mixing console channel strips
-- Height typically 80-120px
+**PRIMARY USE - Level/Amount Parameters:**
 
-### Horizontal Sliders (type: "slider", config.orientation: "horizontal")
-USE FOR: Stereo width, pan position, blend parameters
-- Good for L/R balance, stereo spread
+🎚️ **MANDATORY for these parameters:**
+- Mix / Wet/Dry blend (MOST COMMON - nearly every effect!)
+- Output level / Master volume
+- Input gain / Drive / Saturation
+- Channel faders
+- Any "amount" parameter (0-1 or 0-100 range)
+
+**Configuration:**
+- config.orientation: "vertical" (REQUIRED for faders!)
+- config.min, max, default
+- config.unit (optional: "dB", "%", "")
+- style.color (green for I/O, white for mix)
+
+**Visual Benefits:**
+- Reminiscent of mixing console channel strips
+- Immediate visual feedback of level
+- Professional studio aesthetic
+- Muscle memory from real hardware
+
+**Rule of thumb:** If parameter name contains "mix", "level", "output", "input", "drive", "wet", "dry" → USE FADER!
+
+### Rotary Knobs (type: "knob")
+**PRIMARY USE - Continuous Parameters:**
+
+🎛️ **Best for these parameter types:**
+- Frequency (cutoff, center, baseFrequency, pitch)
+- Time (delay time, attack, release, decay, duration)
+- Ratio/factor (feedback, Q, compression ratio, depth, rate)
+- Pitch/semitones
+- Modulation speed/depth
+
+**Configuration:**
+- config.min, max, default
+- config.step (optional, for discrete steps)
+- config.unit ("Hz", "ms", "dB", etc.)
+- config.curve (linear, exponential, logarithmic)
+
+**Visual Styling:**
+- style.color: amber (warm/vintage) | cyan (clean/modern) | green (modulation) | red (aggressive) | white (neutral) | purple (creative)
+- style.size: lg (main params) | md (secondary) | sm (trim)
+- style.indicator: line (classic) | dot (minimal) | arc (modern)
+
+**Size Guidelines:**
+- lg: Primary effect parameters (TIME, DECAY, THRESHOLD, FREQUENCY)
+- md: Secondary parameters (TONE, COLOR, WIDTH, Q, DEPTH)
+- sm: Fine adjustments, trim controls, utility
 
 ### Toggle Switches (type: "switch")
-- config.onLabel, config.offLabel
-USE FOR: On/off states, mode toggles, bypass
-- BYPASS: offLabel="OUT", onLabel="IN"
-- MODE: offLabel="VINTAGE", onLabel="MODERN"
-- Great for enabling/disabling processing stages
+**PRIMARY USE - Binary Choices:**
+
+🔘 **MANDATORY for these parameter types:**
+- Bypass / Enable-disable
+- Mode toggles with exactly 2 options (vintage/modern, soft/hard, mono/stereo)
+- Polarity switches (normal/inverted)
+- Processing stage on/off
+
+**Configuration:**
+- config.default (true/false)
+- config.onLabel, config.offLabel (keep short: "ON"/"OFF", "IN"/"OUT", "HARD"/"SOFT", "MONO"/"STEREO")
+- style.color (green for on/off, red for bypass, amber for modes)
+
+**Rule of thumb:** If parameter has exactly 2 options → USE SWITCH! (NOT knob, NOT select)
+
+### Horizontal Sliders (type: "slider", config.orientation: "horizontal")
+**PRIMARY USE - Position/Balance Parameters:**
+
+**Best for spatial parameters:**
+- Pan position (L/R)
+- Stereo width (narrow/wide)
+- Balance controls
+- Less common than vertical faders
+
+### Select Dropdowns (type: "select")
+**PRIMARY USE - Multi-Option Enums:**
+
+📋 **MANDATORY for 3+ discrete options:**
+- Filter type (lowpass, highpass, bandpass, notch) - 4 options
+- Distortion type (soft, hard, foldback, bitcrush) - 4 options
+- Waveform shape (sine, square, triangle, sawtooth) - 4+ options
+- Algorithm selection (3+ named algorithms)
+
+**Configuration:**
+- config.options: array of {value, label} pairs
+- config.default: default value
+
+**Rule of thumb:** If parameter has 3 or more named options → USE SELECT! (NOT switch, NOT knob)
+
+## CONTROL SELECTION RULES - MANDATORY VARIETY
+
+### CRITICAL REQUIREMENTS
+1. Complex effects (4+ controls) MUST use at least 3 different control types (knobs, faders, switches, selects)
+2. Simple effects (2-3 controls) MUST use at least 2 different control types
+3. NO effect should use only knobs - that's unrealistic and boring
+4. Mix/level parameters MUST use vertical faders (slider with orientation: vertical)
+5. Mode toggles MUST use switches (not knobs or selects for 2-option choices)
+6. Multi-option enums (3+ options) MUST use select dropdowns
+
+### Parameter-to-Control Type Mapping
+
+**ALWAYS use FADERS (vertical sliders) for these parameters:**
+- Mix / Wet/Dry blend (MOST IMPORTANT!)
+- Output level / Master volume
+- Input gain / Drive / Saturation
+- Channel levels
+- Any parameter representing "amount" or "level" from 0-1 or 0-100%
+- Labels: "MIX", "OUTPUT", "INPUT", "DRIVE", "LEVEL", "WET", "DRY", "SEND"
+
+**ALWAYS use KNOBS for these parameters:**
+- Time-based: delay time, attack, release, decay, duration
+- Frequency-based: cutoff, center, baseFrequency, pitch
+- Ratio/factor: feedback, Q, compression ratio, depth, rate
+- Examples: "TIME", "FREQ", "DECAY", "FEEDBACK", "TONE", "SPEED", "Q"
+
+**ALWAYS use SWITCHES for these parameters:**
+- Bypass / Enable-disable
+- Mode selection between exactly 2 options (vintage/modern, soft/hard, mono/stereo)
+- Polarity (normal/inverted, positive/negative)
+- Processing stage on/off
+- Labels: "BYPASS", "MODE", "TYPE" (only if 2 options!), "POLARITY"
+
+**ALWAYS use SELECT dropdowns for these parameters:**
+- Filter types: lowpass, highpass, bandpass, notch (4 options)
+- Distortion types: soft, hard, foldback, bitcrush (4 options)
+- Waveform shapes: sine, square, triangle, sawtooth (4+ options)
+- Any parameter with 3 or more discrete named options
+- Labels: "FILTER TYPE", "DISTORTION TYPE", "SHAPE", "ALGORITHM"
+
+### Professional Layout Conventions
+
+**Channel Strip Style (SSL, Neve, API):**
+- Vertical faders on outer edges for input/output
+- Knobs in center for EQ/dynamics processing
+- Switches at top for routing/modes
+- Example layout: [Fader:INPUT] [Knobs:FREQ,Q,GAIN] [Fader:OUTPUT] [Switch:BYPASS]
+
+**Pedal Style (Boss, Strymon, Eventide):**
+- 3-5 large knobs for primary parameters
+- 1 vertical fader for mix/level
+- 1-2 switches for mode/bypass
+- Example layout: [Knobs:TIME,FEEDBACK,TONE] [Fader:MIX] [Switch:MODE]
+
+**Compressor Style (1176, LA-2A, DBX):**
+- Knobs for threshold, ratio, attack, release
+- Vertical faders for input/output gain
+- Switch for compression mode
+- VU meter for gain reduction
+- Example: [Fader:INPUT] [Knobs:THRESH,RATIO,ATK,REL] [Switch:MODE] [Fader:OUTPUT]
 
 ## DECORATIONS & VISUAL ELEMENTS
 - LED indicators: Power on, signal present, clip warning (colors: green, amber, red, blue)
@@ -496,7 +611,7 @@ USE FOR: On/off states, mode toggles, bypass
 ### Example 1: Delay Effect
 
 **GOOD - Musical Tape Delay**
-Nodes: input -> filter(highpass, 100Hz, Q:0.8) -> delay(time:375, feedback:0.45, mix:0.35) -> filter(lowpass, 4000Hz, Q:0.7) -> output
+Nodes: input to filter(highpass, 100Hz, Q:0.8) to delay(time:375, feedback:0.45, mix:0.35) to filter(lowpass, 4000Hz, Q:0.7) to output
 **Why it's good:**
 - Tempo-synced delay time (375ms = dotted 8th at 120 BPM) - rhythmic, musical
 - Highpass before delay (cleans up bass, prevents mud in feedback)
@@ -505,7 +620,7 @@ Nodes: input -> filter(highpass, 100Hz, Q:0.8) -> delay(time:375, feedback:0.45,
 - Appropriate mix (0.35) - balanced, not overpowering
 
 **BAD - Poorly Designed Delay**
-Nodes: input -> delay(time:789, feedback:0.92, mix:0.75) -> output
+Nodes: input to delay(time:789, feedback:0.92, mix:0.75) to output
 **Why it's bad:**
 - Random delay time (789ms) - not musical, not rhythmic, awkward
 - Feedback too high (0.92) - near runaway, will get muddy and loud
@@ -516,7 +631,7 @@ Nodes: input -> delay(time:789, feedback:0.92, mix:0.75) -> output
 ### Example 2: Reverb Effect
 
 **GOOD - Vocal Plate Reverb**
-Nodes: input -> filter(highpass, 80Hz, Q:0.7) -> freeverb(roomSize:0.65, dampening:5000, mix:0.25) -> output
+Nodes: input to filter(highpass, 80Hz, Q:0.7) to freeverb(roomSize:0.65, dampening:5000, mix:0.25) to output
 **Why it's good:**
 - Highpass before reverb (prevents muddy bass reverb)
 - Medium roomSize (0.65 = large room, not cathedral) - appropriate size
@@ -524,7 +639,7 @@ Nodes: input -> filter(highpass, 80Hz, Q:0.7) -> freeverb(roomSize:0.65, dampeni
 - Conservative mix (0.25) - subtle enhancement, not swimming
 
 **BAD - Muddy Reverb**
-Nodes: input -> freeverb(roomSize:0.95, dampening:10000, mix:0.8) -> filter(lowpass, 2000Hz, Q:2) -> output
+Nodes: input to freeverb(roomSize:0.95, dampening:10000, mix:0.8) to filter(lowpass, 2000Hz, Q:2) to output
 **Why it's bad:**
 - Filter AFTER reverb - reverb already applied to full spectrum bass (mud!)
 - Huge roomSize (0.95) with high mix (0.8) - drowning in reverb
@@ -535,7 +650,7 @@ Nodes: input -> freeverb(roomSize:0.95, dampening:10000, mix:0.8) -> filter(lowp
 ### Example 3: Compression
 
 **GOOD - Vocal Compressor**
-Nodes: input -> compressor(threshold:-18, ratio:4, attack:12, release:280) -> filter(highpass, 80Hz, Q:0.7) -> output
+Nodes: input to compressor(threshold:-18, ratio:4, attack:12, release:280) to filter(highpass, 80Hz, Q:0.7) to output
 **Why it's good:**
 - Compression first (control dynamics before other processing)
 - Moderate threshold (-18dB) + ratio (4:1) = natural, transparent compression
@@ -544,7 +659,7 @@ Nodes: input -> compressor(threshold:-18, ratio:4, attack:12, release:280) -> fi
 - Filter after compression (shapes the compressed signal cleanly)
 
 **BAD - Over-Compressed**
-Nodes: input -> filter(highpass, 80Hz) -> compressor(threshold:-35, ratio:12, attack:1, release:50) -> output
+Nodes: input to filter(highpass, 80Hz) to compressor(threshold:-35, ratio:12, attack:1, release:50) to output
 **Why it's bad:**
 - Very low threshold (-35dB) + very high ratio (12:1) = crushing everything
 - Attack too fast (1ms) - no transients preserved, causes distortion artifacts
@@ -555,9 +670,9 @@ Nodes: input -> filter(highpass, 80Hz) -> compressor(threshold:-35, ratio:12, at
 ### Example 4: Complete Effect Chain
 
 **GOOD - Guitar Overdrive Chain**
-Nodes: input -> filter(highpass, 120Hz, Q:1) -> distortion(soft, amount:0.6, mix:0.8) -> filter(lowpass, 5500Hz, Q:0.8) -> delay(time:500, feedback:0.4, mix:0.28) -> freeverb(roomSize:0.6, dampening:5500, mix:0.18) -> output
+Nodes: input to filter(highpass, 120Hz, Q:1) to distortion(soft, amount:0.6, mix:0.8) to filter(lowpass, 5500Hz, Q:0.8) to delay(time:500, feedback:0.4, mix:0.28) to freeverb(roomSize:0.6, dampening:5500, mix:0.18) to output
 **Why it's good:**
-- Proper signal flow: clean -> distort -> shape -> time -> space
+- Proper signal flow: clean to distort to shape to time to space
 - Highpass BEFORE distortion (tightens bass before saturation)
 - Lowpass AFTER distortion (tames harsh harmonics from distortion)
 - Delay before reverb (repeats then space, not space then repeats)
@@ -565,7 +680,7 @@ Nodes: input -> filter(highpass, 120Hz, Q:1) -> distortion(soft, amount:0.6, mix
 - Reduced delay/reverb mix (0.28, 0.18) - makes room for both effects
 
 **BAD - Chaotic Chain**
-Nodes: input -> freeverb(roomSize:0.85, mix:0.6) -> delay(time:1200, feedback:0.75, mix:0.5) -> distortion(hard, amount:0.8, mix:0.9) -> compressor(threshold:-25, ratio:10) -> output
+Nodes: input to freeverb(roomSize:0.85, mix:0.6) to delay(time:1200, feedback:0.75, mix:0.5) to distortion(hard, amount:0.8, mix:0.9) to compressor(threshold:-25, ratio:10) to output
 **Why it's bad:**
 - Reverb FIRST - distortion/delay will process reverb tail (unnatural)
 - Delay after reverb - reverb on delays AND delays in reverb = mud soup
@@ -585,8 +700,8 @@ Nodes: input -> freeverb(roomSize:0.85, mix:0.6) -> delay(time:1200, feedback:0.
    - GOOD: reverb mix 0.25 + delay mix 0.3 + chorus mix 0.4 = clarity
 
 3. **Backwards Signal Flow** - Ignoring audio engineering principles
-   - BAD: reverb -> filter -> distortion (unnatural)
-   - GOOD: filter -> distortion -> reverb (natural signal flow)
+   - BAD: reverb to filter to distortion (unnatural)
+   - GOOD: filter to distortion to reverb (natural signal flow)
 
 4. **Extreme Values Without Reason** - Pushing parameters to limits unnecessarily
    - BAD: compressor ratio 20:1, threshold -50dB (crushing)
@@ -594,7 +709,7 @@ Nodes: input -> freeverb(roomSize:0.85, mix:0.6) -> delay(time:1200, feedback:0.
 
 5. **Missing Gain Staging** - Heavy processing without level control
    - BAD: heavy distortion directly to output (clipping likely)
-   - GOOD: heavy distortion -> gain(-6dB) -> output (controlled)
+   - GOOD: heavy distortion to gain(-6dB) to output (controlled)
 
 6. **Competing Frequencies** - Multiple effects fighting for same space
    - BAD: long delay + long reverb both with high mix (mud)
@@ -602,98 +717,179 @@ Nodes: input -> freeverb(roomSize:0.85, mix:0.6) -> delay(time:1200, feedback:0.
 
 7. **No Character Shaping** - Generic digital sound
    - BAD: just delay node with default parameters (boring)
-   - GOOD: filter -> delay -> filter for analog character (interesting!)
+   - GOOD: filter to delay to filter for analog character (interesting!)
 
-## COMPLETE EXAMPLE (follow this structure exactly):
+## CONTROL VARIETY EXAMPLES - GOOD vs BAD
+
+### ✅ GOOD EXAMPLE 1: Delay with Professional Mix Control
 {
   "name": "Tape Echo Station",
-  "description": "Vintage tape delay with analog warmth and modulation",
+  "description": "Vintage tape delay with analog warmth",
   "nodes": [
     { "id": "input", "type": "input", "params": {} },
     { "id": "delay1", "type": "delay", "params": { "time": 375, "feedback": 0.45, "mix": 0.4 } },
     { "id": "filter1", "type": "filter", "params": { "type": "lowpass", "frequency": 4000, "Q": 0.7 } },
-    { "id": "distortion1", "type": "distortion", "params": { "type": "soft", "amount": 0.2, "mix": 0.6 } },
     { "id": "output", "type": "output", "params": {} }
   ],
   "connections": [
     { "from": { "nodeId": "input" }, "to": { "nodeId": "delay1" } },
     { "from": { "nodeId": "delay1" }, "to": { "nodeId": "filter1" } },
-    { "from": { "nodeId": "filter1" }, "to": { "nodeId": "distortion1" } },
-    { "from": { "nodeId": "distortion1" }, "to": { "nodeId": "output" } }
+    { "from": { "nodeId": "filter1" }, "to": { "nodeId": "output" } }
   ],
   "ui": {
     "layout": "absolute",
-    "panelDesign": {
-      "rackUnits": 2,
-      "primaryColor": "#2d1810",
-      "accentColor": "#ff6b35",
-      "textColor": "#f4e4c1"
-    },
-    "artwork": {
-      "background": { "type": "gradient", "colors": ["#2d1810", "#1a0f08"], "direction": "vertical" },
-      "elements": [
-        { "type": "stripe", "position": { "x": 0, "y": 80, "width": 100, "height": 20 }, "color": "#1a0f08" },
-        { "type": "glow", "position": { "x": 20, "y": 50 }, "color": "#ff6b35", "radius": 18, "opacity": 0.12 },
-        { "type": "glow", "position": { "x": 50, "y": 50 }, "color": "#ff6b35", "radius": 18, "opacity": 0.12 }
-      ],
-      "brandLabel": { "text": "TAPE-ECHO", "position": { "x": 50, "y": 8 }, "style": "embossed" }
-    },
     "controls": [
       {
         "id": "time", "type": "knob", "label": "TIME",
-        "position": { "x": 20, "y": 45 },
+        "position": { "x": 25, "y": 50 },
         "style": { "color": "amber", "size": "lg", "indicator": "line" },
         "binding": { "nodeId": "delay1", "param": "time" },
         "config": { "min": 50, "max": 1500, "default": 375, "unit": "ms" }
       },
       {
-        "id": "feedback", "type": "knob", "label": "FEEDBACK",
-        "position": { "x": 40, "y": 45 },
+        "id": "feedback", "type": "knob", "label": "REPEAT",
+        "position": { "x": 50, "y": 50 },
         "style": { "color": "amber", "size": "lg", "indicator": "line" },
         "binding": { "nodeId": "delay1", "param": "feedback" },
-        "config": { "min": 0, "max": 0.95, "default": 0.45 }
+        "config": { "min": 0, "max": 0.9, "default": 0.45 }
       },
       {
         "id": "tone", "type": "knob", "label": "TONE",
-        "position": { "x": 60, "y": 45 },
+        "position": { "x": 75, "y": 50 },
         "style": { "color": "white", "size": "md", "indicator": "line" },
         "binding": { "nodeId": "filter1", "param": "frequency" },
         "config": { "min": 500, "max": 8000, "default": 4000, "unit": "Hz" }
       },
       {
-        "id": "saturation", "type": "knob", "label": "SATURATION",
-        "position": { "x": 80, "y": 45 },
-        "style": { "color": "red", "size": "sm", "indicator": "dot" },
-        "binding": { "nodeId": "distortion1", "param": "amount" },
-        "config": { "min": 0, "max": 0.8, "default": 0.2 }
-      },
-      {
         "id": "mix", "type": "slider", "label": "MIX",
-        "position": { "x": 92, "y": 50 },
+        "position": { "x": 90, "y": 50 },
         "style": { "color": "white" },
         "binding": { "nodeId": "delay1", "param": "mix" },
         "config": { "min": 0, "max": 1, "default": 0.4, "orientation": "vertical" }
       }
-    ],
-    "decorations": [
-      { "type": "led", "position": { "x": 8, "y": 10 }, "color": "green" },
-      { "type": "label", "position": { "x": 20, "y": 72 }, "text": "DELAY", "size": "xs" },
-      { "type": "label", "position": { "x": 70, "y": 72 }, "text": "CHARACTER", "size": "xs" }
     ]
   }
 }
 
+**Why this is GOOD:**
+- Uses knobs for time/frequency (continuous parameters) ✓
+- Uses FADER for mix (level parameter) ✓
+- 2 control types: knobs + fader ✓
+- Matches professional tape delay aesthetic ✓
+
+### ✅ EXCELLENT EXAMPLE 2: Compressor with Maximum Variety
+{
+  "name": "Studio Compressor",
+  "description": "Professional dynamics processor",
+  "nodes": [
+    { "id": "input", "type": "input", "params": {} },
+    { "id": "gain1", "type": "gain", "params": { "level": 0 } },
+    { "id": "comp1", "type": "compressor", "params": { "threshold": -18, "ratio": 4, "attack": 12, "release": 280, "knee": 0 } },
+    { "id": "gain2", "type": "gain", "params": { "level": 0 } },
+    { "id": "output", "type": "output", "params": {} }
+  ],
+  "connections": [
+    { "from": { "nodeId": "input" }, "to": { "nodeId": "gain1" } },
+    { "from": { "nodeId": "gain1" }, "to": { "nodeId": "comp1" } },
+    { "from": { "nodeId": "comp1" }, "to": { "nodeId": "gain2" } },
+    { "from": { "nodeId": "gain2" }, "to": { "nodeId": "output" } }
+  ],
+  "ui": {
+    "layout": "absolute",
+    "controls": [
+      {
+        "id": "input", "type": "slider", "label": "INPUT",
+        "position": { "x": 15, "y": 50 },
+        "style": { "color": "green" },
+        "binding": { "nodeId": "gain1", "param": "level" },
+        "config": { "min": -12, "max": 12, "default": 0, "unit": "dB", "orientation": "vertical" }
+      },
+      {
+        "id": "threshold", "type": "knob", "label": "THRESH",
+        "position": { "x": 35, "y": 50 },
+        "style": { "color": "cyan", "size": "lg", "indicator": "line" },
+        "binding": { "nodeId": "comp1", "param": "threshold" },
+        "config": { "min": -60, "max": 0, "default": -18, "unit": "dB" }
+      },
+      {
+        "id": "ratio", "type": "knob", "label": "RATIO",
+        "position": { "x": 55, "y": 50 },
+        "style": { "color": "cyan", "size": "md", "indicator": "line" },
+        "binding": { "nodeId": "comp1", "param": "ratio" },
+        "config": { "min": 1, "max": 20, "default": 4 }
+      },
+      {
+        "id": "attack", "type": "knob", "label": "ATTACK",
+        "position": { "x": 70, "y": 50 },
+        "style": { "color": "white", "size": "sm", "indicator": "dot" },
+        "binding": { "nodeId": "comp1", "param": "attack" },
+        "config": { "min": 0, "max": 100, "default": 10, "unit": "ms" }
+      },
+      {
+        "id": "mode", "type": "switch", "label": "MODE",
+        "position": { "x": 35, "y": 25 },
+        "style": { "color": "red" },
+        "binding": { "nodeId": "comp1", "param": "knee" },
+        "config": { "default": false, "onLabel": "HARD", "offLabel": "SOFT" }
+      },
+      {
+        "id": "output", "type": "slider", "label": "OUTPUT",
+        "position": { "x": 90, "y": 50 },
+        "style": { "color": "green" },
+        "binding": { "nodeId": "gain2", "param": "level" },
+        "config": { "min": -12, "max": 12, "default": 0, "unit": "dB", "orientation": "vertical" }
+      }
+    ]
+  }
+}
+
+**Why this is EXCELLENT:**
+- Uses FADERS for input/output levels ✓
+- Uses knobs for threshold/ratio/attack (parameters) ✓
+- Uses SWITCH for mode toggle (2 options) ✓
+- 3 control types: knobs + faders + switch ✓
+- Professional studio compressor layout ✓
+- Clear visual hierarchy and grouping ✓
+
+### ❌ BAD EXAMPLE: All Knobs (DON'T DO THIS!)
+{
+  "name": "Generic Delay",
+  "ui": {
+    "controls": [
+      { "id": "input", "type": "knob", "label": "INPUT" },      // ❌ Should be FADER!
+      { "id": "time", "type": "knob", "label": "TIME" },        // ✓ OK
+      { "id": "feedback", "type": "knob", "label": "FEEDBACK" }, // ✓ OK
+      { "id": "tone", "type": "knob", "label": "TONE" },        // ✓ OK
+      { "id": "mix", "type": "knob", "label": "MIX" },          // ❌ Should be FADER!
+      { "id": "output", "type": "knob", "label": "OUTPUT" },    // ❌ Should be FADER!
+      { "id": "bypass", "type": "knob", "label": "BYPASS" }     // ❌ Should be SWITCH!
+    ]
+  }
+}
+
+**Why this is TERRIBLE:**
+- ALL knobs - boring, unrealistic ✗
+- Mix should be a FADER (industry standard) ✗
+- Input/output should be FADERS (mixing console convention) ✗
+- Bypass should be a SWITCH (on/off state) ✗
+- Only 1 control type - no variety ✗
+- Looks like amateur software, not professional hardware ✗
+- Misses opportunity for hardware realism ✗
+
+**NEVER generate effects that look like this bad example!**
+
 ## CREATIVE GUIDELINES
 1. **Unique Identity**: Each effect should feel like a distinct piece of hardware
-2. **Color Palette**: Match colors to the effect character:
+2. **Control Variety**: ALWAYS use diverse control types - complex effects need 3+ types (knobs, faders, switches, selects)
+3. **Mix Faders**: MUST use vertical sliders for mix/wet/dry/level parameters - this is industry standard!
+4. **Color Palette**: Match colors to the effect character:
    - Warm effects (tape, tube, vintage): Amber, cream, brown, orange
    - Cold/modern effects (digital, clean): Cyan, blue, silver, white
    - Aggressive effects (distortion, compression): Red, black, industrial
-3. **Control Layout**: Position controls x: 15-90%, y: 30-75% for good spacing
-4. **Hardware Brand**: Use brandLabel for a memorable name (e.g., "NEBULA-VERB", "IRON-CRUSH", "SPACE-ECHO")
-5. **LED Indicators**: Include at least one LED (power indicator at minimum)
-6. **Section Labels**: Use decorations to label control groups
-7. **Mix Faders**: Consider using a vertical slider for wet/dry mix to mimic console layouts`
+5. **Control Layout**: Position controls x: 15-90%, y: 30-75% for good spacing
+6. **Hardware Brand**: Use brandLabel for a memorable name (e.g., "NEBULA-VERB", "IRON-CRUSH", "SPACE-ECHO")
+7. **LED Indicators**: Include at least one LED (power indicator at minimum)
+8. **Section Labels**: Use decorations to label control groups`
 
 const CHAOS_SYSTEM_PROMPT = `You are a CHAOTIC audio DSP engineer who believes audio effects should be wild, experimental, and unexpected. You take absurd concepts and translate them into actual DSP processing that somehow captures their essence.
 
@@ -780,23 +976,54 @@ Match palette to prompt theme:
 - Cosmic/space: Deep purples, gold, starlight (#4b0082, #ffd700)
 - Absurd/humor: Clashing colors, unexpected combinations (#ff6347, #7cfc00)
 
+## CHAOS CONTROL SELECTION - Even Chaos Needs Appropriate Controls!
+
+**Control Variety in Chaos Mode:**
+Even experimental effects should use the RIGHT control for each parameter type!
+- Mix/levels → FADERS (it's a convention for a reason!)
+- Time/frequency → Knobs
+- Modes → Switches
+- Multi-option enums → Selects
+
+**Chaos is in the DSP and visuals, NOT in inappropriate controls!**
+A chaotic "bureaucratic paperwork delay" can still have:
+- Knob for "RED TAPE AMOUNT" (feedback parameter) ← Still a knob!
+- Knob for "APPROVAL DELAY TIME" (time parameter) ← Still a knob!
+- FADER for "CORPORATE MIX" (mix parameter) ← Still a fader!
+- Switch for "LAYOFF MODE" (on/off toggle) ← Still a switch!
+
+Use creative LABELS and COLORS, but appropriate control TYPES.
+
+**Control Type Mapping (MANDATORY even in chaos!):**
+- Faders (vertical sliders): mix, wet/dry, output, input, drive, level
+- Knobs: time, frequency, feedback, depth, ratio, Q, threshold
+- Switches: bypass, mode toggles (exactly 2 options)
+- Selects: filter types, distortion types (3+ options)
+
+**Variety Requirements:**
+- Complex chaos effects (4+ controls): Use at least 3 different control types
+- Simple chaos effects: Use at least 2 different control types
+
 ## UI CONTROL TYPES (same as normal)
-- Knobs: amber|cyan|green|red|white|purple, sizes: sm|md|lg
-- Sliders: vertical or horizontal orientation
-- Switches: toggle, mode, bypass
+- Knobs: amber|cyan|green|red|white|purple, sizes: sm|md|lg, indicators: line|dot|arc
+- Faders (vertical sliders): config.orientation: "vertical" for mix/level parameters
+- Switches: toggle, mode, bypass (2 options only)
+- Selects: for 3+ discrete options
 
 ## CREATIVE CONTROL NAMES
-Match control names to the chaos theme:
-- "bureaucratic paperwork" -> "RED TAPE" (feedback), "APPROVAL DELAY" (time)
-- "aurora borealis" -> "NORTHERN GLOW" (mix), "SOLAR WIND" (rate)
-- "existential crisis" -> "DREAD" (depth), "VOID" (decay)
+Match control names to the chaos theme, but use appropriate control types:
+- "bureaucratic paperwork" → "RED TAPE" (feedback, knob), "APPROVAL DELAY" (time, knob), "CORPORATE MIX" (mix, FADER!)
+- "aurora borealis" → "NORTHERN GLOW" (mix, FADER!), "SOLAR WIND" (rate, knob), "MAGNETIC MODE" (switch)
+- "existential crisis" → "DREAD" (depth, knob), "VOID" (decay, knob), "CRISIS MIX" (mix, FADER!)
 
 ## IMPORTANT RULES
-1. ALWAYS include a MIX control (mandatory)
-2. Control positions: x: 10-90%, y: 25-80%
-3. Use at least one LED decoration
-4. Creative brandLabel that matches the chaos theme
-5. Make DSP processing reflect the absurd prompt somehow
+1. ALWAYS include a MIX control as a FADER (mandatory - vertical slider!)
+2. Use at least 2-3 different control types (knobs, faders, switches, selects) for variety
+3. Control positions: x: 10-90%, y: 25-80%
+4. Use at least one LED decoration
+5. Creative brandLabel that matches the chaos theme
+6. Make DSP processing reflect the absurd prompt somehow
+7. Chaos is in the concept and visuals, NOT in using inappropriate control types!
 
 Be creative. Be weird. Make audio that sounds like the concept feels.`
 
@@ -1069,8 +1296,8 @@ Respond with only the JSON object, no additional text or markdown formatting.`
     let jsonText = textContent.text.trim()
 
     // Remove markdown code fences if present
-    if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')
+    if (jsonText.startsWith('')) {
+      jsonText = jsonText.replace(/^(?:json)?\n?/, '').replace(/\n?$/, '')
     }
 
     // Try to find JSON object in the response (in case there's extra text)
@@ -1116,8 +1343,10 @@ Respond with only the JSON object, no additional text or markdown formatting.`
   }
 
   // Add quality metadata
-  effect.metadata.qualityWarnings = qualityCheck.warnings.length > 0 ? qualityCheck.warnings : undefined
-  effect.metadata.qualitySuggestions = qualityCheck.suggestions.length > 0 ? qualityCheck.suggestions : undefined
+  effect.metadata.qualityWarnings =
+    qualityCheck.warnings.length > 0 ? qualityCheck.warnings : undefined
+  effect.metadata.qualitySuggestions =
+    qualityCheck.suggestions.length > 0 ? qualityCheck.suggestions : undefined
 
   return { effect, generationTimeMs }
 }
