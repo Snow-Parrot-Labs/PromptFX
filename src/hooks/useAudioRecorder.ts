@@ -29,6 +29,60 @@ export function useAudioRecorder(): {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const previousSourceRef = useRef(source)
 
+  const startRecording = useCallback(() => {
+    try {
+      // Clear any previous recording
+      clearRecording()
+      setRecordingError(null)
+
+      // Get the recorder stream from audio engine
+      const stream = audioEngine.getRecorderStream()
+
+      if (!stream) {
+        throw new Error('No audio stream available. Audio engine may not be initialized.')
+      }
+
+      // Start recording
+      audioRecorder.start(stream)
+      setIsRecording(true)
+      setRecordingDuration(0)
+
+      toast.success('Recording started')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to start recording'
+      setRecordingError(errorMessage)
+      toast.error(errorMessage)
+      console.error('Error starting recording:', error)
+    }
+  }, [clearRecording, setIsRecording, setRecordingDuration, setRecordingError])
+
+  const stopRecording = useCallback(async (): Promise<void> => {
+    try {
+      if (!isRecording) {
+        return
+      }
+
+      // Stop recording and get the WAV blob
+      const blob = await audioRecorder.stop()
+      setRecordedBlob(blob)
+      setIsRecording(false)
+
+      const duration = recordingDuration
+      const minutes = Math.floor(duration / 60)
+      const seconds = Math.floor(duration % 60)
+      const durationText =
+        minutes > 0 ? `${String(minutes)}m ${String(seconds)}s` : `${String(seconds)}s`
+
+      toast.success(`Recording stopped (${durationText})`)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to stop recording'
+      setRecordingError(errorMessage)
+      setIsRecording(false)
+      toast.error(errorMessage)
+      console.error('Error stopping recording:', error)
+    }
+  }, [isRecording, recordingDuration, setIsRecording, setRecordedBlob, setRecordingError])
+
   // Duration timer - updates every 100ms while recording
   useEffect(() => {
     if (isRecording) {
@@ -69,60 +123,6 @@ export function useAudioRecorder(): {
     }
     previousSourceRef.current = source
   }, [source, isRecording])
-
-  const startRecording = useCallback(() => {
-    try {
-      // Clear any previous recording
-      clearRecording()
-      setRecordingError(null)
-
-      // Get the recorder stream from audio engine
-      const stream = audioEngine.getRecorderStream()
-
-      if (!stream) {
-        throw new Error('No audio stream available. Audio engine may not be initialized.')
-      }
-
-      // Start recording
-      audioRecorder.start(stream)
-      setIsRecording(true)
-      setRecordingDuration(0)
-
-      toast.success('Recording started')
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to start recording'
-      setRecordingError(errorMessage)
-      toast.error(errorMessage)
-      console.error('Error starting recording:', error)
-    }
-  }, [clearRecording, setIsRecording, setRecordingDuration, setRecordingError])
-
-  const stopRecording = useCallback(async () => {
-    try {
-      if (!isRecording) {
-        return
-      }
-
-      // Stop recording and get the WAV blob
-      const blob = await audioRecorder.stop()
-      setRecordedBlob(blob)
-      setIsRecording(false)
-
-      const duration = recordingDuration
-      const minutes = Math.floor(duration / 60)
-      const seconds = Math.floor(duration % 60)
-      const durationText =
-        minutes > 0 ? `${String(minutes)}m ${String(seconds)}s` : `${String(seconds)}s`
-
-      toast.success(`Recording stopped (${durationText})`)
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to stop recording'
-      setRecordingError(errorMessage)
-      setIsRecording(false)
-      toast.error(errorMessage)
-      console.error('Error stopping recording:', error)
-    }
-  }, [isRecording, recordingDuration, setIsRecording, setRecordedBlob, setRecordingError])
 
   return {
     startRecording,

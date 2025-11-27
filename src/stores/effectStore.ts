@@ -6,6 +6,7 @@ import { toast } from '@/components/ui'
 interface GenerateOptions {
   complexity?: 'simple' | 'complex'
   style?: string
+  chaosMode?: boolean
 }
 
 interface EffectState {
