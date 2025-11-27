@@ -87,17 +87,6 @@ export function EQPanel(): React.JSX.Element {
                     updateInputEQBand('highpass', 'frequency', value)
                   }}
                 />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={inputEQ.highpass.Q}
-                  min={0.1}
-                  max={10}
-                  label="Q"
-                  onChange={(value) => {
-                    updateInputEQBand('highpass', 'Q', value)
-                  }}
-                />
               </div>
 
               {/* LOW */}
@@ -130,17 +119,6 @@ export function EQPanel(): React.JSX.Element {
                   unit="dB"
                   onChange={(value) => {
                     updateInputEQBand('lowShelf', 'gain', value)
-                  }}
-                />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={inputEQ.lowShelf.Q}
-                  min={0.5}
-                  max={5}
-                  label="Q"
-                  onChange={(value) => {
-                    updateInputEQBand('lowShelf', 'Q', value)
                   }}
                 />
               </div>
@@ -177,17 +155,6 @@ export function EQPanel(): React.JSX.Element {
                     updateInputEQBand('midPeak', 'gain', value)
                   }}
                 />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={inputEQ.midPeak.Q}
-                  min={0.5}
-                  max={5}
-                  label="Q"
-                  onChange={(value) => {
-                    updateInputEQBand('midPeak', 'Q', value)
-                  }}
-                />
               </div>
 
               {/* HIGH */}
@@ -222,17 +189,6 @@ export function EQPanel(): React.JSX.Element {
                     updateInputEQBand('highPeak', 'gain', value)
                   }}
                 />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={inputEQ.highPeak.Q}
-                  min={0.5}
-                  max={5}
-                  label="Q"
-                  onChange={(value) => {
-                    updateInputEQBand('highPeak', 'Q', value)
-                  }}
-                />
               </div>
 
               {/* LPF */}
@@ -253,17 +209,6 @@ export function EQPanel(): React.JSX.Element {
                   unit="Hz"
                   onChange={(value) => {
                     updateInputEQBand('lowpass', 'frequency', value)
-                  }}
-                />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={inputEQ.lowpass.Q}
-                  min={0.1}
-                  max={10}
-                  label="Q"
-                  onChange={(value) => {
-                    updateInputEQBand('lowpass', 'Q', value)
                   }}
                 />
               </div>
@@ -318,17 +263,6 @@ export function EQPanel(): React.JSX.Element {
                     updateOutputEQBand('highpass', 'frequency', value)
                   }}
                 />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={outputEQ.highpass.Q}
-                  min={0.1}
-                  max={10}
-                  label="Q"
-                  onChange={(value) => {
-                    updateOutputEQBand('highpass', 'Q', value)
-                  }}
-                />
               </div>
 
               {/* LOW */}
@@ -361,17 +295,6 @@ export function EQPanel(): React.JSX.Element {
                   unit="dB"
                   onChange={(value) => {
                     updateOutputEQBand('lowShelf', 'gain', value)
-                  }}
-                />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={outputEQ.lowShelf.Q}
-                  min={0.5}
-                  max={5}
-                  label="Q"
-                  onChange={(value) => {
-                    updateOutputEQBand('lowShelf', 'Q', value)
                   }}
                 />
               </div>
@@ -408,17 +331,6 @@ export function EQPanel(): React.JSX.Element {
                     updateOutputEQBand('midPeak', 'gain', value)
                   }}
                 />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={outputEQ.midPeak.Q}
-                  min={0.5}
-                  max={5}
-                  label="Q"
-                  onChange={(value) => {
-                    updateOutputEQBand('midPeak', 'Q', value)
-                  }}
-                />
               </div>
 
               {/* HIGH */}
@@ -453,17 +365,6 @@ export function EQPanel(): React.JSX.Element {
                     updateOutputEQBand('highPeak', 'gain', value)
                   }}
                 />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={outputEQ.highPeak.Q}
-                  min={0.5}
-                  max={5}
-                  label="Q"
-                  onChange={(value) => {
-                    updateOutputEQBand('highPeak', 'Q', value)
-                  }}
-                />
               </div>
 
               {/* LPF */}
@@ -484,17 +385,6 @@ export function EQPanel(): React.JSX.Element {
                   unit="Hz"
                   onChange={(value) => {
                     updateOutputEQBand('lowpass', 'frequency', value)
-                  }}
-                />
-                <StyledKnob
-                  size="xs"
-                  color="white"
-                  value={outputEQ.lowpass.Q}
-                  min={0.1}
-                  max={10}
-                  label="Q"
-                  onChange={(value) => {
-                    updateOutputEQBand('lowpass', 'Q', value)
                   }}
                 />
               </div>
