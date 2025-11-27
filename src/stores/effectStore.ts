@@ -4,7 +4,7 @@ import { api } from '@/services/api'
 import { toast } from '@/components/ui'
 
 interface GenerateOptions {
-  complexity?: 'simple' | 'moderate' | 'complex'
+  complexity?: 'simple' | 'complex'
   style?: string
 }
 

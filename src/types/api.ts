@@ -17,7 +17,7 @@ export interface ApiError {
 export interface GenerateEffectRequest {
   prompt: string
   options?: {
-    complexity?: 'simple' | 'moderate' | 'complex'
+    complexity?: 'simple' | 'complex'
     style?: string
   }
 }

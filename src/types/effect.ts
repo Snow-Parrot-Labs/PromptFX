@@ -38,7 +38,7 @@ export interface Position {
 
 // Panel Design (rack unit styling)
 export interface PanelDesign {
-  rackUnits: 1 | 2 | 3 | 4
+  rackUnits: 1 | 2
   primaryColor: string
   accentColor: string
   textColor: string
@@ -121,12 +121,13 @@ export interface BrandLabel {
 // Artwork Definition
 export interface Artwork {
   background?: GradientElement
+  backgroundImage?: string // Base64 data URL from AI image generation
   elements?: ArtworkElement[]
   brandLabel?: BrandLabel
 }
 
 // Decoration Types (LEDs, meters, labels)
-export type DecorationLEDColor = 'green' | 'amber' | 'red' | 'blue'
+export type DecorationLEDColor = 'green' | 'amber' | 'red' | 'blue' | 'cyan' | 'purple' | 'white'
 
 export interface LEDDecoration {
   type: 'led'

@@ -278,6 +278,19 @@ class AudioEngine {
     }
   }
 
+  // Set master wet/dry mix (0 = fully dry, 1 = fully wet)
+  setMasterMix(mix: number): void {
+    if (this.wetGain && this.dryGain) {
+      const clampedMix = Math.max(0, Math.min(1, mix))
+      this.wetGain.gain.rampTo(clampedMix, 0.02)
+      this.dryGain.gain.rampTo(1 - clampedMix, 0.02)
+    }
+  }
+
+  getMasterMix(): number {
+    return this.wetGain?.gain.value ?? 1
+  }
+
   // Test tone methods
   startTestTone(frequency: TestToneFrequency, waveform: TestToneWaveform = 'sine'): void {
     if (!this.isInitialized) return
@@ -625,19 +638,31 @@ class AudioEngine {
     return this.masterGain?.gain.value ?? 1
   }
 
-  // Spectrum analysis
+  // Spectrum analysis - return silence when no analyser or no signal
+  private createSilenceSpectrum(): Float32Array {
+    return new Float32Array(32).fill(-100) // MIN_DB threshold
+  }
+
   getInputSpectrum(): Float32Array {
     if (this.inputAnalyser) {
-      return this.inputAnalyser.getValue() as Float32Array
+      const data = this.inputAnalyser.getValue() as Float32Array
+      // Check if we have actual signal (not all zeros or very low values)
+      if (data.length > 0 && data.some((v) => v > -95 && isFinite(v))) {
+        return data
+      }
     }
-    return new Float32Array(32)
+    return this.createSilenceSpectrum()
   }
 
   getOutputSpectrum(): Float32Array {
     if (this.outputAnalyser) {
-      return this.outputAnalyser.getValue() as Float32Array
+      const data = this.outputAnalyser.getValue() as Float32Array
+      // Check if we have actual signal (not all zeros or very low values)
+      if (data.length > 0 && data.some((v) => v > -95 && isFinite(v))) {
+        return data
+      }
     }
-    return new Float32Array(32)
+    return this.createSilenceSpectrum()
   }
 
   // Audio export

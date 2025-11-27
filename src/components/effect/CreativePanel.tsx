@@ -50,7 +50,13 @@ export function CreativePanel({
       }}
     >
       {/* Artwork layer (background, decorative elements, brand label) */}
-      {artwork !== undefined && <ArtworkRenderer artwork={artwork} />}
+      {artwork !== undefined && (
+        <ArtworkRenderer
+          artwork={artwork}
+          rackUnits={rackUnits}
+          accentColor={panelDesign?.accentColor ?? '#d4af37'}
+        />
+      )}
 
       {/* Decorations layer (LEDs, VU meters, section labels) */}
       {decorations !== undefined && (

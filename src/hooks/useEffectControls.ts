@@ -52,7 +52,14 @@ export function useEffectControls(): {
       const key = `${control.binding.nodeId}.${control.binding.param}`
       const value = parameterValues[key]
       if (value !== undefined && typeof value !== 'boolean') {
-        effectBuilder.updateParameter(control.binding.nodeId, control.binding.param, value)
+        // Handle special _engine nodeId for master controls
+        if (control.binding.nodeId === '_engine') {
+          if (control.binding.param === 'mix' && typeof value === 'number') {
+            audioEngine.setMasterMix(value)
+          }
+        } else {
+          effectBuilder.updateParameter(control.binding.nodeId, control.binding.param, value)
+        }
       }
     }
   }, [definition, parameterValues])
@@ -62,6 +69,14 @@ export function useEffectControls(): {
       // Update store
       const key = `${nodeId}.${param}`
       updateParameter(key, value)
+
+      // Handle special _engine nodeId for master controls
+      if (nodeId === '_engine') {
+        if (param === 'mix' && typeof value === 'number') {
+          audioEngine.setMasterMix(value)
+        }
+        return
+      }
 
       // Update audio (only for numeric/string values, not booleans)
       if (typeof value !== 'boolean') {

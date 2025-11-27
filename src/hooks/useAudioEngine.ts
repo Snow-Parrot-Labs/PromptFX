@@ -139,14 +139,6 @@ export function useAudioEngine(): UseAudioEngineReturn {
     }
   }, [testToneActive, testToneFrequency, testToneWaveform, startTestTone, stopTestTone])
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      audioEngine.dispose()
-      isInitializedRef.current = false
-    }
-  }, [])
-
   return {
     initialize,
     loadFile,

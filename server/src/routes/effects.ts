@@ -46,6 +46,15 @@ effectRoutes.post(
       // Generate effect
       const effect = await createEffect(prompt, options)
 
+      // Debug: Log what we're returning
+      console.log('📤 [Route] Returning effect:', {
+        id: effect.id,
+        name: effect.name,
+        hasArtwork: effect.ui.artwork !== undefined,
+        hasBackgroundImage: effect.ui.artwork?.backgroundImage !== undefined,
+        backgroundImageLength: effect.ui.artwork?.backgroundImage?.length ?? 0,
+      })
+
       res.status(201).json({
         success: true,
         data: effect,

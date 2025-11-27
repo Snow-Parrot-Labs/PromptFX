@@ -2,20 +2,45 @@ import type { Artwork, ArtworkElement, GradientElement } from '@/types/effect'
 
 interface ArtworkRendererProps {
   artwork: Artwork
+  rackUnits?: number
+  accentColor?: string
 }
 
-export function ArtworkRenderer({ artwork }: ArtworkRendererProps): React.JSX.Element {
+export function ArtworkRenderer({
+  artwork,
+  rackUnits = 2,
+  accentColor = '#d4af37',
+}: ArtworkRendererProps): React.JSX.Element {
   return (
     <>
-      {/* Background gradient */}
-      {artwork.background !== undefined && <GradientBackground gradient={artwork.background} />}
+      {/* AI-generated texture (cover background - lowest layer) */}
+      {artwork.backgroundImage !== undefined && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            zIndex: 0,
+            backgroundImage: `url(${artwork.backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+      )}
 
-      {/* Decorative elements */}
+      {/* Background gradient - only render if NO background image */}
+      {artwork.background !== undefined && artwork.backgroundImage === undefined && (
+        <GradientBackground gradient={artwork.background} />
+      )}
+
+      {/* Procedural panel elements (screws, seams, vents) */}
+      <ProceduralPanelElements rackUnits={rackUnits} accentColor={accentColor} />
+
+      {/* Decorative elements (z-index 1 - above background) */}
       {artwork.elements?.map((element, i) => (
         <ElementRenderer key={i} element={element} />
       ))}
 
-      {/* Brand label */}
+      {/* Brand label (z-index 2 - above decorative elements) */}
       {artwork.brandLabel !== undefined && (
         <BrandLabel
           text={artwork.brandLabel.text}
@@ -24,6 +49,163 @@ export function ArtworkRenderer({ artwork }: ArtworkRendererProps): React.JSX.El
         />
       )}
     </>
+  )
+}
+
+interface ProceduralPanelElementsProps {
+  rackUnits: number
+  accentColor: string
+}
+
+function ProceduralPanelElements({
+  rackUnits,
+  accentColor,
+}: ProceduralPanelElementsProps): React.JSX.Element {
+  const panelHeight = rackUnits * 88
+
+  return (
+    <>
+      {/* Corner screws */}
+      <Screw x={12} y={12} />
+      <Screw x={12} y={panelHeight - 12} />
+      <Screw x="calc(100% - 12px)" y={12} />
+      <Screw x="calc(100% - 12px)" y={panelHeight - 12} />
+
+      {/* Edge rails (subtle horizontal lines at top and bottom) */}
+      <div
+        className="absolute left-0 right-0 pointer-events-none"
+        style={{
+          top: 0,
+          height: '2px',
+          background:
+            'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.3) 100%)',
+          zIndex: 1,
+        }}
+      />
+      <div
+        className="absolute left-0 right-0 pointer-events-none"
+        style={{
+          bottom: 0,
+          height: '2px',
+          background:
+            'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.3) 100%)',
+          zIndex: 1,
+        }}
+      />
+
+      {/* Rack unit divider line (if 2U) */}
+      {rackUnits === 2 && (
+        <div
+          className="absolute left-8 right-8 pointer-events-none"
+          style={{
+            top: '50%',
+            height: '1px',
+            background: 'rgba(0,0,0,0.2)',
+            boxShadow: '0 1px 0 rgba(255,255,255,0.05)',
+            zIndex: 1,
+          }}
+        />
+      )}
+
+      {/* Vent grille (subtle, at far right) */}
+      <VentGrille x="calc(100% - 40px)" y="50%" accentColor={accentColor} />
+
+      {/* Panel bevel effect (inner shadow) */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.3)',
+          zIndex: 1,
+        }}
+      />
+    </>
+  )
+}
+
+interface ScrewProps {
+  x: number | string
+  y: number | string
+}
+
+function Screw({ x, y }: ScrewProps): React.JSX.Element {
+  const left = typeof x === 'number' ? `${x.toString()}px` : x
+  const top = typeof y === 'number' ? `${y.toString()}px` : y
+
+  return (
+    <div
+      className="absolute pointer-events-none"
+      style={{
+        left,
+        top,
+        width: '10px',
+        height: '10px',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 2,
+      }}
+    >
+      {/* Screw body */}
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 50%, #1a1a1a 100%)',
+          boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.2), 0 1px 2px rgba(0,0,0,0.5)',
+        }}
+      />
+      {/* Screw slot */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '25%',
+          right: '25%',
+          height: '1.5px',
+          background: '#1a1a1a',
+          transform: 'translateY(-50%)',
+        }}
+      />
+    </div>
+  )
+}
+
+interface VentGrilleProps {
+  x: string
+  y: string
+  accentColor: string
+}
+
+function VentGrille({ x, y }: VentGrilleProps): React.JSX.Element {
+  const slotCount = 5
+  const slots = []
+
+  for (let i = 0; i < slotCount; i++) {
+    slots.push(
+      <div
+        key={i}
+        style={{
+          width: '3px',
+          height: '24px',
+          background: 'rgba(0,0,0,0.6)',
+          borderRadius: '1px',
+          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+        }}
+      />
+    )
+  }
+
+  return (
+    <div
+      className="absolute pointer-events-none flex gap-1"
+      style={{
+        left: x,
+        top: y,
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1,
+      }}
+    >
+      {slots}
+    </div>
   )
 }
 
@@ -55,12 +237,15 @@ function GradientBackground({ gradient }: { gradient: GradientElement }): React.
 }
 
 function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.Element | null {
+  const baseStyle = { zIndex: 1 }
+
   switch (element.type) {
     case 'stripe':
       return (
         <div
           className="absolute pointer-events-none"
           style={{
+            ...baseStyle,
             left: `${element.position.x.toString()}%`,
             top: `${element.position.y.toString()}%`,
             width: `${element.position.width.toString()}%`,
@@ -75,6 +260,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
         <div
           className="absolute rounded-full pointer-events-none"
           style={{
+            ...baseStyle,
             left: `${element.position.x.toString()}%`,
             top: `${element.position.y.toString()}%`,
             width: `${(element.radius * 2).toString()}%`,
@@ -87,7 +273,6 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
       )
 
     case 'line': {
-      // Calculate line angle and length
       const dx = element.to.x - element.from.x
       const dy = element.to.y - element.from.y
       const length = Math.sqrt(dx * dx + dy * dy)
@@ -97,6 +282,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
         <div
           className="absolute origin-left pointer-events-none"
           style={{
+            ...baseStyle,
             left: `${element.from.x.toString()}%`,
             top: `${element.from.y.toString()}%`,
             width: `${length.toString()}%`,
@@ -113,6 +299,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
         <div
           className="absolute rounded-full pointer-events-none"
           style={{
+            ...baseStyle,
             left: `${element.position.x.toString()}%`,
             top: `${element.position.y.toString()}%`,
             width: `${(element.radius * 2).toString()}%`,
@@ -129,6 +316,7 @@ function ElementRenderer({ element }: { element: ArtworkElement }): React.JSX.El
         <div
           className="absolute pointer-events-none"
           style={{
+            ...baseStyle,
             left: `${element.position.x.toString()}%`,
             top: `${element.position.y.toString()}%`,
             width: `${element.position.width.toString()}%`,
@@ -199,7 +387,10 @@ function BrandLabel({ text, position, style }: BrandLabelProps): React.JSX.Eleme
   }
 
   return (
-    <div className="absolute uppercase tracking-widest pointer-events-none" style={getTextStyle()}>
+    <div
+      className="absolute uppercase tracking-widest pointer-events-none"
+      style={{ ...getTextStyle(), zIndex: 2 }}
+    >
       {text}
     </div>
   )

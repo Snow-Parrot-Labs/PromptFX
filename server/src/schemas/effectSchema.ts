@@ -47,7 +47,7 @@ export const positionSchema = z.object({
 
 // Panel Design (rack unit styling)
 export const panelDesignSchema = z.object({
-  rackUnits: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)]),
+  rackUnits: z.union([z.literal(1), z.literal(2)]),
   primaryColor: z.string(),
   accentColor: z.string(),
   textColor: z.string(),
@@ -139,12 +139,13 @@ export const brandLabelSchema = z.object({
 // Artwork Definition
 export const artworkSchema = z.object({
   background: gradientElementSchema.optional(),
+  backgroundImage: z.string().optional(), // Base64 data URL from AI image generation
   elements: z.array(artworkElementSchema).optional(),
   brandLabel: brandLabelSchema.optional(),
 })
 
 // Decoration Types
-export const ledColorSchema = z.enum(['green', 'amber', 'red', 'blue'])
+export const ledColorSchema = z.enum(['green', 'amber', 'red', 'blue', 'cyan', 'purple', 'white'])
 
 export const ledDecorationSchema = z.object({
   type: z.literal('led'),

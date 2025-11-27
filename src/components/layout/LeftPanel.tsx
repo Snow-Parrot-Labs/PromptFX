@@ -4,20 +4,19 @@ import { api } from '@/services/api'
 import { toast } from '@/components/ui'
 
 interface ComplexityOption {
-  value: 'simple' | 'moderate' | 'complex'
+  value: 'simple' | 'complex'
   label: string
   desc: string
 }
 
 const COMPLEXITY_OPTIONS: ComplexityOption[] = [
-  { value: 'simple', label: 'Simple', desc: '2-3' },
-  { value: 'moderate', label: 'Moderate', desc: '3-5' },
-  { value: 'complex', label: 'Complex', desc: '5-7' },
+  { value: 'simple', label: 'Simple', desc: '1U, 2-3 controls' },
+  { value: 'complex', label: 'Complex', desc: '2U, 5-7 controls' },
 ]
 
 export function LeftPanel(): React.JSX.Element {
   const [prompt, setPrompt] = useState('')
-  const [complexity, setComplexity] = useState<'simple' | 'moderate' | 'complex'>('moderate')
+  const [complexity, setComplexity] = useState<'simple' | 'complex'>('complex')
   const [isLoadingRandom, setIsLoadingRandom] = useState(false)
   const { isGenerating, generationError, generateEffect } = useEffectStore()
 
@@ -123,7 +122,7 @@ export function LeftPanel(): React.JSX.Element {
           <label className="text-xs font-medium text-[--color-text-secondary] mb-2 block">
             Complexity
           </label>
-          <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-2 gap-1">
             {COMPLEXITY_OPTIONS.map((option) => (
               <button
                 key={option.value}

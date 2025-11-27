@@ -6,9 +6,16 @@ const anthropic = new Anthropic({
   apiKey: config.ANTHROPIC_API_KEY,
 })
 
-const SYSTEM_PROMPT = `You are an expert audio DSP engineer and creative UI designer specializing in rack-mounted audio gear. Generate unique, visually stunning effect units that look like professional studio equipment.
+const SYSTEM_PROMPT = `You are an expert audio DSP engineer and creative UI designer specializing in professional audio plugin interfaces. Design plugin GUIs that look like software emulations of legendary hardware - think Universal Audio, Waves, Plugin Alliance, and Soundtoys.
 
-IMPORTANT: You are designing a CREATIVE, UNIQUE rack-mount effect panel. Each effect should have its own visual identity.
+## DESIGN PHILOSOPHY
+Create interfaces that look like real hardware studio gear:
+- Neve 1073: Warm colors, chunky knobs, VU meters, red/maroon panels
+- SSL 4000: Blue/gray industrial look, precise encoders, channel strip layout
+- Universal Audio LA-2A: Cream/tan panels, large knobs, retro lettering
+- Moog synthesizers: Wood panels, large knobs with skirts, warm lighting
+- Roland/Boss pedals: Colorful, compact, rugged metal construction
+- API 500 series: Punchy graphics, bold colors, compact professional layout
 
 ## DSP Node Types (params MUST be an object, even if empty: "params": {})
 - input: Audio input (required, params: {})
@@ -26,81 +33,141 @@ IMPORTANT: You are designing a CREATIVE, UNIQUE rack-mount effect panel. Each ef
 ## Connection Format (MUST use objects with nodeId):
 { "from": { "nodeId": "sourceNodeId" }, "to": { "nodeId": "targetNodeId" } }
 
-## UI Controls (position x,y are 0-100%)
-- knob: style.color: amber|cyan|green|red|white|purple, style.size: sm|md|lg
-- slider: orientation: horizontal|vertical
-- switch: onLabel, offLabel
+## UI CONTROL TYPES & WHEN TO USE THEM
+
+### Rotary Knobs (type: "knob")
+- style.color: amber|cyan|green|red|white|purple
+- style.size: sm|md|lg
+- style.indicator: line|dot|arc
+USE FOR: Frequency, time, gain, mix, feedback - any continuously variable parameter
+- lg: Main effect parameters (TIME, DECAY, THRESHOLD)
+- md: Secondary parameters (TONE, COLOR, WIDTH)
+- sm: Trim adjustments, fine-tuning
+
+### Vertical Faders (type: "slider", config.orientation: "vertical")
+USE FOR: Level/volume controls, wet/dry mix - parameters where you want visual feedback of level
+- Great for OUTPUT, INPUT GAIN, MIX controls
+- Reminiscent of mixing console channel strips
+- Height typically 80-120px
+
+### Horizontal Sliders (type: "slider", config.orientation: "horizontal")
+USE FOR: Stereo width, pan position, blend parameters
+- Good for L/R balance, stereo spread
+
+### Toggle Switches (type: "switch")
+- config.onLabel, config.offLabel
+USE FOR: On/off states, mode toggles, bypass
+- BYPASS: offLabel="OUT", onLabel="IN"
+- MODE: offLabel="VINTAGE", onLabel="MODERN"
+- Great for enabling/disabling processing stages
+
+## DECORATIONS & VISUAL ELEMENTS
+- LED indicators: Power on, signal present, clip warning (colors: green, amber, red, blue)
+- VU meters: Level visualization for compressors, limiters
+- Section labels: Group related controls ("INPUT", "OUTPUT", "MODULATION")
+- Stripes: Visual separation between panel sections
+- Glows: Subtle illumination behind main controls
+
+## PANEL DESIGN PRINCIPLES
+1. **Visual Hierarchy**: Most important controls should be largest and most prominent
+2. **Logical Grouping**: Related parameters should be visually grouped together
+3. **Clear Flow**: Signal flow should be apparent (typically left-to-right or top-to-bottom)
+4. **Breathing Room**: Don't overcrowd - leave space between control groups
+5. **Consistent Style**: All controls should feel like they belong to the same piece of gear
 
 ## COMPLETE EXAMPLE (follow this structure exactly):
 {
-  "name": "Warm Delay",
-  "description": "Analog-style delay with tape warmth",
+  "name": "Tape Echo Station",
+  "description": "Vintage tape delay with analog warmth and modulation",
   "nodes": [
     { "id": "input", "type": "input", "params": {} },
-    { "id": "delay1", "type": "delay", "params": { "time": 300, "feedback": 0.4, "mix": 0.5 } },
-    { "id": "filter1", "type": "filter", "params": { "type": "lowpass", "frequency": 3000, "Q": 1 } },
+    { "id": "delay1", "type": "delay", "params": { "time": 375, "feedback": 0.45, "mix": 0.4 } },
+    { "id": "filter1", "type": "filter", "params": { "type": "lowpass", "frequency": 4000, "Q": 0.7 } },
+    { "id": "distortion1", "type": "distortion", "params": { "type": "soft", "amount": 0.2, "mix": 0.6 } },
     { "id": "output", "type": "output", "params": {} }
   ],
   "connections": [
     { "from": { "nodeId": "input" }, "to": { "nodeId": "delay1" } },
     { "from": { "nodeId": "delay1" }, "to": { "nodeId": "filter1" } },
-    { "from": { "nodeId": "filter1" }, "to": { "nodeId": "output" } }
+    { "from": { "nodeId": "filter1" }, "to": { "nodeId": "distortion1" } },
+    { "from": { "nodeId": "distortion1" }, "to": { "nodeId": "output" } }
   ],
   "ui": {
     "layout": "absolute",
     "panelDesign": {
       "rackUnits": 2,
-      "primaryColor": "#1a1a2e",
-      "accentColor": "#f59e0b",
-      "textColor": "#e5e5e5"
+      "primaryColor": "#2d1810",
+      "accentColor": "#ff6b35",
+      "textColor": "#f4e4c1"
     },
     "artwork": {
-      "background": { "type": "gradient", "colors": ["#1a1a2e", "#0f0f1a"], "direction": "vertical" },
+      "background": { "type": "gradient", "colors": ["#2d1810", "#1a0f08"], "direction": "vertical" },
       "elements": [
-        { "type": "stripe", "position": { "x": 0, "y": 85, "width": 100, "height": 15 }, "color": "#0a0a12" },
-        { "type": "glow", "position": { "x": 25, "y": 50 }, "color": "#f59e0b", "radius": 15, "opacity": 0.15 }
+        { "type": "stripe", "position": { "x": 0, "y": 80, "width": 100, "height": 20 }, "color": "#1a0f08" },
+        { "type": "glow", "position": { "x": 20, "y": 50 }, "color": "#ff6b35", "radius": 18, "opacity": 0.12 },
+        { "type": "glow", "position": { "x": 50, "y": 50 }, "color": "#ff6b35", "radius": 18, "opacity": 0.12 }
       ],
-      "brandLabel": { "text": "WARM-DELAY", "position": { "x": 50, "y": 10 }, "style": "embossed" }
+      "brandLabel": { "text": "TAPE-ECHO", "position": { "x": 50, "y": 8 }, "style": "embossed" }
     },
     "controls": [
       {
         "id": "time", "type": "knob", "label": "TIME",
-        "position": { "x": 25, "y": 50 },
+        "position": { "x": 20, "y": 45 },
         "style": { "color": "amber", "size": "lg", "indicator": "line" },
         "binding": { "nodeId": "delay1", "param": "time" },
-        "config": { "min": 0, "max": 2000, "default": 300, "unit": "ms" }
+        "config": { "min": 50, "max": 1500, "default": 375, "unit": "ms" }
       },
       {
         "id": "feedback", "type": "knob", "label": "FEEDBACK",
-        "position": { "x": 50, "y": 50 },
+        "position": { "x": 40, "y": 45 },
         "style": { "color": "amber", "size": "lg", "indicator": "line" },
         "binding": { "nodeId": "delay1", "param": "feedback" },
-        "config": { "min": 0, "max": 1, "default": 0.4 }
+        "config": { "min": 0, "max": 0.95, "default": 0.45 }
       },
       {
-        "id": "mix", "type": "knob", "label": "MIX",
-        "position": { "x": 75, "y": 50 },
+        "id": "tone", "type": "knob", "label": "TONE",
+        "position": { "x": 60, "y": 45 },
         "style": { "color": "white", "size": "md", "indicator": "line" },
+        "binding": { "nodeId": "filter1", "param": "frequency" },
+        "config": { "min": 500, "max": 8000, "default": 4000, "unit": "Hz" }
+      },
+      {
+        "id": "saturation", "type": "knob", "label": "SATURATION",
+        "position": { "x": 80, "y": 45 },
+        "style": { "color": "red", "size": "sm", "indicator": "dot" },
+        "binding": { "nodeId": "distortion1", "param": "amount" },
+        "config": { "min": 0, "max": 0.8, "default": 0.2 }
+      },
+      {
+        "id": "mix", "type": "slider", "label": "MIX",
+        "position": { "x": 92, "y": 50 },
+        "style": { "color": "white" },
         "binding": { "nodeId": "delay1", "param": "mix" },
-        "config": { "min": 0, "max": 1, "default": 0.5 }
+        "config": { "min": 0, "max": 1, "default": 0.4, "orientation": "vertical" }
       }
     ],
     "decorations": [
-      { "type": "led", "position": { "x": 92, "y": 10 }, "color": "green" }
+      { "type": "led", "position": { "x": 8, "y": 10 }, "color": "green" },
+      { "type": "label", "position": { "x": 20, "y": 72 }, "text": "DELAY", "size": "xs" },
+      { "type": "label", "position": { "x": 70, "y": 72 }, "text": "CHARACTER", "size": "xs" }
     ]
   }
 }
 
-## Creative Guidelines
-1. EVERY effect needs unique panel colors (warm=amber/red, cold=cyan/blue)
-2. Position controls intentionally across the panel (x: 15-85%, y: 35-75%)
-3. Use brandLabel for a cool hardware name (e.g., "NEBULA-VERB", "TAPE-CRUSH")
-4. Add visual elements: stripes, glows behind knobs
-5. Include at least one LED indicator
-6. Use lg knobs for main controls, sm/md for secondary`
+## CREATIVE GUIDELINES
+1. **Unique Identity**: Each effect should feel like a distinct piece of hardware
+2. **Color Palette**: Match colors to the effect character:
+   - Warm effects (tape, tube, vintage): Amber, cream, brown, orange
+   - Cold/modern effects (digital, clean): Cyan, blue, silver, white
+   - Aggressive effects (distortion, compression): Red, black, industrial
+3. **Control Layout**: Position controls x: 15-90%, y: 30-75% for good spacing
+4. **Hardware Brand**: Use brandLabel for a memorable name (e.g., "NEBULA-VERB", "IRON-CRUSH", "SPACE-ECHO")
+5. **LED Indicators**: Include at least one LED (power indicator at minimum)
+6. **Section Labels**: Use decorations to label control groups
+7. **Mix Faders**: Consider using a vertical slider for wet/dry mix to mimic console layouts`
 
 export interface GenerateEffectOptions {
-  complexity?: 'simple' | 'moderate' | 'complex'
+  complexity?: 'simple' | 'complex'
   style?: string
 }
 
@@ -203,10 +270,8 @@ export async function generateEffect(
 
   const complexityHint =
     options.complexity === 'simple'
-      ? 'Create a simple effect with 2-3 controls.'
-      : options.complexity === 'complex'
-        ? 'Create a complex effect with 5-7 controls and multiple processing stages.'
-        : 'Create a moderately complex effect with 3-5 controls.'
+      ? 'Create a simple effect with 2-3 controls. Panel size: 1 rack unit.'
+      : 'Create a complex effect with 5-7 controls and multiple processing stages. Panel size: 2 rack units.'
 
   const styleHint = options.style ? `Style preference: ${options.style}.` : ''
 

@@ -28,6 +28,21 @@ const LED_COLORS: Record<DecorationLEDColor, { on: string; off: string; glow: st
     off: '#141a24',
     glow: 'rgba(90, 122, 154, 0.5)',
   },
+  cyan: {
+    on: '#4ac4c4',
+    off: '#142424',
+    glow: 'rgba(74, 196, 196, 0.5)',
+  },
+  purple: {
+    on: '#9a5a9a',
+    off: '#241428',
+    glow: 'rgba(154, 90, 154, 0.5)',
+  },
+  white: {
+    on: '#c4c4c4',
+    off: '#242424',
+    glow: 'rgba(196, 196, 196, 0.5)',
+  },
 }
 
 export function LEDIndicator({

@@ -4,20 +4,19 @@ import { api } from '@/services/api'
 import { toast } from '@/components/ui'
 
 interface ComplexityOption {
-  value: 'simple' | 'moderate' | 'complex'
+  value: 'simple' | 'complex'
   label: string
   description: string
 }
 
 const COMPLEXITY_OPTIONS: ComplexityOption[] = [
-  { value: 'simple', label: 'Simple', description: '2-3 controls' },
-  { value: 'moderate', label: 'Moderate', description: '3-5 controls' },
-  { value: 'complex', label: 'Complex', description: '5-7 controls' },
+  { value: 'simple', label: 'Simple', description: '1U, 2-3 controls' },
+  { value: 'complex', label: 'Complex', description: '2U, 5-7 controls' },
 ]
 
 export function PromptInput(): React.JSX.Element {
   const [prompt, setPrompt] = useState('')
-  const [complexity, setComplexity] = useState<'simple' | 'moderate' | 'complex'>('moderate')
+  const [complexity, setComplexity] = useState<'simple' | 'complex'>('complex')
   const [isLoadingRandom, setIsLoadingRandom] = useState(false)
   const { isGenerating, generationError, generateEffect } = useEffectStore()
 
