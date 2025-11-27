@@ -132,28 +132,25 @@ export function IOMeter(): React.JSX.Element {
   )
 
   return (
-    <div className="flex flex-col items-center">
-      {/* Channel strips container */}
-      <div className="flex gap-4 p-3 bg-[--color-bg-tertiary] rounded-lg border border-[--color-border]">
-        {/* Input Channel */}
-        <ChannelStrip
-          label="IN"
-          level={inputLevel}
-          gain={inputGain}
-          onGainChange={handleInputGainChange}
-        />
+    <div className="flex gap-4 justify-center">
+      {/* Input Channel */}
+      <ChannelStrip
+        label="IN"
+        level={inputLevel}
+        gain={inputGain}
+        onGainChange={handleInputGainChange}
+      />
 
-        {/* Divider */}
-        <div className="w-px bg-[--color-border] self-stretch my-4" />
+      {/* Divider */}
+      <div className="w-px bg-[--color-border] self-stretch my-4" />
 
-        {/* Output Channel */}
-        <ChannelStrip
-          label="OUT"
-          level={outputLevel}
-          gain={masterVolume}
-          onGainChange={handleOutputGainChange}
-        />
-      </div>
+      {/* Output Channel */}
+      <ChannelStrip
+        label="OUT"
+        level={outputLevel}
+        gain={masterVolume}
+        onGainChange={handleOutputGainChange}
+      />
     </div>
   )
 }

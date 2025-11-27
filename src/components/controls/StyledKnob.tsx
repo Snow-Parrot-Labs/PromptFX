@@ -24,6 +24,7 @@ const COLOR_THEMES: Record<ControlColorTheme, { main: string; glow: string }> = 
 }
 
 const SIZE_CONFIG: Record<ControlSize, { knob: number; label: string; value: string }> = {
+  xs: { knob: 30, label: 'text-[8px]', value: 'text-[7px]' },
   sm: { knob: 40, label: 'text-[9px]', value: 'text-[8px]' },
   md: { knob: 56, label: 'text-[10px]', value: 'text-[9px]' },
   lg: { knob: 72, label: 'text-xs', value: 'text-[10px]' },
@@ -135,7 +136,8 @@ export function StyledKnob({
               className="absolute top-1.5 left-1/2 -translate-x-1/2 rounded-full"
               style={{
                 width: '2px',
-                height: size === 'lg' ? '12px' : size === 'md' ? '10px' : '8px',
+                height:
+                  size === 'lg' ? '12px' : size === 'md' ? '10px' : size === 'sm' ? '8px' : '6px',
                 background: `linear-gradient(180deg, ${theme.main} 0%, ${theme.main}88 100%)`,
                 boxShadow: `0 0 3px ${theme.glow}`,
               }}
@@ -145,8 +147,8 @@ export function StyledKnob({
             <div
               className="absolute top-2 left-1/2 -translate-x-1/2 rounded-full"
               style={{
-                width: size === 'lg' ? '6px' : '4px',
-                height: size === 'lg' ? '6px' : '4px',
+                width: size === 'lg' ? '6px' : size === 'xs' ? '3px' : '4px',
+                height: size === 'lg' ? '6px' : size === 'xs' ? '3px' : '4px',
                 background: `radial-gradient(circle at 30% 30%, ${theme.main} 0%, ${theme.main}88 100%)`,
                 boxShadow: `0 0 4px ${theme.glow}`,
               }}
@@ -158,7 +160,7 @@ export function StyledKnob({
         <div
           className="absolute rounded-full"
           style={{
-            inset: size === 'lg' ? '20px' : size === 'md' ? '16px' : '12px',
+            inset: size === 'lg' ? '20px' : size === 'md' ? '16px' : size === 'sm' ? '12px' : '9px',
             background: 'linear-gradient(145deg, #5a5448 0%, #3a3428 100%)',
             boxShadow:
               'inset 1px 1px 2px rgba(255,255,255,0.08), inset -1px -1px 2px rgba(0,0,0,0.3)',

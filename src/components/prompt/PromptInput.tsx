@@ -107,10 +107,9 @@ export function PromptInput(): React.JSX.Element {
             maxLength={500}
             disabled={isDisabled}
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>Min 3 characters</span>
-            <span>{prompt.length}/500</span>
-          </div>
+          {prompt.length >= 500 && (
+            <div className="text-xs text-yellow-400 mt-1">Character limit reached (500 max)</div>
+          )}
         </div>
 
         <div>

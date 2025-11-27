@@ -51,7 +51,7 @@ export interface PanelDesign {
 
 // Control Style (visual styling for controls)
 export type ControlColorTheme = 'amber' | 'cyan' | 'green' | 'red' | 'white' | 'purple'
-export type ControlSize = 'sm' | 'md' | 'lg'
+export type ControlSize = 'xs' | 'sm' | 'md' | 'lg'
 export type IndicatorStyle = 'line' | 'dot' | 'arc'
 
 export interface ControlStyle {

@@ -5,6 +5,7 @@ import { EffectPanel } from '@/components/effect/EffectPanel'
 import { PresetControls } from '@/components/effect/PresetControls'
 import { SkeletonEffectPanel } from '@/components/ui/Skeleton'
 import { RackRails, BlankPanel, EffectRackUnit, SpectrumAnalyzer } from '@/components/rack'
+import { EQPanel } from '@/components/audio/EQPanel'
 
 export function CenterRack(): React.JSX.Element {
   const { definition, isGenerating, parameterValues } = useEffectStore()
@@ -73,6 +74,11 @@ export function CenterRack(): React.JSX.Element {
             `,
           }}
         >
+          {/* EQ Panel - always visible */}
+          <div className="w-full max-w-4xl mb-4">
+            <EQPanel />
+          </div>
+
           {/* Spectrum Analyzer - always at top */}
           <div className="w-full max-w-4xl mb-4">
             <SpectrumAnalyzer />

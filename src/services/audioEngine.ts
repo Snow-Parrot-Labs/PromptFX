@@ -38,6 +38,45 @@ class AudioEngine {
   private dryGain: Tone.Gain | null = null
   private masterGain: Tone.Gain | null = null
   private recorderDestination: MediaStreamAudioDestinationNode | null = null
+  // EQ chains for input (pre-effect) and output (post-effect)
+  private inputEQ: {
+    enabled: boolean
+    bypassed: boolean
+    highpass: Tone.Filter | null
+    lowShelf: Tone.Filter | null
+    midPeak: Tone.Filter | null
+    highPeak: Tone.Filter | null
+    lowpass: Tone.Filter | null
+    chain: Tone.ToneAudioNode[]
+  } = {
+    enabled: false,
+    bypassed: false,
+    highpass: null,
+    lowShelf: null,
+    midPeak: null,
+    highPeak: null,
+    lowpass: null,
+    chain: [],
+  }
+  private outputEQ: {
+    enabled: boolean
+    bypassed: boolean
+    highpass: Tone.Filter | null
+    lowShelf: Tone.Filter | null
+    midPeak: Tone.Filter | null
+    highPeak: Tone.Filter | null
+    lowpass: Tone.Filter | null
+    chain: Tone.ToneAudioNode[]
+  } = {
+    enabled: false,
+    bypassed: false,
+    highpass: null,
+    lowShelf: null,
+    midPeak: null,
+    highPeak: null,
+    lowpass: null,
+    chain: [],
+  }
   private audioBuffer: Tone.ToneAudioBuffer | null = null
   private isInitialized = false
   private liveInputEnabled = false
@@ -206,29 +245,43 @@ class AudioEngine {
     // Source -> InputGain
     source.connect(this.inputGainNode)
 
-    // InputGain -> InputMeter (tap for level display - meter is a dead end, doesn't pass audio)
-    this.inputGainNode.connect(this.inputMeter)
+    // After InputGain, determine next node in chain
+    let currentNode: Tone.ToneAudioNode = this.inputGainNode
 
-    // InputGain -> InputAnalyser (tap for spectrum analysis)
-    if (this.inputAnalyser) {
-      this.inputGainNode.connect(this.inputAnalyser)
+    // InputGain -> Input EQ (if enabled and not bypassed)
+    if (this.inputEQ.enabled && !this.inputEQ.bypassed && this.inputEQ.chain.length > 0) {
+      this.inputGainNode.connect(this.inputEQ.chain[0])
+      currentNode = this.inputEQ.chain[this.inputEQ.chain.length - 1]
     }
 
-    // InputGain -> Effect Chain -> Wet Gain
-    // OR InputGain -> Wet Gain (if no effects)
+    // After Input EQ (or InputGain) -> InputMeter (tap for level display)
+    currentNode.connect(this.inputMeter)
+
+    // After Input EQ (or InputGain) -> InputAnalyser (tap for spectrum)
+    if (this.inputAnalyser) {
+      currentNode.connect(this.inputAnalyser)
+    }
+
+    // After Input EQ (or InputGain) -> Effect Chain -> next stage
     if (this.effectsChain.length > 0) {
       const firstEffect = this.effectsChain[0]
       const lastEffect = this.effectsChain[this.effectsChain.length - 1]
-      if (firstEffect && lastEffect) {
-        this.inputGainNode.connect(firstEffect)
-        lastEffect.connect(this.wetGain)
+      if (firstEffect !== undefined && lastEffect !== undefined) {
+        currentNode.connect(firstEffect)
+        currentNode = lastEffect
       }
-    } else {
-      // No effects - connect directly to wet gain for output
-      this.inputGainNode.connect(this.wetGain)
     }
 
-    // InputGain -> Dry Gain (for bypass - unprocessed signal)
+    // After Effects -> Output EQ (if enabled and not bypassed)
+    if (this.outputEQ.enabled && !this.outputEQ.bypassed && this.outputEQ.chain.length > 0) {
+      currentNode.connect(this.outputEQ.chain[0])
+      currentNode = this.outputEQ.chain[this.outputEQ.chain.length - 1]
+    }
+
+    // Final -> Wet Gain
+    currentNode.connect(this.wetGain)
+
+    // InputGain -> Dry Gain (for bypass - unprocessed signal, skips EQ and effects)
     this.inputGainNode.connect(this.dryGain)
   }
 
@@ -441,6 +494,190 @@ class AudioEngine {
     this.clearEffectsChain()
   }
 
+  // EQ management
+  initializeEQ(): void {
+    // INPUT EQ - 5 filters in series
+    this.inputEQ.highpass = new Tone.Filter({
+      type: 'highpass',
+      frequency: 80,
+      Q: 0.7,
+    })
+    this.inputEQ.lowShelf = new Tone.Filter({
+      type: 'lowshelf',
+      frequency: 100,
+      gain: 0,
+      Q: 0.7,
+    })
+    this.inputEQ.midPeak = new Tone.Filter({
+      type: 'peaking',
+      frequency: 1000,
+      gain: 0,
+      Q: 1.0,
+    })
+    this.inputEQ.highPeak = new Tone.Filter({
+      type: 'peaking',
+      frequency: 8000,
+      gain: 0,
+      Q: 1.0,
+    })
+    this.inputEQ.lowpass = new Tone.Filter({
+      type: 'lowpass',
+      frequency: 12000,
+      Q: 0.7,
+    })
+
+    // Connect input EQ chain
+    this.inputEQ.highpass.connect(this.inputEQ.lowShelf)
+    this.inputEQ.lowShelf.connect(this.inputEQ.midPeak)
+    this.inputEQ.midPeak.connect(this.inputEQ.highPeak)
+    this.inputEQ.highPeak.connect(this.inputEQ.lowpass)
+
+    this.inputEQ.chain = [
+      this.inputEQ.highpass,
+      this.inputEQ.lowShelf,
+      this.inputEQ.midPeak,
+      this.inputEQ.highPeak,
+      this.inputEQ.lowpass,
+    ]
+
+    // OUTPUT EQ - 5 filters in series
+    this.outputEQ.highpass = new Tone.Filter({
+      type: 'highpass',
+      frequency: 80,
+      Q: 0.7,
+    })
+    this.outputEQ.lowShelf = new Tone.Filter({
+      type: 'lowshelf',
+      frequency: 100,
+      gain: 0,
+      Q: 0.7,
+    })
+    this.outputEQ.midPeak = new Tone.Filter({
+      type: 'peaking',
+      frequency: 1000,
+      gain: 0,
+      Q: 1.0,
+    })
+    this.outputEQ.highPeak = new Tone.Filter({
+      type: 'peaking',
+      frequency: 8000,
+      gain: 0,
+      Q: 1.0,
+    })
+    this.outputEQ.lowpass = new Tone.Filter({
+      type: 'lowpass',
+      frequency: 12000,
+      Q: 0.7,
+    })
+
+    // Connect output EQ chain
+    this.outputEQ.highpass.connect(this.outputEQ.lowShelf)
+    this.outputEQ.lowShelf.connect(this.outputEQ.midPeak)
+    this.outputEQ.midPeak.connect(this.outputEQ.highPeak)
+    this.outputEQ.highPeak.connect(this.outputEQ.lowpass)
+
+    this.outputEQ.chain = [
+      this.outputEQ.highpass,
+      this.outputEQ.lowShelf,
+      this.outputEQ.midPeak,
+      this.outputEQ.highPeak,
+      this.outputEQ.lowpass,
+    ]
+
+    this.inputEQ.enabled = true
+    this.outputEQ.enabled = true
+
+    // Rebuild signal chain with EQ inserted
+    this.reconnectActiveSource()
+  }
+
+  destroyEQ(): void {
+    // Dispose input EQ
+    if (this.inputEQ.highpass) this.inputEQ.highpass.dispose()
+    if (this.inputEQ.lowShelf) this.inputEQ.lowShelf.dispose()
+    if (this.inputEQ.midPeak) this.inputEQ.midPeak.dispose()
+    if (this.inputEQ.highPeak) this.inputEQ.highPeak.dispose()
+    if (this.inputEQ.lowpass) this.inputEQ.lowpass.dispose()
+
+    this.inputEQ.highpass = null
+    this.inputEQ.lowShelf = null
+    this.inputEQ.midPeak = null
+    this.inputEQ.highPeak = null
+    this.inputEQ.lowpass = null
+    this.inputEQ.chain = []
+    this.inputEQ.enabled = false
+
+    // Dispose output EQ
+    if (this.outputEQ.highpass) this.outputEQ.highpass.dispose()
+    if (this.outputEQ.lowShelf) this.outputEQ.lowShelf.dispose()
+    if (this.outputEQ.midPeak) this.outputEQ.midPeak.dispose()
+    if (this.outputEQ.highPeak) this.outputEQ.highPeak.dispose()
+    if (this.outputEQ.lowpass) this.outputEQ.lowpass.dispose()
+
+    this.outputEQ.highpass = null
+    this.outputEQ.lowShelf = null
+    this.outputEQ.midPeak = null
+    this.outputEQ.highPeak = null
+    this.outputEQ.lowpass = null
+    this.outputEQ.chain = []
+    this.outputEQ.enabled = false
+
+    this.reconnectActiveSource()
+  }
+
+  updateInputEQParameter(
+    filterType: 'highpass' | 'lowShelf' | 'midPeak' | 'highPeak' | 'lowpass',
+    param: 'frequency' | 'Q' | 'gain',
+    value: number
+  ): void {
+    const filter = this.inputEQ[filterType]
+    if (!filter) return
+
+    const rampTime = 0.02 // 20ms smooth transition
+
+    if (param === 'frequency') {
+      filter.frequency.rampTo(value, rampTime)
+    } else if (param === 'Q') {
+      filter.Q.rampTo(value, rampTime)
+    } else {
+      // Only lowshelf/peaking types have gain
+      if ('gain' in filter && filter.gain !== undefined) {
+        filter.gain.rampTo(value, rampTime)
+      }
+    }
+  }
+
+  updateOutputEQParameter(
+    filterType: 'highpass' | 'lowShelf' | 'midPeak' | 'highPeak' | 'lowpass',
+    param: 'frequency' | 'Q' | 'gain',
+    value: number
+  ): void {
+    const filter = this.outputEQ[filterType]
+    if (!filter) return
+
+    const rampTime = 0.02
+
+    if (param === 'frequency') {
+      filter.frequency.rampTo(value, rampTime)
+    } else if (param === 'Q') {
+      filter.Q.rampTo(value, rampTime)
+    } else {
+      if ('gain' in filter && filter.gain !== undefined) {
+        filter.gain.rampTo(value, rampTime)
+      }
+    }
+  }
+
+  setInputEQBypass(bypass: boolean): void {
+    this.inputEQ.bypassed = bypass
+    this.reconnectActiveSource()
+  }
+
+  setOutputEQBypass(bypass: boolean): void {
+    this.outputEQ.bypassed = bypass
+    this.reconnectActiveSource()
+  }
+
   setBypassed(bypass: boolean): void {
     this.setBypass(bypass)
   }
@@ -616,7 +853,7 @@ class AudioEngine {
       const context = Tone.getContext().rawContext as AudioContext & {
         setSinkId?: (sinkId: string) => Promise<void>
       }
-      return typeof context?.setSinkId === 'function'
+      return typeof context.setSinkId === 'function'
     } catch {
       return false
     }
@@ -820,6 +1057,9 @@ class AudioEngine {
     this.masterGain?.dispose()
     this.effectsChain.forEach((effect) => effect.dispose())
     this.recorderDestination = null
+
+    // Cleanup EQ nodes
+    this.destroyEQ()
 
     this.isInitialized = false
   }
