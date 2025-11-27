@@ -25,6 +25,7 @@ export function useAudioEngine(): UseAudioEngineReturn {
     setFileInfo,
     setSource,
     bypassEffect,
+    isLooping,
     testToneActive,
     testToneFrequency,
     testToneWaveform,
@@ -129,6 +130,11 @@ export function useAudioEngine(): UseAudioEngineReturn {
   useEffect(() => {
     audioEngine.setBypass(bypassEffect)
   }, [bypassEffect])
+
+  // Sync looping state with audio engine
+  useEffect(() => {
+    audioEngine.setLooping(isLooping)
+  }, [isLooping])
 
   // Sync test tone state
   useEffect(() => {

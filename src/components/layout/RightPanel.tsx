@@ -152,7 +152,12 @@ export function RightPanel(): React.JSX.Element {
             </div>
             <div className="space-y-2">
               {/* Waveform area - fixed height, doubles as drop zone when no file */}
-              <div className="h-16 bg-[--color-bg-tertiary] rounded overflow-hidden">
+              <div
+                className="h-16 rounded overflow-hidden"
+                style={{
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(0,0,0,0.2)',
+                }}
+              >
                 {fileInfo !== null ? <Waveform /> : <FileUploader />}
               </div>
               {/* Transport controls */}

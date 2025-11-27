@@ -143,7 +143,7 @@ export function FileUploader(): React.JSX.Element {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onClick={handleClick}
-      className={`h-24 flex items-center justify-center border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+      className={`h-full flex items-center justify-center border-2 border-dashed rounded cursor-pointer transition-colors ${
         isDragOver
           ? 'border-[--color-accent-primary] bg-[--color-accent-primary]/10'
           : 'border-[--color-border] hover:border-[--color-text-muted]'
@@ -152,14 +152,14 @@ export function FileUploader(): React.JSX.Element {
       {isFileUploading ? (
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 border-2 border-[--color-accent-primary] border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-[--color-text-secondary]">Loading...</span>
+          <span className="text-xs text-[--color-text-secondary]">Loading...</span>
         </div>
       ) : (
-        <div className="text-center">
-          <p className="text-[--color-text-muted] text-sm">
-            {isDragOver ? 'Drop file here' : 'Drop audio file here or click to upload'}
+        <div className="text-center px-2">
+          <p className="text-[--color-text-muted] text-xs">
+            {isDragOver ? 'Drop file here' : 'Drop audio or click to upload'}
           </p>
-          <p className="text-[--color-text-muted] text-xs mt-1">WAV, MP3, AIFF (max 256MB)</p>
+          <p className="text-[--color-text-muted] text-[10px] mt-0.5">WAV, MP3, AIFF</p>
         </div>
       )}
     </div>

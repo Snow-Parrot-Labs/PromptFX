@@ -45,6 +45,7 @@ class AudioEngine {
   private playbackStartTime = 0
   private callbacks: AudioEngineCallback = {}
   private animationFrameId: number | null = null
+  private loopEnabled = false
 
   async initialize(): Promise<void> {
     if (this.isInitialized) return
@@ -109,9 +110,19 @@ class AudioEngine {
         // Check if playback has reached the end
         if (this.isPlayerPlaying && this.audioBuffer) {
           if (currentTime >= this.audioBuffer.duration) {
-            this.isPlayerPlaying = false
-            this.playbackPosition = 0
-            this.callbacks.onPlaybackEnd?.()
+            if (this.loopEnabled) {
+              // Loop: restart from beginning
+              this.playbackPosition = 0
+              this.playbackStartTime = Tone.now()
+              if (this.player) {
+                this.player.stop()
+                this.player.start(Tone.now(), 0)
+              }
+            } else {
+              this.isPlayerPlaying = false
+              this.playbackPosition = 0
+              this.callbacks.onPlaybackEnd?.()
+            }
           }
         }
       }
@@ -278,6 +289,14 @@ class AudioEngine {
     }
   }
 
+  setLooping(loop: boolean): void {
+    this.loopEnabled = loop
+  }
+
+  isLoopingEnabled(): boolean {
+    return this.loopEnabled
+  }
+
   // Set master wet/dry mix (0 = fully dry, 1 = fully wet)
   setMasterMix(mix: number): void {
     if (this.wetGain && this.dryGain) {
@@ -331,7 +350,7 @@ class AudioEngine {
     if (!this.audioBuffer) return null
 
     const channelData = this.audioBuffer.getChannelData(0)
-    const samples = 200 // Number of peaks to display
+    const samples = 400 // Number of peaks to display (increased for detail)
     const blockSize = Math.floor(channelData.length / samples)
     const peaks = new Float32Array(samples)
 
