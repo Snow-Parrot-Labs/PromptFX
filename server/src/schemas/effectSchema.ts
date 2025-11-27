@@ -5,14 +5,19 @@ export const dspNodeTypeSchema = z.enum([
   'input',
   'output',
   'delay',
-  'reverb',
+  'freeverb',
   'filter',
   'distortion',
   'gain',
   'compressor',
   'chorus',
   'tremolo',
-  'panner',
+  'phaser',
+  'pitchShift',
+  'autoFilter',
+  'autoPanner',
+  'stereoWidener',
+  'autoWah',
 ])
 
 export const filterTypeSchema = z.enum(['lowpass', 'highpass', 'bandpass', 'notch'])

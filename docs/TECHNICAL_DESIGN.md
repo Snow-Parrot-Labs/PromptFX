@@ -290,11 +290,10 @@ definition for an audio effect including the DSP processing graph and UI control
 - feedback: 0-1
 - wetDry: 0-1
 
-### Reverb
-- decay: 0.1-10s
-- preDelay: 0-100ms
+### Freeverb
+- roomSize: 0-1
+- dampening: 500-10000Hz
 - wetDry: 0-1
-- highCut: 200-20000Hz
 
 ### Filter
 - type: lowpass | highpass | bandpass | notch
@@ -325,6 +324,44 @@ definition for an audio effect including the DSP processing graph and UI control
 - rate: 0.1-20Hz
 - depth: 0-1
 - shape: sine | square | triangle
+
+### Phaser
+- rate: 0.1-10Hz
+- octaves: 1-8
+- baseFrequency: 50-1000Hz
+- Q: 1-20
+- wetDry: 0-1
+
+### PitchShift
+- pitch: -12 to 12 semitones
+- windowSize: 0.01-0.5
+- delayTime: 0-0.1
+- wetDry: 0-1
+
+### AutoFilter
+- rate: 0.1-20Hz
+- depth: 0-1
+- baseFrequency: 50-2000Hz
+- octaves: 1-6
+- shape: sine | square | triangle
+- wetDry: 0-1
+
+### AutoPanner
+- rate: 0.1-20Hz
+- depth: 0-1
+- shape: sine | square | triangle
+- wetDry: 0-1
+
+### StereoWidener
+- width: 0-1 (0=mono, 1=wide)
+
+### AutoWah
+- baseFrequency: 50-500Hz
+- octaves: 1-8
+- sensitivity: -40 to 0dB
+- Q: 1-10
+- gain: 0-10
+- wetDry: 0-1
 
 ## Output Format
 
@@ -521,14 +558,19 @@ type DSPNodeType =
   | 'input'
   | 'output'
   | 'delay'
-  | 'reverb'
+  | 'freeverb'
   | 'filter'
   | 'distortion'
   | 'gain'
   | 'compressor'
   | 'chorus'
   | 'tremolo'
-  | 'panner';
+  | 'phaser'
+  | 'pitchShift'
+  | 'autoFilter'
+  | 'autoPanner'
+  | 'stereoWidener'
+  | 'autoWah';
 
 interface Connection {
   from: { nodeId: string; output?: number };

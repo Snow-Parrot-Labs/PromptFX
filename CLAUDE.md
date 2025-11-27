@@ -236,14 +236,19 @@ import './EffectPanel.css';
 | Node | Key Parameters |
 |------|----------------|
 | delay | delayTime, feedback, wetDry |
-| reverb | decay, preDelay, wetDry, highCut |
+| freeverb | roomSize, dampening, wetDry |
 | filter | type, frequency, Q, gain |
 | distortion | amount, type, tone |
 | compressor | threshold, ratio, attack, release |
 | chorus | rate, depth, wetDry |
 | tremolo | rate, depth, shape |
+| phaser | rate, octaves, baseFrequency, Q, wetDry |
+| pitchShift | pitch, windowSize, delayTime, wetDry |
+| autoFilter | rate, depth, baseFrequency, octaves, shape, wetDry |
+| autoPanner | rate, depth, shape, wetDry |
+| stereoWidener | width |
+| autoWah | baseFrequency, octaves, sensitivity, Q, gain, wetDry |
 | gain | level |
-| panner | pan |
 
 ## Audio Specifications
 

@@ -76,16 +76,6 @@ class EffectBuilder {
         return delay
       }
 
-      case 'reverb': {
-        const reverb = new Tone.Reverb({
-          decay: Number(params.decay ?? 2),
-          preDelay: Number(params.preDelay ?? 10) / 1000,
-        })
-        if (params.mix !== undefined) {
-          reverb.wet.value = Number(params.mix)
-        }
-        return reverb
-      }
 
       case 'filter': {
         const filterType = String(params.type ?? 'lowpass') as BiquadFilterType
@@ -143,8 +133,86 @@ class EffectBuilder {
         return tremolo.start()
       }
 
-      case 'panner':
-        return new Tone.Panner(Number(params.pan ?? 0))
+      case 'stereoWidener':
+        return new Tone.StereoWidener({
+          width: Number(params.width ?? 0.5),
+        })
+
+      case 'phaser': {
+        const phaser = new Tone.Phaser({
+          frequency: Number(params.rate ?? 0.5),
+          octaves: Number(params.octaves ?? 3),
+          baseFrequency: Number(params.baseFrequency ?? 350),
+          Q: Number(params.Q ?? 10),
+        })
+        if (params.mix !== undefined) {
+          phaser.wet.value = Number(params.mix)
+        }
+        return phaser
+      }
+
+      case 'autoFilter': {
+        const autoFilter = new Tone.AutoFilter({
+          frequency: Number(params.rate ?? 1),
+          depth: Number(params.depth ?? 1),
+          baseFrequency: Number(params.baseFrequency ?? 200),
+          octaves: Number(params.octaves ?? 2.6),
+          type: String(params.shape ?? 'sine') as 'sine' | 'square' | 'triangle',
+        })
+        if (params.mix !== undefined) {
+          autoFilter.wet.value = Number(params.mix)
+        }
+        return autoFilter.start()
+      }
+
+      case 'autoPanner': {
+        const autoPanner = new Tone.AutoPanner({
+          frequency: Number(params.rate ?? 1),
+          depth: Number(params.depth ?? 1),
+          type: String(params.shape ?? 'sine') as 'sine' | 'square' | 'triangle',
+        })
+        if (params.mix !== undefined) {
+          autoPanner.wet.value = Number(params.mix)
+        }
+        return autoPanner.start()
+      }
+
+      case 'autoWah': {
+        const autoWah = new Tone.AutoWah({
+          baseFrequency: Number(params.baseFrequency ?? 100),
+          octaves: Number(params.octaves ?? 6),
+          sensitivity: Number(params.sensitivity ?? 0),
+          Q: Number(params.Q ?? 2),
+          gain: Number(params.gain ?? 2),
+        })
+        if (params.mix !== undefined) {
+          autoWah.wet.value = Number(params.mix)
+        }
+        return autoWah
+      }
+
+      case 'freeverb': {
+        const freeverb = new Tone.Freeverb({
+          roomSize: Number(params.roomSize ?? 0.7),
+          dampening: Number(params.dampening ?? 3000),
+        })
+        if (params.mix !== undefined) {
+          freeverb.wet.value = Number(params.mix)
+        }
+        return freeverb
+      }
+
+      case 'pitchShift': {
+        const pitchShift = new Tone.PitchShift({
+          pitch: Number(params.pitch ?? 0),
+          windowSize: Number(params.windowSize ?? 0.1),
+          delayTime: Number(params.delayTime ?? 0),
+        })
+        if (params.mix !== undefined) {
+          pitchShift.wet.value = Number(params.mix)
+        }
+        return pitchShift
+      }
 
       default:
         console.warn(`Unknown node type: ${type as string}`)
@@ -195,14 +263,6 @@ class EffectBuilder {
         break
       }
 
-      case 'reverb': {
-        const reverb = node as Tone.Reverb
-        if (param === 'mix') {
-          reverb.wet.rampTo(Number(value), rampTime)
-        }
-        // Note: decay and preDelay can't be changed in real-time in Tone.js Reverb
-        break
-      }
 
       case 'filter': {
         const filter = node as Tone.Filter
@@ -264,10 +324,102 @@ class EffectBuilder {
         break
       }
 
-      case 'panner': {
-        const panner = node as Tone.Panner
-        if (param === 'pan') {
-          panner.pan.rampTo(Number(value), rampTime)
+      case 'stereoWidener': {
+        const stereoWidener = node as Tone.StereoWidener
+        if (param === 'width') {
+          stereoWidener.width.rampTo(Number(value), rampTime)
+        }
+        break
+      }
+
+      case 'phaser': {
+        const phaser = node as Tone.Phaser
+        if (param === 'rate') {
+          phaser.frequency.rampTo(Number(value), rampTime)
+        } else if (param === 'octaves') {
+          phaser.octaves = Number(value)
+        } else if (param === 'baseFrequency') {
+          phaser.baseFrequency = Number(value)
+        } else if (param === 'Q') {
+          phaser.Q.rampTo(Number(value), rampTime)
+        } else if (param === 'mix') {
+          phaser.wet.rampTo(Number(value), rampTime)
+        }
+        break
+      }
+
+      case 'autoFilter': {
+        const autoFilter = node as Tone.AutoFilter
+        if (param === 'rate') {
+          autoFilter.frequency.rampTo(Number(value), rampTime)
+        } else if (param === 'depth') {
+          autoFilter.depth.rampTo(Number(value), rampTime)
+        } else if (param === 'baseFrequency') {
+          autoFilter.baseFrequency = Number(value)
+        } else if (param === 'octaves') {
+          autoFilter.octaves = Number(value)
+        } else if (param === 'shape') {
+          autoFilter.type = String(value) as 'sine' | 'square' | 'triangle'
+        } else if (param === 'mix') {
+          autoFilter.wet.rampTo(Number(value), rampTime)
+        }
+        break
+      }
+
+      case 'autoPanner': {
+        const autoPanner = node as Tone.AutoPanner
+        if (param === 'rate') {
+          autoPanner.frequency.rampTo(Number(value), rampTime)
+        } else if (param === 'depth') {
+          autoPanner.depth.rampTo(Number(value), rampTime)
+        } else if (param === 'shape') {
+          autoPanner.type = String(value) as 'sine' | 'square' | 'triangle'
+        } else if (param === 'mix') {
+          autoPanner.wet.rampTo(Number(value), rampTime)
+        }
+        break
+      }
+
+      case 'autoWah': {
+        const autoWah = node as Tone.AutoWah
+        if (param === 'baseFrequency') {
+          autoWah.baseFrequency = Number(value)
+        } else if (param === 'octaves') {
+          autoWah.octaves = Number(value)
+        } else if (param === 'sensitivity') {
+          autoWah.sensitivity = Number(value)
+        } else if (param === 'Q') {
+          autoWah.Q.rampTo(Number(value), rampTime)
+        } else if (param === 'gain') {
+          autoWah.gain.rampTo(Number(value), rampTime)
+        } else if (param === 'mix') {
+          autoWah.wet.rampTo(Number(value), rampTime)
+        }
+        break
+      }
+
+      case 'freeverb': {
+        const freeverb = node as Tone.Freeverb
+        if (param === 'roomSize') {
+          freeverb.roomSize.rampTo(Number(value), rampTime)
+        } else if (param === 'dampening') {
+          freeverb.dampening = Number(value)
+        } else if (param === 'mix') {
+          freeverb.wet.rampTo(Number(value), rampTime)
+        }
+        break
+      }
+
+      case 'pitchShift': {
+        const pitchShift = node as Tone.PitchShift
+        if (param === 'pitch') {
+          pitchShift.pitch = Number(value)
+        } else if (param === 'windowSize') {
+          pitchShift.windowSize = Number(value)
+        } else if (param === 'delayTime') {
+          pitchShift.delayTime = Number(value)
+        } else if (param === 'mix') {
+          pitchShift.wet.rampTo(Number(value), rampTime)
         }
         break
       }

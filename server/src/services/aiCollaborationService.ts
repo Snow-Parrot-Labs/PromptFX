@@ -120,14 +120,19 @@ Respond with ONLY valid JSON matching this structure:
 DSP Node Types:
 - input, output (required)
 - delay: { time: 0-2000, feedback: 0-1, mix: 0-1 }
-- reverb: { decay: 0.1-10, preDelay: 0-100, mix: 0-1 }
+- freeverb: { roomSize: 0-1, dampening: 500-10000, mix: 0-1 }
 - filter: { type: "lowpass"|"highpass"|"bandpass"|"notch", frequency: 20-20000, Q: 0.1-20 }
 - distortion: { type: "soft"|"hard"|"foldback"|"bitcrush", amount: 0-1, mix: 0-1 }
 - gain: { gain: -60 to 12 }
 - compressor: { threshold: -60 to 0, ratio: 1-20, attack: 0-1000, release: 0-3000 }
 - chorus: { rate: 0.1-10, depth: 0-1, mix: 0-1 }
 - tremolo: { rate: 0.1-20, depth: 0-1, shape: "sine"|"square"|"triangle" }
-- panner: { pan: -1 to 1 }
+- phaser: { rate: 0.1-10, octaves: 1-8, baseFrequency: 50-1000, Q: 1-20, mix: 0-1 }
+- pitchShift: { pitch: -12 to 12, windowSize: 0.01-0.5, delayTime: 0-0.1, mix: 0-1 }
+- autoFilter: { rate: 0.1-20, depth: 0-1, baseFrequency: 50-2000, octaves: 1-6, shape: "sine"|"square"|"triangle", mix: 0-1 }
+- autoPanner: { rate: 0.1-20, depth: 0-1, shape: "sine"|"square"|"triangle", mix: 0-1 }
+- stereoWidener: { width: 0-1 }
+- autoWah: { baseFrequency: 50-500, octaves: 1-8, sensitivity: -40 to 0, Q: 1-10, gain: 0-10, mix: 0-1 }
 
 Visual Styles:
 - "vintage-warm": Neve/UA style, warm colors, cream accents
