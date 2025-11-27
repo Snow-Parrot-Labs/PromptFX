@@ -37,6 +37,7 @@ class AudioEngine {
   private wetGain: Tone.Gain | null = null
   private dryGain: Tone.Gain | null = null
   private masterGain: Tone.Gain | null = null
+  private recorderDestination: MediaStreamAudioDestinationNode | null = null
   private audioBuffer: Tone.ToneAudioBuffer | null = null
   private isInitialized = false
   private liveInputEnabled = false
@@ -68,11 +69,23 @@ class AudioEngine {
     this.wetGain = new Tone.Gain(1) // Processed (wet) signal
     this.masterGain = new Tone.Gain(1) // Master output
 
+    // Create MediaStreamAudioDestinationNode for recording
+    const rawContext = Tone.getContext().rawContext as AudioContext
+    this.recorderDestination = rawContext.createMediaStreamDestination()
+
     // Connect output chain
     this.wetGain.connect(this.masterGain)
     this.dryGain.connect(this.masterGain)
     this.masterGain.connect(this.outputMeter)
     this.masterGain.connect(this.outputAnalyser) // Tap for spectrum analysis
+    this.masterGain.connect(
+      Tone.getContext()
+        .createGain({
+          gain: 1,
+          context: Tone.getContext().rawContext,
+        })
+        .connect(this.recorderDestination) as unknown as Tone.InputNode
+    ) // Tap for recording
     this.outputMeter.connect(Tone.getDestination())
 
     this.isInitialized = true
@@ -372,6 +385,10 @@ class AudioEngine {
 
   getDuration(): number {
     return this.audioBuffer?.duration ?? 0
+  }
+
+  getRecorderStream(): MediaStream | null {
+    return this.recorderDestination?.stream ?? null
   }
 
   getCurrentTime(): number {
@@ -802,6 +819,7 @@ class AudioEngine {
     this.wetGain?.dispose()
     this.masterGain?.dispose()
     this.effectsChain.forEach((effect) => effect.dispose())
+    this.recorderDestination = null
 
     this.isInitialized = false
   }

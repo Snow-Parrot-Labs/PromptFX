@@ -48,6 +48,12 @@ interface AudioState {
   selectedOutputDeviceId: string | null
   outputDeviceSupported: boolean
 
+  // Recording
+  isRecording: boolean
+  recordingDuration: number
+  recordedBlob: Blob | null
+  recordingError: string | null
+
   // Actions
   setSource: (source: AudioSourceType) => void
   setFileInfo: (info: AudioFileInfo | null) => void
@@ -70,6 +76,11 @@ interface AudioState {
   setAudioOutputDevices: (devices: AudioOutputDevice[]) => void
   setSelectedOutputDeviceId: (deviceId: string | null) => void
   setOutputDeviceSupported: (supported: boolean) => void
+  setIsRecording: (recording: boolean) => void
+  setRecordingDuration: (duration: number) => void
+  setRecordedBlob: (blob: Blob | null) => void
+  setRecordingError: (error: string | null) => void
+  clearRecording: () => void
   reset: () => void
 }
 
@@ -99,6 +110,10 @@ const initialState = {
   audioOutputDevices: [] as AudioOutputDevice[],
   selectedOutputDeviceId: null as string | null,
   outputDeviceSupported: true, // Assume supported until checked
+  isRecording: false,
+  recordingDuration: 0,
+  recordedBlob: null as Blob | null,
+  recordingError: null as string | null,
 }
 
 export const useAudioStore = create<AudioState>((set) => ({
@@ -166,6 +181,21 @@ export const useAudioStore = create<AudioState>((set) => ({
   },
   setOutputDeviceSupported: (outputDeviceSupported) => {
     set({ outputDeviceSupported })
+  },
+  setIsRecording: (isRecording) => {
+    set({ isRecording })
+  },
+  setRecordingDuration: (recordingDuration) => {
+    set({ recordingDuration })
+  },
+  setRecordedBlob: (recordedBlob) => {
+    set({ recordedBlob })
+  },
+  setRecordingError: (recordingError) => {
+    set({ recordingError })
+  },
+  clearRecording: () => {
+    set({ recordedBlob: null, recordingDuration: 0, recordingError: null })
   },
   reset: () => {
     set(initialState)

@@ -6,6 +6,7 @@ import { TestToneGenerator } from './TestToneGenerator'
 import { LiveInput } from './LiveInput'
 import { OutputControls } from './OutputControls'
 import { ExportAudio } from './ExportAudio'
+import { RecordingControls } from './RecordingControls'
 
 export function AudioSection(): React.JSX.Element {
   const { source, fileInfo, testToneActive, liveInputEnabled } = useAudioStore()
@@ -83,6 +84,11 @@ export function AudioSection(): React.JSX.Element {
           <ExportAudio />
         </div>
       )}
+
+      {/* Recording Controls */}
+      <div className="mt-6">
+        <RecordingControls />
+      </div>
 
       {/* Output Controls */}
       <div className="mt-6">

@@ -161,15 +161,37 @@ export function LeftPanel(): React.JSX.Element {
               setChaosMode(!chaosMode)
             }}
             disabled={isDisabled}
-            className={`relative w-10 h-5 rounded-full transition-colors ${
-              chaosMode ? 'bg-gradient-to-r from-purple-600 to-pink-500' : 'bg-gray-700'
+            className={`p-2 rounded-lg transition-all ${
+              chaosMode
+                ? 'bg-gradient-to-br from-purple-600/20 to-pink-500/20 border-2 border-purple-500'
+                : 'bg-gray-800/50 border-2 border-gray-700 hover:border-gray-600'
             } disabled:opacity-50`}
+            title={chaosMode ? 'Chaos Mode: ON' : 'Chaos Mode: OFF'}
           >
-            <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                chaosMode ? 'translate-x-5' : 'translate-x-0'
-              }`}
-            />
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={`transition-colors ${chaosMode ? 'stroke-purple-400' : 'stroke-gray-500'}`}
+            >
+              {/* Circle */}
+              <circle cx="12" cy="12" r="8" strokeWidth="2" />
+              {/* Diagonal slash 1 */}
+              <line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" />
+              {/* Diagonal slash 2 */}
+              <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" />
+              {/* Top dot */}
+              <circle
+                cx="12"
+                cy="5"
+                r="1.5"
+                className={chaosMode ? 'fill-purple-400' : 'fill-gray-500'}
+              />
+              {/* Side line */}
+              <line x1="20" y1="12" x2="22" y2="12" strokeWidth="2" />
+            </svg>
           </button>
         </div>
 
