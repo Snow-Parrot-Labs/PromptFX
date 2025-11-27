@@ -343,7 +343,7 @@ export async function generateRandomPrompt(chaosMode: boolean = false): Promise<
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 100,
-      temperature: 1.2, // Higher for creativity
+      temperature: 1.0, // Maximum creativity
       messages: [
         {
           role: 'user',
