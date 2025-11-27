@@ -18,6 +18,131 @@ Create interfaces that look like real hardware studio gear:
 - Roland/Boss pedals: Colorful, compact, rugged metal construction
 - API 500 series: Punchy graphics, bold colors, compact professional layout
 
+## MANUFACTURER LOGO BADGES
+
+Each effect needs a unique manufacturer identity expressed through logo badges. Create fictional but believable brand names that match the effect's character.
+
+### Badge Styles by Hardware Type
+
+**Neve Style - Script Elegance**
+- Shape: ellipse or roundedRect
+- Logo: script text effect (cursive, italic)
+- Colors: Gold/brass (#d4af37) on dark (#1a1a1a)
+- Frame: beveled with metallic border
+- Example: "Aurelia Audio", "Tempus"
+
+**SSL Style - Industrial Precision**
+- Shape: rectangle or shield
+- Logo: block text effect (bold, uppercase)
+- Colors: White/silver (#e5e5e5) on blue-gray (#2c3e50)
+- Frame: outlined, sharp edges
+- Example: "APEX DYNAMICS", "PRECISION AUDIO"
+
+**Moog Style - Retro Modern**
+- Shape: roundedRect
+- Logo: combination (text + graphic lines)
+- Colors: Black on white or white on black
+- Frame: flat or raised
+- Example: "MODULAR WAVE", "VOLTAGE WORKS"
+
+**API 500 Style - Bold Graphics**
+- Shape: hexagon or shield
+- Logo: combination with bold colors
+- Colors: High contrast (red/black, yellow/black)
+- Frame: beveled, raised
+- Example: "500 SERIES", "RACK DYNAMICS"
+
+**Boss Pedal Style - Compact Punch**
+- Shape: rectangle
+- Logo: stencil or block text
+- Colors: Bold on metallic (#ff6b35 on #a89f8f)
+- Frame: raised, metallic
+- Example: "TURBO DRIVE", "METAL ZONE"
+
+**Universal Audio Style - Vintage Class**
+- Shape: ellipse or roundedRect
+- Logo: script or serif text
+- Colors: Cream/tan (#f4e4c1) on warm brown (#2d1810)
+- Frame: engraved or beveled
+- Example: "UA", "Classic Audio"
+
+### Badge Positioning & Sizing
+
+**Manufacturer Badge** (primary):
+- Position: x: 15-25%, y: 8-12%
+- Size: width: 25-40%, height: 12-18%
+
+**Model Badge** (secondary, optional):
+- Position: x: 75-85%, y: 8-12%
+- Size: width: 15-25%, height: 8-12%
+
+### Design Rules
+
+1. Match badge style to effect character (vintage → script, modern → block)
+2. Badge colors must complement panel colors (use primaryColor, accentColor from panelDesign)
+3. 1-2 badges maximum per effect
+4. Badges stay in top 20% of panel (y: 5-20%) to avoid control overlap
+5. Create believable, professional-sounding manufacturer names (not generic)
+6. Text must be readable with good contrast
+7. Use shadow and/or glow effects for depth
+
+### Badge JSON Structure Example
+
+Always include logoBadges in the artwork object:
+
+\`\`\`json
+{
+  "ui": {
+    "panelDesign": {
+      "primaryColor": "#2d1810",
+      "accentColor": "#d4af37"
+    },
+    "artwork": {
+      "logoBadges": [
+        {
+          "id": "manufacturer",
+          "position": { "x": 20, "y": 10 },
+          "size": { "width": 35, "height": 15 },
+          "shape": "ellipse",
+          "frameStyle": "beveled",
+          "backgroundColor": "#1a1a1a",
+          "borderColor": "#d4af37",
+          "borderWidth": 2,
+          "logo": {
+            "type": "text",
+            "text": "AURELIA",
+            "textEffect": "script",
+            "fontFamily": "script",
+            "fontSize": 16
+          },
+          "shadow": true,
+          "glow": { "color": "#d4af37", "intensity": 0.3 }
+        },
+        {
+          "id": "model",
+          "position": { "x": 82, "y": 9 },
+          "size": { "width": 16, "height": 9 },
+          "shape": "roundedRect",
+          "frameStyle": "flat",
+          "backgroundColor": "#2a2010",
+          "borderColor": "#d4af37",
+          "borderWidth": 1,
+          "logo": {
+            "type": "text",
+            "text": "CH-2",
+            "textEffect": "block",
+            "fontFamily": "sans-serif",
+            "fontSize": 9
+          }
+        }
+      ]
+    }
+  }
+}
+\`\`\`
+
+**IMPORTANT**: Always generate logoBadges for every effect - they are core to the hardware aesthetic.
+
 ## DSP Node Types (params MUST be an object, even if empty: "params": {})
 - input: Audio input (required, params: {})
 - output: Audio output (required, params: {})

@@ -1,4 +1,5 @@
 import type { Artwork, ArtworkElement, GradientElement } from '@/types/effect'
+import { BadgeRenderer } from './BadgeRenderer'
 
 interface ArtworkRendererProps {
   artwork: Artwork
@@ -40,8 +41,13 @@ export function ArtworkRenderer({
         <ElementRenderer key={i} element={element} />
       ))}
 
-      {/* Brand label (z-index 2 - above decorative elements) */}
-      {artwork.brandLabel !== undefined && (
+      {/* Logo badges (z-index 2 - above decorative elements) */}
+      {artwork.logoBadges !== undefined && artwork.logoBadges.length > 0 && (
+        <BadgeRenderer badges={artwork.logoBadges} accentColor={accentColor} />
+      )}
+
+      {/* DEPRECATED: Old brand label (z-index 2, backward compatibility) */}
+      {artwork.brandLabel !== undefined && artwork.logoBadges === undefined && (
         <BrandLabel
           text={artwork.brandLabel.text}
           position={artwork.brandLabel.position}

@@ -141,12 +141,75 @@ export const brandLabelSchema = z.object({
   style: labelStyleSchema,
 })
 
+// Logo Badge Schemas
+export const badgeShapeSchema = z.enum([
+  'roundedRect',
+  'shield',
+  'circle',
+  'hexagon',
+  'ellipse',
+  'rectangle',
+])
+
+export const badgeFrameStyleSchema = z.enum(['outlined', 'beveled', 'engraved', 'raised', 'flat'])
+
+export const badgeTextEffectSchema = z.enum([
+  'plain',
+  'metallic',
+  'engraved',
+  'embossed',
+  'script',
+  'block',
+  'stencil',
+])
+
+export const badgeGraphicElementSchema = z.object({
+  type: z.enum(['line', 'circle', 'arc', 'star', 'wave']),
+  position: z.object({ x: z.number(), y: z.number() }),
+  size: z.number(),
+  color: z.string(),
+  opacity: z.number().min(0).max(1).optional(),
+})
+
+export const badgeLogoSchema = z.object({
+  type: z.enum(['text', 'graphic', 'combination']),
+  text: z.string().optional(),
+  textEffect: badgeTextEffectSchema.optional(),
+  fontFamily: z.string().optional(),
+  fontSize: z.number().min(8).max(24).optional(),
+  graphicElements: z.array(badgeGraphicElementSchema).optional(),
+})
+
+export const logoBadgeSchema = z.object({
+  id: z.string(),
+  position: positionSchema,
+  size: z.object({
+    width: z.number().min(5).max(80),
+    height: z.number().min(5).max(30),
+  }),
+  shape: badgeShapeSchema,
+  frameStyle: badgeFrameStyleSchema,
+  backgroundColor: z.string(),
+  borderColor: z.string(),
+  borderWidth: z.number().min(0).max(5).optional(),
+  logo: badgeLogoSchema,
+  shadow: z.boolean().optional(),
+  glow: z
+    .object({
+      color: z.string(),
+      intensity: z.number().min(0).max(1),
+    })
+    .optional(),
+  rotation: z.number().min(-45).max(45).optional(),
+})
+
 // Artwork Definition
 export const artworkSchema = z.object({
   background: gradientElementSchema.optional(),
   backgroundImage: z.string().optional(), // Base64 data URL from AI image generation
   elements: z.array(artworkElementSchema).optional(),
-  brandLabel: brandLabelSchema.optional(),
+  brandLabel: brandLabelSchema.optional(), // DEPRECATED - for backward compatibility
+  logoBadges: z.array(logoBadgeSchema).optional(), // NEW - manufacturer logo badges
 })
 
 // Decoration Types

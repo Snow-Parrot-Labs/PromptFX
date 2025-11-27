@@ -123,12 +123,59 @@ export interface BrandLabel {
   style: LabelStyle
 }
 
+// Logo Badge Types (manufacturer branding)
+export type BadgeShape = 'roundedRect' | 'shield' | 'circle' | 'hexagon' | 'ellipse' | 'rectangle'
+
+export type BadgeFrameStyle = 'outlined' | 'beveled' | 'engraved' | 'raised' | 'flat'
+
+export type BadgeTextEffect =
+  | 'plain'
+  | 'metallic'
+  | 'engraved'
+  | 'embossed'
+  | 'script'
+  | 'block'
+  | 'stencil'
+
+export interface BadgeGraphicElement {
+  type: 'line' | 'circle' | 'arc' | 'star' | 'wave'
+  position: { x: number; y: number }
+  size: number
+  color: string
+  opacity?: number
+}
+
+export interface BadgeLogo {
+  type: 'text' | 'graphic' | 'combination'
+  text?: string
+  textEffect?: BadgeTextEffect
+  fontFamily?: string
+  fontSize?: number
+  graphicElements?: BadgeGraphicElement[]
+}
+
+export interface LogoBadge {
+  id: string
+  position: Position
+  size: { width: number; height: number }
+  shape: BadgeShape
+  frameStyle: BadgeFrameStyle
+  backgroundColor: string
+  borderColor: string
+  borderWidth?: number
+  logo: BadgeLogo
+  shadow?: boolean
+  glow?: { color: string; intensity: number }
+  rotation?: number
+}
+
 // Artwork Definition
 export interface Artwork {
   background?: GradientElement
   backgroundImage?: string // Base64 data URL from AI image generation
   elements?: ArtworkElement[]
-  brandLabel?: BrandLabel
+  brandLabel?: BrandLabel // DEPRECATED - for backward compatibility
+  logoBadges?: LogoBadge[] // NEW - manufacturer logo badges
 }
 
 // Decoration Types (LEDs, meters, labels)
