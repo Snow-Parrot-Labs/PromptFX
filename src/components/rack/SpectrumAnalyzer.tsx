@@ -15,13 +15,13 @@ const RED_THRESHOLD = 0.85
 const COLORS = {
   green: '#5a9a5a',
   yellow: '#c4a43a',
-  red: '#b54a4a',
+  red: '#d97638',
   inactive: '#1a1610',
   background: '#0d0c0a',
   glow: {
     green: 'rgba(90, 154, 90, 0.6)',
     yellow: 'rgba(196, 164, 58, 0.6)',
-    red: 'rgba(181, 74, 74, 0.6)',
+    red: 'rgba(217, 118, 56, 0.6)',
   },
 }
 

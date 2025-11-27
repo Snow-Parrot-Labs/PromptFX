@@ -229,46 +229,96 @@ export function LeftPanel(): React.JSX.Element {
                   setChaosMode(!chaosMode)
                 }}
                 disabled={isDisabled}
-                className={`p-2 rounded-lg transition-all ${
+                className={`relative p-2 rounded-lg transition-all overflow-hidden ${
                   chaosMode
-                    ? 'bg-yellow-600/20 border-2 border-yellow-600'
+                    ? 'bg-gray-800/50 border-2 border-[#B54A4A]'
                     : 'bg-gray-800/50 border-2 border-gray-700 hover:border-gray-600'
                 } disabled:opacity-50`}
+                style={{
+                  boxShadow: chaosMode
+                    ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 0 12px rgba(181, 74, 74, 0.4), 0 0 20px rgba(181, 74, 74, 0.2)'
+                    : undefined,
+                }}
                 title={chaosMode ? 'Chaos Mode: ON' : 'Chaos Mode: OFF'}
               >
+                {/* Red bulb backlight glow when active */}
+                {chaosMode && (
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background:
+                        'radial-gradient(ellipse at center, rgba(181, 74, 74, 0.4) 0%, rgba(181, 74, 74, 0.15) 40%, transparent 70%)',
+                    }}
+                  />
+                )}
                 <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 32 32"
+                  width="40"
+                  height="24"
+                  viewBox="0 0 40 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {/* Vertical toggle track (elongated oval) */}
+                  {/* Horizontal toggle track (elongated slot) */}
                   <rect
-                    x="11"
-                    y="6"
-                    width="10"
-                    height="20"
+                    x="4"
+                    y="7"
+                    width="32"
+                    height="10"
                     rx="5"
                     className={`transition-colors ${
                       chaosMode
-                        ? 'fill-yellow-900/40 stroke-yellow-600'
-                        : 'fill-gray-800 stroke-gray-600'
-                    }`}
-                    strokeWidth="2"
-                  />
-                  {/* Toggle knob (moves up/down) */}
-                  <circle
-                    cx="16"
-                    cy={chaosMode ? '21' : '11'}
-                    r="4"
-                    className={`transition-all duration-300 ${
-                      chaosMode
-                        ? 'fill-yellow-500 stroke-yellow-400'
-                        : 'fill-gray-400 stroke-gray-300'
+                        ? 'fill-red-950/40 stroke-[#B54A4A]'
+                        : 'fill-gray-900 stroke-gray-700'
                     }`}
                     strokeWidth="1.5"
                   />
+                  {/* Track inner shadow for depth */}
+                  <rect
+                    x="5"
+                    y="8"
+                    width="30"
+                    height="8"
+                    rx="4"
+                    className={`transition-colors ${chaosMode ? 'fill-black/50' : 'fill-black/40'}`}
+                  />
+                  {/* Toggle knob base (moves left/right) */}
+                  <g
+                    className="transition-transform duration-300"
+                    transform={chaosMode ? 'translate(18, 0)' : 'translate(0, 0)'}
+                  >
+                    {/* Knob shadow */}
+                    <ellipse cx="11" cy="13" rx="5" ry="4.5" className="fill-black/40" />
+                    {/* Knob body */}
+                    <circle
+                      cx="11"
+                      cy="12"
+                      r="5.5"
+                      className={`transition-all duration-300 ${
+                        chaosMode
+                          ? 'fill-[#B54A4A] stroke-[#e8a0a0]'
+                          : 'fill-gray-500 stroke-gray-400'
+                      }`}
+                      strokeWidth="1.5"
+                    />
+                    {/* Knob highlight for 3D effect */}
+                    <ellipse
+                      cx="10"
+                      cy="10"
+                      rx="2.5"
+                      ry="2"
+                      className={chaosMode ? 'fill-[#e8a0a0]/60' : 'fill-gray-300/40'}
+                    />
+                    {/* Knob center indicator line */}
+                    <line
+                      x1="11"
+                      y1="9"
+                      x2="11"
+                      y2="15"
+                      className={chaosMode ? 'stroke-red-950' : 'stroke-gray-700'}
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                    />
+                  </g>
                 </svg>
               </button>
             </div>
@@ -333,7 +383,7 @@ export function LeftPanel(): React.JSX.Element {
           <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-medium text-[--color-text-muted] uppercase tracking-wide">
-                Audio File
+                Sampler
               </h3>
               {fileInfo !== null && <SwapFileButton />}
             </div>

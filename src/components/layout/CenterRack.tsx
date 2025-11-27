@@ -1,4 +1,5 @@
 import { useEffectStore } from '@/stores/effectStore'
+import { useAudioStore } from '@/stores'
 import { useEffectControls } from '@/hooks/useEffectControls'
 import { EffectPanel } from '@/components/effect/EffectPanel'
 import { PresetControls } from '@/components/effect/PresetControls'
@@ -7,6 +8,7 @@ import { RackRails, BlankPanel, EffectRackUnit, SpectrumAnalyzer } from '@/compo
 
 export function CenterRack(): React.JSX.Element {
   const { definition, isGenerating, parameterValues } = useEffectStore()
+  const { bypassEffect, toggleBypass } = useAudioStore()
   const { handleParameterChange } = useEffectControls()
 
   return (
@@ -26,7 +28,34 @@ export function CenterRack(): React.JSX.Element {
             </>
           )}
         </div>
-        <PresetControls />
+        <div className="flex items-center gap-3">
+          {/* Bypass Toggle - vintage lit button with red bulb glow */}
+          <button
+            type="button"
+            onClick={() => {
+              toggleBypass()
+            }}
+            className="relative px-3 py-1.5 rounded text-xs font-medium tracking-wide transition-all btn-mechanical text-[--color-text-muted] overflow-hidden"
+            style={{
+              boxShadow: bypassEffect
+                ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 0 12px rgba(181, 74, 74, 0.4), 0 0 20px rgba(181, 74, 74, 0.2)'
+                : undefined,
+            }}
+          >
+            {/* Red bulb backlight glow when bypassed */}
+            {bypassEffect && (
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at center bottom, rgba(181, 74, 74, 0.4) 0%, rgba(181, 74, 74, 0.15) 40%, transparent 70%)',
+                }}
+              />
+            )}
+            <span className={`relative z-10 ${bypassEffect ? 'text-[#e8a0a0]' : ''}`}>BYPASS</span>
+          </button>
+          <PresetControls />
+        </div>
       </div>
 
       {/* Rack Space */}

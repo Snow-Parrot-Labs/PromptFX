@@ -6,8 +6,7 @@ import { RecordingControls } from '@/components/audio/RecordingControls'
 import { IOMeter } from '@/components/audio/IOMeter'
 
 export function RightPanel(): React.JSX.Element {
-  const { source, fileInfo, liveInputEnabled, bypassEffect } = useAudioStore()
-  const { toggleBypass } = useAudioStore()
+  const { source, fileInfo, liveInputEnabled } = useAudioStore()
 
   // Initialize audio engine and sync state - must be in always-mounted component
   useAudioEngine()
@@ -15,39 +14,22 @@ export function RightPanel(): React.JSX.Element {
   return (
     <aside className="w-[320px] flex-shrink-0 bg-[--color-bg-secondary] border-l border-[--color-border] flex flex-col overflow-hidden">
       {/* Panel Header */}
-      <div className="px-4 py-3 border-b border-[--color-border] flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-[--color-border]">
         <h2 className="text-sm font-semibold text-[--color-text-primary] uppercase tracking-wider">
           Audio
         </h2>
-        {/* Bypass Toggle - vintage lit button with red bulb glow */}
-        <button
-          type="button"
-          onClick={() => {
-            toggleBypass()
-          }}
-          className="relative px-3 py-1.5 rounded text-xs font-medium tracking-wide transition-all btn-mechanical text-[--color-text-muted] overflow-hidden"
-          style={{
-            boxShadow: bypassEffect
-              ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 0 12px rgba(181, 74, 74, 0.4), 0 0 20px rgba(181, 74, 74, 0.2)'
-              : undefined,
-          }}
-        >
-          {/* Red bulb backlight glow when bypassed */}
-          {bypassEffect && (
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(ellipse at center bottom, rgba(181, 74, 74, 0.4) 0%, rgba(181, 74, 74, 0.15) 40%, transparent 70%)',
-              }}
-            />
-          )}
-          <span className={`relative z-10 ${bypassEffect ? 'text-[#e8a0a0]' : ''}`}>BYPASS</span>
-        </button>
       </div>
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto no-scrollbar p-3 space-y-3">
+        {/* I/O Levels Section */}
+        <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
+          <h3 className="text-xs font-medium text-[--color-text-muted] mb-3 uppercase tracking-wide text-center">
+            Levels
+          </h3>
+          <IOMeter />
+        </div>
+
         {/* Audio I/O Section */}
         <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
           <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
@@ -70,14 +52,6 @@ export function RightPanel(): React.JSX.Element {
 
         {/* Recording Controls */}
         <RecordingControls />
-
-        {/* I/O Levels Section */}
-        <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
-          <h3 className="text-xs font-medium text-[--color-text-muted] mb-3 uppercase tracking-wide text-center">
-            Levels
-          </h3>
-          <IOMeter />
-        </div>
 
         {/* Export */}
         {source === 'file' && fileInfo !== null && (
