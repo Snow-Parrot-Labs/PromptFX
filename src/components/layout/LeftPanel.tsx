@@ -169,34 +169,35 @@ export function LeftPanel(): React.JSX.Element {
             title={chaosMode ? 'Chaos Mode: ON' : 'Chaos Mode: OFF'}
           >
             <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
+              width="32"
+              height="32"
+              viewBox="0 0 32 32"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className={`transition-colors ${chaosMode ? 'stroke-purple-400' : 'stroke-gray-500'}`}
             >
-              {/* Circle */}
-              <circle cx="12" cy="12" r="8" strokeWidth="2" />
-              {/* Diagonal slash 1 */}
-              <line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" />
-              {/* Diagonal slash 2 */}
-              <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" />
-              {/* Top dot */}
-              <circle
-                cx="12"
-                cy="5"
-                r="1.5"
-                className={chaosMode ? 'fill-purple-400' : 'fill-gray-500'}
-              />
-              {/* Side line - moves based on switch position */}
-              <line
-                x1={chaosMode ? '20' : '2'}
-                y1="12"
-                x2={chaosMode ? '22' : '4'}
-                y2="12"
+              {/* Vertical toggle track (elongated oval) */}
+              <rect
+                x="11"
+                y="6"
+                width="10"
+                height="20"
+                rx="5"
+                className={`transition-colors ${
+                  chaosMode
+                    ? 'fill-purple-900/40 stroke-purple-500'
+                    : 'fill-gray-800 stroke-gray-600'
+                }`}
                 strokeWidth="2"
-                className="transition-all duration-300"
+              />
+              {/* Toggle knob (moves up/down) */}
+              <circle
+                cx="16"
+                cy={chaosMode ? '21' : '11'}
+                r="4"
+                className={`transition-all duration-300 ${
+                  chaosMode ? 'fill-purple-400 stroke-purple-300' : 'fill-gray-400 stroke-gray-300'
+                }`}
+                strokeWidth="1.5"
               />
             </svg>
           </button>
