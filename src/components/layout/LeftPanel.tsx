@@ -163,7 +163,7 @@ export function LeftPanel(): React.JSX.Element {
             disabled={isDisabled}
             className={`p-2 rounded-lg transition-all ${
               chaosMode
-                ? 'bg-gradient-to-br from-purple-600/20 to-pink-500/20 border-2 border-purple-500'
+                ? 'bg-yellow-600/20 border-2 border-yellow-600'
                 : 'bg-gray-800/50 border-2 border-gray-700 hover:border-gray-600'
             } disabled:opacity-50`}
             title={chaosMode ? 'Chaos Mode: ON' : 'Chaos Mode: OFF'}
@@ -184,7 +184,7 @@ export function LeftPanel(): React.JSX.Element {
                 rx="5"
                 className={`transition-colors ${
                   chaosMode
-                    ? 'fill-purple-900/40 stroke-purple-500'
+                    ? 'fill-yellow-900/40 stroke-yellow-600'
                     : 'fill-gray-800 stroke-gray-600'
                 }`}
                 strokeWidth="2"
@@ -195,7 +195,7 @@ export function LeftPanel(): React.JSX.Element {
                 cy={chaosMode ? '21' : '11'}
                 r="4"
                 className={`transition-all duration-300 ${
-                  chaosMode ? 'fill-purple-400 stroke-purple-300' : 'fill-gray-400 stroke-gray-300'
+                  chaosMode ? 'fill-yellow-500 stroke-yellow-400' : 'fill-gray-400 stroke-gray-300'
                 }`}
                 strokeWidth="1.5"
               />
