@@ -2,7 +2,7 @@ import { useEffect, useCallback, useRef } from 'react'
 import { useAudioStore } from '@/stores'
 import { audioEngine } from '@/services/audioEngine'
 import { audioRecorder } from '@/services/audioRecorder'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui'
 
 export function useAudioRecorder(): {
   startRecording: () => void
@@ -38,10 +38,7 @@ export function useAudioRecorder(): {
 
         // Show warning at 9:30 (570 seconds)
         if (duration >= 570 && duration < 570.2) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          toast.warning('Recording will stop at 10 minutes', {
-            duration: 5000,
-          })
+          toast.warning('Recording will stop at 10 minutes')
         }
 
         // Check if max duration reached
@@ -68,7 +65,6 @@ export function useAudioRecorder(): {
   // Source switching support - show notification
   useEffect(() => {
     if (isRecording && source !== previousSourceRef.current && previousSourceRef.current !== null) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       toast.info('Audio source changed, continuing recording')
     }
     previousSourceRef.current = source
@@ -92,12 +88,10 @@ export function useAudioRecorder(): {
       setIsRecording(true)
       setRecordingDuration(0)
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       toast.success('Recording started')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to start recording'
       setRecordingError(errorMessage)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       toast.error(errorMessage)
       console.error('Error starting recording:', error)
     }
@@ -120,13 +114,11 @@ export function useAudioRecorder(): {
       const durationText =
         minutes > 0 ? `${String(minutes)}m ${String(seconds)}s` : `${String(seconds)}s`
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       toast.success(`Recording stopped (${durationText})`)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to stop recording'
       setRecordingError(errorMessage)
       setIsRecording(false)
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       toast.error(errorMessage)
       console.error('Error stopping recording:', error)
     }

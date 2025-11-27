@@ -189,8 +189,15 @@ export function LeftPanel(): React.JSX.Element {
                 r="1.5"
                 className={chaosMode ? 'fill-purple-400' : 'fill-gray-500'}
               />
-              {/* Side line */}
-              <line x1="20" y1="12" x2="22" y2="12" strokeWidth="2" />
+              {/* Side line - moves based on switch position */}
+              <line
+                x1={chaosMode ? '20' : '2'}
+                y1="12"
+                x2={chaosMode ? '22' : '4'}
+                y2="12"
+                strokeWidth="2"
+                className="transition-all duration-300"
+              />
             </svg>
           </button>
         </div>
