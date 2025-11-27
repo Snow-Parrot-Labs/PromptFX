@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { config } from '../config/index.js'
 import type { EffectDefinition } from '../schemas/effectSchema.js'
+import { validateEffectQuality } from './effectValidator.js'
 
 const anthropic = new Anthropic({
   apiKey: config.ANTHROPIC_API_KEY,
@@ -202,7 +203,7 @@ Create interfaces that look like real hardware studio gear:
 
 ### Standard Effect Chain Order (Professional Studio Practice)
 ```
-INPUT → Dynamics → EQ → Modulation → Time-Based → Spatial → OUTPUT
+INPUT -> Dynamics -> EQ -> Modulation -> Time-Based -> Spatial -> OUTPUT
       (compressor) (filter) (chorus/tremolo) (delay) (freeverb)
 ```
 
@@ -217,48 +218,48 @@ INPUT → Dynamics → EQ → Modulation → Time-Based → Spatial → OUTPUT
 
 **Vocal Chain**
 ```
-input → compressor (threshold: -18dB, ratio: 4:1)
-      → filter (highpass, 80Hz, Q: 0.7) [remove rumble]
-      → delay (time: 375ms, feedback: 0.35, mix: 0.25)
-      → freeverb (roomSize: 0.65, dampening: 5000, mix: 0.2)
-      → output
+input -> compressor (threshold: -18dB, ratio: 4:1)
+      -> filter (highpass, 80Hz, Q: 0.7) [remove rumble]
+      -> delay (time: 375ms, feedback: 0.35, mix: 0.25)
+      -> freeverb (roomSize: 0.65, dampening: 5000, mix: 0.2)
+      -> output
 ```
 Why: Compress dynamics, clean up lows, add rhythmic interest, place in space
 
 **Guitar Overdrive**
 ```
-input → filter (highpass, 120Hz, Q: 1.0) [tighten bass]
-      → distortion (type: soft, amount: 0.6, mix: 0.8)
-      → filter (lowpass, 5000Hz, Q: 0.8) [tame harshness]
-      → delay (time: 500ms, feedback: 0.4, mix: 0.3)
-      → output
+input -> filter (highpass, 120Hz, Q: 1.0) [tighten bass]
+      -> distortion (type: soft, amount: 0.6, mix: 0.8)
+      -> filter (lowpass, 5000Hz, Q: 0.8) [tame harshness]
+      -> delay (time: 500ms, feedback: 0.4, mix: 0.3)
+      -> output
 ```
 Why: Clean up first, distort, tame harshness, add space
 
 **Ambient Pad**
 ```
-input → chorus (rate: 0.5Hz, depth: 0.6, mix: 0.5) [thickness]
-      → freeverb (roomSize: 0.85, dampening: 6000, mix: 0.7) [huge space]
-      → filter (lowpass, 8000Hz, Q: 0.5) [gentle roll-off]
-      → output
+input -> chorus (rate: 0.5Hz, depth: 0.6, mix: 0.5) [thickness]
+      -> freeverb (roomSize: 0.85, dampening: 6000, mix: 0.7) [huge space]
+      -> filter (lowpass, 8000Hz, Q: 0.5) [gentle roll-off]
+      -> output
 ```
 Why: Thicken first, add massive space, gentle final shaping
 
 **Drum Bus Processing**
 ```
-input → filter (highpass, 40Hz, Q: 1.2) [sub cleanup]
-      → compressor (threshold: -15dB, ratio: 6:1, attack: 30ms, release: 150ms) [glue]
-      → distortion (type: soft, amount: 0.15, mix: 0.3) [grit]
-      → output
+input -> filter (highpass, 40Hz, Q: 1.2) [sub cleanup]
+      -> compressor (threshold: -15dB, ratio: 6:1, attack: 30ms, release: 150ms) [glue]
+      -> distortion (type: soft, amount: 0.15, mix: 0.3) [grit]
+      -> output
 ```
 Why: Clean bottom, glue together, add aggression
 
 **Lo-Fi Effect**
 ```
-input → distortion (type: bitcrush, amount: 0.5, mix: 0.7) [degradation]
-      → filter (lowpass, 3500Hz, Q: 1.5) [telephone tone]
-      → chorus (rate: 0.8Hz, depth: 0.4, mix: 0.35) [warble]
-      → output
+input -> distortion (type: bitcrush, amount: 0.5, mix: 0.7) [degradation]
+      -> filter (lowpass, 3500Hz, Q: 1.5) [telephone tone]
+      -> chorus (rate: 0.8Hz, depth: 0.4, mix: 0.35) [warble]
+      -> output
 ```
 Why: Degrade first, band-limit, add vintage instability
 
@@ -275,11 +276,11 @@ Sometimes unconventional routing creates unique sounds:
 
 **Solution**: Use gain nodes strategically
 ```
-input → gain (-3dB) [pre-distortion pad]
-      → distortion (amount: 0.7)
-      → gain (-6dB) [post-distortion pad]
-      → compressor (catches peaks)
-      → output
+input -> gain (-3dB) [pre-distortion pad]
+      -> distortion (amount: 0.7)
+      -> gain (-6dB) [post-distortion pad]
+      -> compressor (catches peaks)
+      -> output
 ```
 
 **Rules:**
@@ -292,18 +293,18 @@ input → gain (-3dB) [pre-distortion pad]
 
 1. **Reverb before EQ** - Results in muddy, unclear space (bass frequencies get reverb)
 2. **Heavy compression after distortion** - Amplifies noise and harshness
-3. **Multiple time-based effects without care** - delay → delay → reverb = muddy soup
+3. **Multiple time-based effects without care** - delay -> delay -> reverb = muddy soup
 4. **Ignoring gain staging** - Causes distortion in unexpected places
 5. **Too many effects** - Less is more; 2-4 effects is usually plenty
 6. **Competing frequencies** - delay + reverb both heavy = mud (reduce one or both)
 
 ### Genre-Specific Conventions
 
-- **Rock/Pop**: compressor → filter (EQ) → delay → reverb (conventional order)
-- **Electronic/Dance**: filter → distortion → compressor (sidechain pumping)
-- **Ambient**: chorus → reverb → filter (space-heavy, dream-like)
-- **Lo-Fi/Hip-Hop**: bitcrush → filter → chorus (vintage texture)
-- **Metal**: highpass → distortion → lowpass (tight, controlled aggression)
+- **Rock/Pop**: compressor -> filter (EQ) -> delay -> reverb (conventional order)
+- **Electronic/Dance**: filter -> distortion -> compressor (sidechain pumping)
+- **Ambient**: chorus -> reverb -> filter (space-heavy, dream-like)
+- **Lo-Fi/Hip-Hop**: bitcrush -> filter -> chorus (vintage texture)
+- **Metal**: highpass -> distortion -> lowpass (tight, controlled aggression)
 
 ## PARAMETER RELATIONSHIPS - How Controls Interact Musically
 
@@ -316,9 +317,9 @@ input → gain (-3dB) [pre-distortion pad]
 - Example: Telephone effect = frequency 1000Hz, Q 6 (narrow focus)
 
 **Delay: time + feedback + mix** (triangle of balance)
-- Long time (>800ms) → lower feedback (0.2-0.4) → lower mix (0.2-0.4)
-- Short time (<400ms) → higher feedback OK (0.4-0.6) → higher mix OK (0.3-0.5)
-- High feedback (>0.7) → MUST reduce mix (0.15-0.3) or becomes muddy
+- Long time (>800ms) -> lower feedback (0.2-0.4) -> lower mix (0.2-0.4)
+- Short time (<400ms) -> higher feedback OK (0.4-0.6) -> higher mix OK (0.3-0.5)
+- High feedback (>0.7) -> MUST reduce mix (0.15-0.3) or becomes muddy
 - Example: Slapback = time 120ms, feedback 0.15, mix 0.4 (one clear repeat)
 - Example: Ambient = time 1200ms, feedback 0.7, mix 0.25 (lush tail, no mud)
 
@@ -337,8 +338,8 @@ input → gain (-3dB) [pre-distortion pad]
 - Example: Smooth vocals = attack 10ms, release 300ms (catch everything, natural decay)
 
 **Reverb: roomSize + mix + dampening** (space and clarity balance)
-- Large roomSize (0.85+) → lower mix (0.15-0.3) → lower dampening (3000-5000Hz) = huge but clear
-- Small roomSize (0.5) → higher mix OK (0.3-0.5) → higher dampening (6000-8000Hz) = intimate room
+- Large roomSize (0.85+) -> lower mix (0.15-0.3) -> lower dampening (3000-5000Hz) = huge but clear
+- Small roomSize (0.5) -> higher mix OK (0.3-0.5) -> higher dampening (6000-8000Hz) = intimate room
 - Example: Vocal clarity = roomSize 0.65, dampening 5000Hz, mix 0.2 (space without washing out)
 - Example: Ambient pad = roomSize 0.9, dampening 6000Hz, mix 0.6 (massive tail, still defined)
 
@@ -495,7 +496,7 @@ USE FOR: On/off states, mode toggles, bypass
 ### Example 1: Delay Effect
 
 **GOOD - Musical Tape Delay**
-Nodes: input → filter(highpass, 100Hz, Q:0.8) → delay(time:375, feedback:0.45, mix:0.35) → filter(lowpass, 4000Hz, Q:0.7) → output
+Nodes: input -> filter(highpass, 100Hz, Q:0.8) -> delay(time:375, feedback:0.45, mix:0.35) -> filter(lowpass, 4000Hz, Q:0.7) -> output
 **Why it's good:**
 - Tempo-synced delay time (375ms = dotted 8th at 120 BPM) - rhythmic, musical
 - Highpass before delay (cleans up bass, prevents mud in feedback)
@@ -504,7 +505,7 @@ Nodes: input → filter(highpass, 100Hz, Q:0.8) → delay(time:375, feedback:0.4
 - Appropriate mix (0.35) - balanced, not overpowering
 
 **BAD - Poorly Designed Delay**
-Nodes: input → delay(time:789, feedback:0.92, mix:0.75) → output
+Nodes: input -> delay(time:789, feedback:0.92, mix:0.75) -> output
 **Why it's bad:**
 - Random delay time (789ms) - not musical, not rhythmic, awkward
 - Feedback too high (0.92) - near runaway, will get muddy and loud
@@ -515,7 +516,7 @@ Nodes: input → delay(time:789, feedback:0.92, mix:0.75) → output
 ### Example 2: Reverb Effect
 
 **GOOD - Vocal Plate Reverb**
-Nodes: input → filter(highpass, 80Hz, Q:0.7) → freeverb(roomSize:0.65, dampening:5000, mix:0.25) → output
+Nodes: input -> filter(highpass, 80Hz, Q:0.7) -> freeverb(roomSize:0.65, dampening:5000, mix:0.25) -> output
 **Why it's good:**
 - Highpass before reverb (prevents muddy bass reverb)
 - Medium roomSize (0.65 = large room, not cathedral) - appropriate size
@@ -523,7 +524,7 @@ Nodes: input → filter(highpass, 80Hz, Q:0.7) → freeverb(roomSize:0.65, dampe
 - Conservative mix (0.25) - subtle enhancement, not swimming
 
 **BAD - Muddy Reverb**
-Nodes: input → freeverb(roomSize:0.95, dampening:10000, mix:0.8) → filter(lowpass, 2000Hz, Q:2) → output
+Nodes: input -> freeverb(roomSize:0.95, dampening:10000, mix:0.8) -> filter(lowpass, 2000Hz, Q:2) -> output
 **Why it's bad:**
 - Filter AFTER reverb - reverb already applied to full spectrum bass (mud!)
 - Huge roomSize (0.95) with high mix (0.8) - drowning in reverb
@@ -534,7 +535,7 @@ Nodes: input → freeverb(roomSize:0.95, dampening:10000, mix:0.8) → filter(lo
 ### Example 3: Compression
 
 **GOOD - Vocal Compressor**
-Nodes: input → compressor(threshold:-18, ratio:4, attack:12, release:280) → filter(highpass, 80Hz, Q:0.7) → output
+Nodes: input -> compressor(threshold:-18, ratio:4, attack:12, release:280) -> filter(highpass, 80Hz, Q:0.7) -> output
 **Why it's good:**
 - Compression first (control dynamics before other processing)
 - Moderate threshold (-18dB) + ratio (4:1) = natural, transparent compression
@@ -543,7 +544,7 @@ Nodes: input → compressor(threshold:-18, ratio:4, attack:12, release:280) → 
 - Filter after compression (shapes the compressed signal cleanly)
 
 **BAD - Over-Compressed**
-Nodes: input → filter(highpass, 80Hz) → compressor(threshold:-35, ratio:12, attack:1, release:50) → output
+Nodes: input -> filter(highpass, 80Hz) -> compressor(threshold:-35, ratio:12, attack:1, release:50) -> output
 **Why it's bad:**
 - Very low threshold (-35dB) + very high ratio (12:1) = crushing everything
 - Attack too fast (1ms) - no transients preserved, causes distortion artifacts
@@ -554,9 +555,9 @@ Nodes: input → filter(highpass, 80Hz) → compressor(threshold:-35, ratio:12, 
 ### Example 4: Complete Effect Chain
 
 **GOOD - Guitar Overdrive Chain**
-Nodes: input → filter(highpass, 120Hz, Q:1) → distortion(soft, amount:0.6, mix:0.8) → filter(lowpass, 5500Hz, Q:0.8) → delay(time:500, feedback:0.4, mix:0.28) → freeverb(roomSize:0.6, dampening:5500, mix:0.18) → output
+Nodes: input -> filter(highpass, 120Hz, Q:1) -> distortion(soft, amount:0.6, mix:0.8) -> filter(lowpass, 5500Hz, Q:0.8) -> delay(time:500, feedback:0.4, mix:0.28) -> freeverb(roomSize:0.6, dampening:5500, mix:0.18) -> output
 **Why it's good:**
-- Proper signal flow: clean → distort → shape → time → space
+- Proper signal flow: clean -> distort -> shape -> time -> space
 - Highpass BEFORE distortion (tightens bass before saturation)
 - Lowpass AFTER distortion (tames harsh harmonics from distortion)
 - Delay before reverb (repeats then space, not space then repeats)
@@ -564,7 +565,7 @@ Nodes: input → filter(highpass, 120Hz, Q:1) → distortion(soft, amount:0.6, m
 - Reduced delay/reverb mix (0.28, 0.18) - makes room for both effects
 
 **BAD - Chaotic Chain**
-Nodes: input → freeverb(roomSize:0.85, mix:0.6) → delay(time:1200, feedback:0.75, mix:0.5) → distortion(hard, amount:0.8, mix:0.9) → compressor(threshold:-25, ratio:10) → output
+Nodes: input -> freeverb(roomSize:0.85, mix:0.6) -> delay(time:1200, feedback:0.75, mix:0.5) -> distortion(hard, amount:0.8, mix:0.9) -> compressor(threshold:-25, ratio:10) -> output
 **Why it's bad:**
 - Reverb FIRST - distortion/delay will process reverb tail (unnatural)
 - Delay after reverb - reverb on delays AND delays in reverb = mud soup
@@ -584,8 +585,8 @@ Nodes: input → freeverb(roomSize:0.85, mix:0.6) → delay(time:1200, feedback:
    - GOOD: reverb mix 0.25 + delay mix 0.3 + chorus mix 0.4 = clarity
 
 3. **Backwards Signal Flow** - Ignoring audio engineering principles
-   - BAD: reverb → filter → distortion (unnatural)
-   - GOOD: filter → distortion → reverb (natural signal flow)
+   - BAD: reverb -> filter -> distortion (unnatural)
+   - GOOD: filter -> distortion -> reverb (natural signal flow)
 
 4. **Extreme Values Without Reason** - Pushing parameters to limits unnecessarily
    - BAD: compressor ratio 20:1, threshold -50dB (crushing)
@@ -593,7 +594,7 @@ Nodes: input → freeverb(roomSize:0.85, mix:0.6) → delay(time:1200, feedback:
 
 5. **Missing Gain Staging** - Heavy processing without level control
    - BAD: heavy distortion directly to output (clipping likely)
-   - GOOD: heavy distortion → gain(-6dB) → output (controlled)
+   - GOOD: heavy distortion -> gain(-6dB) -> output (controlled)
 
 6. **Competing Frequencies** - Multiple effects fighting for same space
    - BAD: long delay + long reverb both with high mix (mud)
@@ -601,7 +602,7 @@ Nodes: input → freeverb(roomSize:0.85, mix:0.6) → delay(time:1200, feedback:
 
 7. **No Character Shaping** - Generic digital sound
    - BAD: just delay node with default parameters (boring)
-   - GOOD: filter → delay → filter for analog character (interesting!)
+   - GOOD: filter -> delay -> filter for analog character (interesting!)
 
 ## COMPLETE EXAMPLE (follow this structure exactly):
 {
@@ -786,9 +787,9 @@ Match palette to prompt theme:
 
 ## CREATIVE CONTROL NAMES
 Match control names to the chaos theme:
-- "bureaucratic paperwork" → "RED TAPE" (feedback), "APPROVAL DELAY" (time)
-- "aurora borealis" → "NORTHERN GLOW" (mix), "SOLAR WIND" (rate)
-- "existential crisis" → "DREAD" (depth), "VOID" (decay)
+- "bureaucratic paperwork" -> "RED TAPE" (feedback), "APPROVAL DELAY" (time)
+- "aurora borealis" -> "NORTHERN GLOW" (mix), "SOLAR WIND" (rate)
+- "existential crisis" -> "DREAD" (depth), "VOID" (decay)
 
 ## IMPORTANT RULES
 1. ALWAYS include a MIX control (mandatory)
@@ -1103,6 +1104,20 @@ Respond with only the JSON object, no additional text or markdown formatting.`
       aiModel: 'claude-sonnet-4-20250514',
     },
   }
+
+  // Validate effect quality and add warnings/suggestions
+  const qualityCheck = validateEffectQuality(effect)
+
+  if (!qualityCheck.passed) {
+    console.warn(`[Effect Quality] Warnings for "${effect.name}":`, qualityCheck.warnings)
+    if (qualityCheck.suggestions.length > 0) {
+      console.log(`[Effect Quality] Suggestions:`, qualityCheck.suggestions)
+    }
+  }
+
+  // Add quality metadata
+  effect.metadata.qualityWarnings = qualityCheck.warnings.length > 0 ? qualityCheck.warnings : undefined
+  effect.metadata.qualitySuggestions = qualityCheck.suggestions.length > 0 ? qualityCheck.suggestions : undefined
 
   return { effect, generationTimeMs }
 }

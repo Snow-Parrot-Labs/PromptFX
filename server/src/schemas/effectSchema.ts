@@ -249,6 +249,8 @@ export const effectDefinitionSchema = z.object({
     createdAt: z.string(),
     generationTimeMs: z.number(),
     aiModel: z.string(),
+    qualityWarnings: z.array(z.string()).optional(),
+    qualitySuggestions: z.array(z.string()).optional(),
   }),
 })
 
