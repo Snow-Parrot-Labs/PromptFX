@@ -71,8 +71,9 @@ class ApiClient {
     })
   }
 
-  async getRandomPrompt(): Promise<ApiResponse<{ prompt: string }>> {
-    return this.request<{ prompt: string }>('/effects/random-prompt')
+  async getRandomPrompt(chaosMode?: boolean): Promise<ApiResponse<{ prompt: string }>> {
+    const params = chaosMode === true ? '?chaosMode=true' : ''
+    return this.request<{ prompt: string }>(`/effects/random-prompt${params}`)
   }
 }
 

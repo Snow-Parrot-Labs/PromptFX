@@ -19,6 +19,7 @@ export interface GenerateEffectRequest {
   options?: {
     complexity?: 'simple' | 'complex'
     style?: string
+    chaosMode?: boolean
   }
 }
 

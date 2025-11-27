@@ -15,9 +15,10 @@ export const effectRoutes = Router()
 effectRoutes.get(
   '/random-prompt',
   aiRateLimiter,
-  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const prompt = await generateRandomPrompt()
+      const chaosMode = req.query.chaosMode === 'true'
+      const prompt = await generateRandomPrompt(chaosMode)
       res.json({
         success: true,
         data: { prompt },

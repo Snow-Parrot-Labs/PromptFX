@@ -17,19 +17,20 @@ const COMPLEXITY_OPTIONS: ComplexityOption[] = [
 export function LeftPanel(): React.JSX.Element {
   const [prompt, setPrompt] = useState('')
   const [complexity, setComplexity] = useState<'simple' | 'complex'>('complex')
+  const [chaosMode, setChaosMode] = useState(false)
   const [isLoadingRandom, setIsLoadingRandom] = useState(false)
   const { isGenerating, generationError, generateEffect } = useEffectStore()
 
   const handleSubmit = (e: React.FormEvent): void => {
     e.preventDefault()
     if (prompt.trim().length < 3 || isGenerating) return
-    void generateEffect(prompt, { complexity })
+    void generateEffect(prompt, { complexity, chaosMode })
   }
 
   const handleRandomEffect = useCallback(async (): Promise<void> => {
     setIsLoadingRandom(true)
     try {
-      const response = await api.getRandomPrompt()
+      const response = await api.getRandomPrompt(chaosMode)
       if (response.success && response.data) {
         setPrompt(response.data.prompt)
         toast.success('Random effect idea generated!')
@@ -41,7 +42,7 @@ export function LeftPanel(): React.JSX.Element {
     } finally {
       setIsLoadingRandom(false)
     }
-  }, [])
+  }, [chaosMode])
 
   const isDisabled = isGenerating || isLoadingRandom
 
@@ -142,6 +143,34 @@ export function LeftPanel(): React.JSX.Element {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Chaos Mode Toggle */}
+        <div className="flex items-center justify-between py-2 px-3 border-t border-[--color-border]">
+          <div>
+            <label className="text-xs font-medium text-[--color-text-secondary]">Chaos Mode</label>
+            <p className="text-[10px] text-[--color-text-muted] mt-0.5">
+              Wild experimental effects
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={chaosMode}
+            onClick={() => {
+              setChaosMode(!chaosMode)
+            }}
+            disabled={isDisabled}
+            className={`relative w-10 h-5 rounded-full transition-colors ${
+              chaosMode ? 'bg-gradient-to-r from-purple-600 to-pink-500' : 'bg-gray-700'
+            } disabled:opacity-50`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                chaosMode ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
         </div>
 
         {/* Error Display */}

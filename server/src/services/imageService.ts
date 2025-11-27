@@ -11,8 +11,11 @@ interface PanelDesign {
  * Generate a simple tileable texture using DALL-E 3.
  * Returns a small texture that can be tiled as a CSS background.
  */
-export async function generatePanelTexture(panelDesign: PanelDesign): Promise<string | null> {
-  console.log('🎨 [ImageService] generatePanelTexture called:', { panelDesign })
+export async function generatePanelTexture(
+  panelDesign: PanelDesign,
+  chaosMode: boolean = false
+): Promise<string | null> {
+  console.log('🎨 [ImageService] generatePanelTexture called:', { panelDesign, chaosMode })
 
   if (!config.OPENAI_API_KEY) {
     console.warn('⚠️ [ImageService] OPENAI_API_KEY not configured, skipping texture generation')
@@ -22,8 +25,10 @@ export async function generatePanelTexture(panelDesign: PanelDesign): Promise<st
   try {
     const openai = new OpenAI({ apiKey: config.OPENAI_API_KEY })
 
-    // Build a simple texture prompt based on the color
-    const texturePrompt = buildTexturePrompt(panelDesign.primaryColor)
+    // Build texture prompt based on mode
+    const texturePrompt = chaosMode
+      ? buildChaosTexturePrompt(panelDesign)
+      : buildTexturePrompt(panelDesign.primaryColor)
     console.log('📝 [ImageService] Texture prompt:', texturePrompt)
 
     const response = await openai.images.generate({
@@ -91,13 +96,49 @@ Abstract material texture only, no objects or shapes.
 Perfect for seamless tiling as a background pattern.`
 }
 
+/**
+ * Build a chaos-themed texture prompt that matches the panel design colors.
+ * Maps colors to experimental/wild texture styles.
+ */
+function buildChaosTexturePrompt(panelDesign: PanelDesign): string {
+  const primary = panelDesign.primaryColor.toLowerCase()
+  const accent = panelDesign.accentColor.toLowerCase()
+
+  // Determine chaos texture style based on colors
+  let textureStyle = 'abstract digital glitch pattern'
+  let description = 'cyberpunk aesthetic with data corruption artifacts'
+
+  // Map colors to chaos texture themes
+  if (primary.includes('1a') || primary.includes('0f') || primary.includes('16')) {
+    // Dark colors → cosmic/space theme
+    textureStyle = 'deep space nebula texture'
+    description = 'swirling cosmic dust with distant stars and subtle color gradients'
+  } else if (accent.includes('ff') && (accent.includes('00') || accent.includes('88'))) {
+    // Neon accents → glitch/cyber theme
+    textureStyle = 'holographic interference pattern'
+    description = 'iridescent surface with digital scan lines and chromatic aberration'
+  } else if (primary.includes('2') || primary.includes('3')) {
+    // Mid tones → organic/surreal theme
+    textureStyle = 'bioluminescent organic texture'
+    description = 'flowing cellular patterns with ethereal glow'
+  }
+
+  return `Seamless tileable texture: ${textureStyle}.
+${description}
+Colors: ${panelDesign.primaryColor} base with ${panelDesign.accentColor} highlights.
+Abstract, experimental, suitable for audio effect GUI background.
+Uniform lighting, can be tiled seamlessly.
+No text, no objects, pure abstract pattern.`
+}
+
 // Keep the old function signature for backwards compatibility
 // but redirect to the new texture-only approach
 export async function generatePanelImage(
   _effectName: string,
   _effectDescription: string,
   panelDesign: PanelDesign,
-  _controls: unknown[] = []
+  _controls: unknown[] = [],
+  chaosMode: boolean = false
 ): Promise<string | null> {
-  return generatePanelTexture(panelDesign)
+  return generatePanelTexture(panelDesign, chaosMode)
 }

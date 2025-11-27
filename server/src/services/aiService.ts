@@ -166,9 +166,86 @@ USE FOR: On/off states, mode toggles, bypass
 6. **Section Labels**: Use decorations to label control groups
 7. **Mix Faders**: Consider using a vertical slider for wet/dry mix to mimic console layouts`
 
+const CHAOS_SYSTEM_PROMPT = `You are a CHAOTIC audio DSP engineer who believes audio effects should be wild, experimental, and unexpected. You take absurd concepts and translate them into actual DSP processing that somehow captures their essence.
+
+## CHAOS PHILOSOPHY
+- Break traditional audio conventions
+- Use unusual parameter combinations
+- Create unexpected interactions between effects
+- Match the visual design to the chaotic concept
+- Embrace the weird, the glitchy, the unconventional
+
+## DSP Node Types (same as normal, params MUST be an object)
+- input: Audio input (required, params: {})
+- output: Audio output (required, params: {})
+- delay: params: { time: 0-2000, feedback: 0-1, mix: 0-1 }
+- reverb: params: { decay: 0.1-10, preDelay: 0-100, mix: 0-1 }
+- filter: params: { type: "lowpass"|"highpass"|"bandpass"|"notch", frequency: 20-20000, Q: 0.1-20 }
+- distortion: params: { type: "soft"|"hard"|"foldback"|"bitcrush", amount: 0-1, mix: 0-1 }
+- gain: params: { gain: -60 to 12 }
+- compressor: params: { threshold: -60 to 0, ratio: 1-20, attack: 0-1000, release: 0-3000 }
+- chorus: params: { rate: 0.1-10, depth: 0-1, mix: 0-1 }
+- tremolo: params: { rate: 0.1-20, depth: 0-1, shape: "sine"|"square"|"triangle" }
+- panner: params: { pan: -1 to 1 }
+
+## Connection Format (MUST use objects with nodeId):
+{ "from": { "nodeId": "sourceNodeId" }, "to": { "nodeId": "targetNodeId" } }
+
+## CHAOS DSP GUIDELINES
+1. **Unusual Combinations**: Pair effects that wouldn't normally go together
+2. **Extreme Parameters**: Push parameters to unusual ranges
+3. **Creative Routing**: Use unconventional signal chains
+4. **Thematic Processing**: DSP should somehow reflect the prompt's theme
+
+## CHAOS VISUAL DESIGN
+Forget boring studio hardware aesthetics. Think:
+- Experimental color palettes (neon, pastel, clashing colors)
+- Unconventional layouts (asymmetric, chaotic positioning)
+- Thematic visuals (aurora borealis = swirling greens/purples)
+- More variety in art styles
+- Panel should visually represent the prompt's concept
+
+## VISUAL STYLE OPTIONS
+- "glitch": Neon colors, digital artifacts, cyberpunk aesthetic
+- "organic": Natural colors, flowing shapes, bioluminescent
+- "cosmic": Deep space colors, stars, nebulas
+- "surreal": Impossible geometries, dreamlike, Dali-esque
+- "retro-future": Vaporwave, synthwave, 80s neon
+- "abstract": Pure color and form, no representational elements
+
+## COLOR PALETTES FOR CHAOS
+Match palette to prompt theme:
+- Anxiety/tension: Deep reds, blacks, sharp contrasts (#8b0000, #1a1a1a)
+- Dreams/memory: Soft purples, blues, faded edges (#9370db, #4169e1)
+- Nature/organic: Greens, earth tones, gradients (#228b22, #8b4513)
+- Technology/glitch: Cyan, magenta, electric blue, hot pink (#00ffff, #ff1493)
+- Cosmic/space: Deep purples, gold, starlight (#4b0082, #ffd700)
+- Absurd/humor: Clashing colors, unexpected combinations (#ff6347, #7cfc00)
+
+## UI CONTROL TYPES (same as normal)
+- Knobs: amber|cyan|green|red|white|purple, sizes: sm|md|lg
+- Sliders: vertical or horizontal orientation
+- Switches: toggle, mode, bypass
+
+## CREATIVE CONTROL NAMES
+Match control names to the chaos theme:
+- "bureaucratic paperwork" → "RED TAPE" (feedback), "APPROVAL DELAY" (time)
+- "aurora borealis" → "NORTHERN GLOW" (mix), "SOLAR WIND" (rate)
+- "existential crisis" → "DREAD" (depth), "VOID" (decay)
+
+## IMPORTANT RULES
+1. ALWAYS include a MIX control (mandatory)
+2. Control positions: x: 10-90%, y: 25-80%
+3. Use at least one LED decoration
+4. Creative brandLabel that matches the chaos theme
+5. Make DSP processing reflect the absurd prompt somehow
+
+Be creative. Be weird. Make audio that sounds like the concept feels.`
+
 export interface GenerateEffectOptions {
   complexity?: 'simple' | 'complex'
   style?: string
+  chaosMode?: boolean
 }
 
 export interface GenerateEffectResult {
@@ -176,7 +253,124 @@ export interface GenerateEffectResult {
   generationTimeMs: number
 }
 
-export async function generateRandomPrompt(): Promise<string> {
+export async function generateRandomPrompt(chaosMode: boolean = false): Promise<string> {
+  // CHAOS MODE: Use completely wild, unconventional concepts
+  if (chaosMode) {
+    // Move chaos word lists here for chaos mode logic
+    const chaosNonAudio = [
+      'weather patterns',
+      'stock market volatility',
+      'traffic jam',
+      'quantum entanglement',
+      'continental drift',
+      'cellular mitosis',
+      'gravitational waves',
+      'photosynthesis',
+      'neural network learning',
+      'fermentation process',
+      'crystallization',
+      'erosion',
+    ]
+
+    const chaosSynesthetic = [
+      'the color purple',
+      'the taste of static',
+      'anxiety',
+      'nostalgia',
+      'smell of rain',
+      'deja vu',
+      'the feeling of falling',
+      'bittersweet memories',
+      'cognitive dissonance',
+      'the uncanny valley',
+      'liminal spaces',
+      'time dilation',
+    ]
+
+    const chaosPhysical = [
+      'earthquake',
+      'black hole event horizon',
+      'aurora borealis',
+      'supernova',
+      'bioluminescence',
+      'lightning storm',
+      'volcanic eruption',
+      'tidal forces',
+      'magnetic field reversal',
+      'nuclear fusion',
+      'solar flares',
+      'meteor shower',
+    ]
+
+    const chaosAbsurd = [
+      "grandma's knitting",
+      'confused GPS',
+      'bureaucratic paperwork',
+      'existential crisis in a spreadsheet',
+      'cats arguing about philosophy',
+      'elevator music in hell',
+      'dial-up internet connecting to the void',
+      'a fax machine having dreams',
+      'corporate synergy feedback loop',
+      'expired coupon for reality',
+      'screensaver achieving sentience',
+      'loading bar that never completes',
+    ]
+
+    const chaosTransformations = [
+      'collapsing into',
+      'arguing with',
+      'dreaming about',
+      'becoming',
+      'forgetting how to be',
+      'glitching through',
+      'dissolving into',
+      'rebelling against',
+      'having an existential crisis about',
+      'accidentally summoning',
+    ]
+
+    // Randomly select from chaos categories
+    const categories = [chaosNonAudio, chaosSynesthetic, chaosPhysical, chaosAbsurd]
+    const category1 = categories[Math.floor(Math.random() * categories.length)]!
+    const category2 = categories[Math.floor(Math.random() * categories.length)]!
+
+    const concept1 = category1[Math.floor(Math.random() * category1.length)]!
+    const concept2 = category2[Math.floor(Math.random() * category2.length)]!
+    const transformation =
+      chaosTransformations[Math.floor(Math.random() * chaosTransformations.length)]!
+
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 100,
+      temperature: 1.2, // Higher for creativity
+      messages: [
+        {
+          role: 'user',
+          content: `Write an absurd, creative audio effect idea (6-15 words) inspired by: "${concept1} ${transformation} ${concept2}"
+
+This is for CHAOS MODE - be weird, experimental, and unexpected. Think of how these non-audio concepts could translate into sound manipulation.
+
+Examples of good chaos responses:
+- "The sound of bureaucracy slowly consuming your will to live"
+- "Audio that forgets what frequency it was supposed to be"
+- "Reverb that sounds like a black hole having regrets"
+- "Distortion modeled on a cat walking across a synthesizer"
+
+Respond with ONLY the description. No quotes. Be creative and weird.`,
+        },
+      ],
+    })
+
+    const textContent = response.content.find((block) => block.type === 'text')
+    if (!textContent || textContent.type !== 'text') {
+      throw new Error('No text response from AI')
+    }
+
+    return textContent.text.trim()
+  }
+
+  // NORMAL MODE: Traditional audio effect concepts
   // Seed words to inspire variety - pick a few random ones
   const adjectives = [
     'shimmering',
@@ -275,17 +469,25 @@ export async function generateEffect(
 
   const styleHint = options.style ? `Style preference: ${options.style}.` : ''
 
+  const chaosHint = options.chaosMode
+    ? 'This is CHAOS MODE - be experimental, weird, and creative. Push boundaries!'
+    : ''
+
+  const systemPrompt = options.chaosMode ? CHAOS_SYSTEM_PROMPT : SYSTEM_PROMPT
+
   const userMessage = `Create an audio effect based on this description: "${prompt}"
 
 ${complexityHint}
 ${styleHint}
+${chaosHint}
 
 Respond with only the JSON object, no additional text or markdown formatting.`
 
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2048,
-    system: SYSTEM_PROMPT,
+    temperature: options.chaosMode ? 1.0 : 0.7,
+    system: systemPrompt,
     messages: [
       {
         role: 'user',

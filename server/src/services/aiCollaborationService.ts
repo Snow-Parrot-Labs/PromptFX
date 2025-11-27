@@ -10,6 +10,7 @@ const anthropic = new Anthropic({
 export interface GenerateEffectOptions {
   complexity?: 'simple' | 'complex'
   style?: string
+  chaosMode?: boolean
 }
 
 interface EffectConcept {
@@ -173,7 +174,10 @@ Visual Styles:
  * Step 2: Generate visual design with DALL-E texture
  * Generates a simple tileable texture for the panel background
  */
-async function generateVisualDesign(concept: EffectConcept): Promise<VisualDesignResult> {
+async function generateVisualDesign(
+  concept: EffectConcept,
+  chaosMode: boolean = false
+): Promise<VisualDesignResult> {
   console.log('🎨 [Collaboration] Step 2: Generating panel texture with DALL-E...')
 
   // Define control zones based on number of controls
@@ -181,11 +185,17 @@ async function generateVisualDesign(concept: EffectConcept): Promise<VisualDesig
   const zones = generateControlZones(numControls, concept.panelDesign.rackUnits)
 
   // Generate a simple tileable texture (no inpainting needed)
-  const backgroundImage = await generatePanelImage(concept.name, concept.description, {
-    primaryColor: concept.panelDesign.primaryColor,
-    accentColor: concept.panelDesign.accentColor,
-    rackUnits: concept.panelDesign.rackUnits,
-  })
+  const backgroundImage = await generatePanelImage(
+    concept.name,
+    concept.description,
+    {
+      primaryColor: concept.panelDesign.primaryColor,
+      accentColor: concept.panelDesign.accentColor,
+      rackUnits: concept.panelDesign.rackUnits,
+    },
+    [],
+    chaosMode
+  )
 
   console.log('✅ [Collaboration] Visual design generated with', zones.length, 'control zones')
 
@@ -482,15 +492,18 @@ export async function generateEffectWithCollaboration(
   options: GenerateEffectOptions = {}
 ): Promise<{ effect: EffectDefinition; generationTimeMs: number }> {
   const startTime = Date.now()
+  const chaosMode = options.chaosMode ?? false
 
-  console.log('🤝 [Collaboration] Starting iterative AI collaboration...')
+  console.log(
+    `🤝 [Collaboration] Starting ${chaosMode ? 'CHAOS' : 'normal'} iterative AI collaboration...`
+  )
   console.log('📝 [Collaboration] User prompt:', prompt)
 
   // Step 1: Claude generates concept
   const concept = await generateEffectConcept(prompt, options)
 
-  // Step 2: Gemini generates visual design
-  const visualDesign = await generateVisualDesign(concept)
+  // Step 2: DALL-E generates visual design (with chaos mode)
+  const visualDesign = await generateVisualDesign(concept, chaosMode)
 
   // Step 3: Claude refines with visual context
   const effect = await refineEffectWithVisuals(concept, visualDesign, prompt)

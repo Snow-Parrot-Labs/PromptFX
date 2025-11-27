@@ -6,6 +6,7 @@ export const generateEffectRequestSchema = z.object({
     .object({
       complexity: z.enum(['simple', 'complex']).optional(),
       style: z.string().max(50).optional(),
+      chaosMode: z.boolean().optional(),
     })
     .optional(),
 })
