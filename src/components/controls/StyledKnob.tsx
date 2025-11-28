@@ -113,7 +113,11 @@ export function StyledKnob({
         <div
           className="absolute inset-0 rounded-full"
           style={{
-            background: `conic-gradient(from 225deg, ${theme.main} ${(fillValue * 270).toString()}deg, rgba(58,52,40,0.5) ${(fillValue * 270).toString()}deg 270deg, transparent 270deg)`,
+            background: inverted
+              ? // Inverted (LPF): fill from right to left
+                `conic-gradient(from 225deg, rgba(58,52,40,0.5) 0deg ${((1 - fillValue) * 270).toString()}deg, ${theme.main} ${((1 - fillValue) * 270).toString()}deg 270deg, transparent 270deg)`
+              : // Normal (HPF, others): fill from left to right
+                `conic-gradient(from 225deg, ${theme.main} ${(fillValue * 270).toString()}deg, rgba(58,52,40,0.5) ${(fillValue * 270).toString()}deg 270deg, transparent 270deg)`,
             boxShadow: isDragging ? `0 0 8px ${theme.glow}` : 'none',
           }}
         />
