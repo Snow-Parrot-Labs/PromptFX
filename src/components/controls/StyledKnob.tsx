@@ -12,6 +12,7 @@ interface StyledKnobProps {
   size?: ControlSize | undefined
   indicator?: IndicatorStyle | undefined
   inverted?: boolean | undefined // Inverts fill direction (for LPF to mirror HPF)
+  variant?: 'fill' | 'arrow' | undefined // 'fill' shows progress ring (filters), 'arrow' shows position marker (freq select)
 }
 
 // Vintage analog color themes - brass, aged metal, warm tones
@@ -42,6 +43,7 @@ export function StyledKnob({
   size = 'md',
   indicator = 'line',
   inverted = false,
+  variant = 'fill',
 }: StyledKnobProps): React.JSX.Element {
   const [isDragging, setIsDragging] = useState(false)
   const knobRef = useRef<HTMLDivElement>(null)
@@ -113,14 +115,55 @@ export function StyledKnob({
         <div
           className="absolute inset-0 rounded-full"
           style={{
-            background: inverted
-              ? // Inverted (LPF): fill from right to left
-                `conic-gradient(from 225deg, rgba(58,52,40,0.5) 0deg ${((1 - fillValue) * 270).toString()}deg, ${theme.main} ${((1 - fillValue) * 270).toString()}deg 270deg, transparent 270deg)`
-              : // Normal (HPF, others): fill from left to right
-                `conic-gradient(from 225deg, ${theme.main} ${(fillValue * 270).toString()}deg, rgba(58,52,40,0.5) ${(fillValue * 270).toString()}deg 270deg, transparent 270deg)`,
+            background:
+              variant === 'arrow'
+                ? // Arrow variant: just show empty dark ring
+                  'rgba(58,52,40,0.5)'
+                : inverted
+                  ? // Inverted (LPF): fill from right to left
+                    `conic-gradient(from 225deg, rgba(58,52,40,0.5) 0deg ${((1 - fillValue) * 270).toString()}deg, ${theme.main} ${((1 - fillValue) * 270).toString()}deg 270deg, transparent 270deg)`
+                  : // Normal (HPF, others): fill from left to right
+                    `conic-gradient(from 225deg, ${theme.main} ${(fillValue * 270).toString()}deg, rgba(58,52,40,0.5) ${(fillValue * 270).toString()}deg 270deg, transparent 270deg)`,
             boxShadow: isDragging ? `0 0 8px ${theme.glow}` : 'none',
           }}
-        />
+        >
+          {/* Arrow position marker for frequency selection knobs */}
+          {variant === 'arrow' && (
+            <div
+              className="absolute"
+              style={{
+                top: '50%',
+                left: '50%',
+                width: '0',
+                height: '0',
+                transform: `translate(-50%, -50%) rotate(${rotation.toString()}deg)`,
+              }}
+            >
+              {/* Outward-pointing triangle */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top:
+                    size === 'lg'
+                      ? '-32px'
+                      : size === 'md'
+                        ? '-24px'
+                        : size === 'sm'
+                          ? '-16px'
+                          : '-12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '0',
+                  height: '0',
+                  borderLeft: size === 'xs' ? '3px solid transparent' : '4px solid transparent',
+                  borderRight: size === 'xs' ? '3px solid transparent' : '4px solid transparent',
+                  borderBottom: `${size === 'xs' ? '4px' : '5px'} solid ${theme.main}`,
+                  filter: `drop-shadow(0 0 2px ${theme.glow})`,
+                }}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Knob body - vintage bakelite */}
         <div

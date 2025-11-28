@@ -105,6 +105,7 @@ export function EQPanel(): React.JSX.Element {
                   max={250}
                   label="FREQ"
                   unit="Hz"
+                  variant="arrow"
                   onChange={(value) => {
                     updateInputEQBand('lowShelf', 'frequency', value)
                   }}
@@ -139,6 +140,7 @@ export function EQPanel(): React.JSX.Element {
                   max={2000}
                   label="FREQ"
                   unit="Hz"
+                  variant="arrow"
                   onChange={(value) => {
                     updateInputEQBand('midPeak', 'frequency', value)
                   }}
@@ -173,6 +175,7 @@ export function EQPanel(): React.JSX.Element {
                   max={12000}
                   label="FREQ"
                   unit="Hz"
+                  variant="arrow"
                   onChange={(value) => {
                     updateInputEQBand('highPeak', 'frequency', value)
                   }}
@@ -282,6 +285,7 @@ export function EQPanel(): React.JSX.Element {
                   max={250}
                   label="FREQ"
                   unit="Hz"
+                  variant="arrow"
                   onChange={(value) => {
                     updateOutputEQBand('lowShelf', 'frequency', value)
                   }}
@@ -316,6 +320,7 @@ export function EQPanel(): React.JSX.Element {
                   max={2000}
                   label="FREQ"
                   unit="Hz"
+                  variant="arrow"
                   onChange={(value) => {
                     updateOutputEQBand('midPeak', 'frequency', value)
                   }}
@@ -350,6 +355,7 @@ export function EQPanel(): React.JSX.Element {
                   max={12000}
                   label="FREQ"
                   unit="Hz"
+                  variant="arrow"
                   onChange={(value) => {
                     updateOutputEQBand('highPeak', 'frequency', value)
                   }}
