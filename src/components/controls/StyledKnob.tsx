@@ -11,6 +11,7 @@ interface StyledKnobProps {
   color?: ControlColorTheme | undefined
   size?: ControlSize | undefined
   indicator?: IndicatorStyle | undefined
+  inverted?: boolean | undefined // Inverts fill direction (for LPF to mirror HPF)
 }
 
 // Vintage analog color themes - brass, aged metal, warm tones
@@ -40,6 +41,7 @@ export function StyledKnob({
   color = 'amber',
   size = 'md',
   indicator = 'line',
+  inverted = false,
 }: StyledKnobProps): React.JSX.Element {
   const [isDragging, setIsDragging] = useState(false)
   const knobRef = useRef<HTMLDivElement>(null)
@@ -52,6 +54,8 @@ export function StyledKnob({
   // Calculate rotation: -135deg to 135deg (270deg range)
   const normalizedValue = (value - min) / (max - min)
   const rotation = -135 + normalizedValue * 270
+  // For inverted knobs (LPF), fill increases as value decreases
+  const fillValue = inverted ? 1 - normalizedValue : normalizedValue
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -109,7 +113,7 @@ export function StyledKnob({
         <div
           className="absolute inset-0 rounded-full"
           style={{
-            background: `conic-gradient(from 225deg, ${theme.main} ${(normalizedValue * 270).toString()}deg, rgba(58,52,40,0.5) ${(normalizedValue * 270).toString()}deg 270deg, transparent 270deg)`,
+            background: `conic-gradient(from 225deg, ${theme.main} ${(fillValue * 270).toString()}deg, rgba(58,52,40,0.5) ${(fillValue * 270).toString()}deg 270deg, transparent 270deg)`,
             boxShadow: isDragging ? `0 0 8px ${theme.glow}` : 'none',
           }}
         />

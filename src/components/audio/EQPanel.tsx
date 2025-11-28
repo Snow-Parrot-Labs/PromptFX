@@ -207,6 +207,7 @@ export function EQPanel(): React.JSX.Element {
                   max={20000}
                   label="FREQ"
                   unit="Hz"
+                  inverted={true}
                   onChange={(value) => {
                     updateInputEQBand('lowpass', 'frequency', value)
                   }}
@@ -383,6 +384,7 @@ export function EQPanel(): React.JSX.Element {
                   max={20000}
                   label="FREQ"
                   unit="Hz"
+                  inverted={true}
                   onChange={(value) => {
                     updateOutputEQBand('lowpass', 'frequency', value)
                   }}
