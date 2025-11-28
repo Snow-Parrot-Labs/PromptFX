@@ -13,7 +13,7 @@ export function LiveInput(): React.JSX.Element {
     setLiveInputEnabled,
     setLiveInputError,
     setSource,
-    setTestToneActive,
+    setToneGeneratorActive,
     setAudioInputDevices,
     setSelectedInputDeviceId,
   } = useAudioStore()
@@ -58,9 +58,9 @@ export function LiveInput(): React.JSX.Element {
       setSource(null)
     } else {
       try {
-        // Stop test tone if active
-        setTestToneActive(false)
-        audioEngine.stopTestTone()
+        // Stop tone generator if active
+        setToneGeneratorActive(false)
+        audioEngine.stopToneGenerator()
 
         // Load devices if not loaded yet
         if (audioInputDevices.length === 0) {
@@ -85,7 +85,7 @@ export function LiveInput(): React.JSX.Element {
     setLiveInputEnabled,
     setLiveInputError,
     setSource,
-    setTestToneActive,
+    setToneGeneratorActive,
     loadDevices,
   ])
 

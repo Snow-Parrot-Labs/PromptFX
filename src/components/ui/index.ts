@@ -1,4 +1,5 @@
 export { Knob } from './Knob'
+export { DialKnob } from './DialKnob'
 export { Slider } from './Slider'
 export { Switch } from './Switch'
 export { Select } from './Select'

@@ -1,13 +1,13 @@
 import { useAudioStore } from '@/stores/audioStore'
 
-type SourceTab = 'file' | 'live' | 'test'
+type SourceTab = 'file' | 'live' | 'tone'
 
 export function SourceSelector(): React.JSX.Element {
-  const { source, testToneActive, liveInputEnabled } = useAudioStore()
+  const { source, toneGeneratorActive, liveInputEnabled } = useAudioStore()
 
   const getCurrentTab = (): SourceTab => {
     if (liveInputEnabled) return 'live'
-    if (testToneActive) return 'test'
+    if (toneGeneratorActive) return 'tone'
     return 'file'
   }
 
@@ -42,7 +42,7 @@ export function SourceSelector(): React.JSX.Element {
         hasContent={liveInputEnabled}
       />
       <TabButton
-        label="Test"
+        label="Tone"
         icon={
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -53,8 +53,8 @@ export function SourceSelector(): React.JSX.Element {
             />
           </svg>
         }
-        isActive={currentTab === 'test'}
-        hasContent={testToneActive}
+        isActive={currentTab === 'tone'}
+        hasContent={toneGeneratorActive}
       />
     </div>
   )

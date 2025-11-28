@@ -2,8 +2,7 @@ import * as Tone from 'tone'
 import type {
   AudioFileInfo,
   WaveformData,
-  TestToneFrequency,
-  TestToneWaveform,
+  ToneGeneratorWaveform,
   AudioInputDevice,
   AudioOutputDevice,
 } from '@/types/audio'
@@ -376,11 +375,11 @@ class AudioEngine {
     return this.wetGain?.gain.value ?? 1
   }
 
-  // Test tone methods
-  startTestTone(frequency: TestToneFrequency, waveform: TestToneWaveform = 'sine'): void {
+  // Tone generator methods
+  startToneGenerator(frequency: number, waveform: ToneGeneratorWaveform = 'sine'): void {
     if (!this.isInitialized) return
 
-    this.stopTestTone()
+    this.stopToneGenerator()
 
     this.oscillator = new Tone.Oscillator({
       frequency,
@@ -391,13 +390,13 @@ class AudioEngine {
     this.oscillator.start()
   }
 
-  setTestToneWaveform(waveform: TestToneWaveform): void {
+  setToneGeneratorWaveform(waveform: ToneGeneratorWaveform): void {
     if (this.oscillator) {
       this.oscillator.type = waveform
     }
   }
 
-  stopTestTone(): void {
+  stopToneGenerator(): void {
     if (this.oscillator) {
       this.oscillator.stop()
       this.oscillator.dispose()
@@ -405,7 +404,7 @@ class AudioEngine {
     }
   }
 
-  setTestToneFrequency(frequency: TestToneFrequency): void {
+  setToneGeneratorFrequency(frequency: number): void {
     if (this.oscillator) {
       this.oscillator.frequency.rampTo(frequency, 0.01)
     }
@@ -692,7 +691,7 @@ class AudioEngine {
 
     // Stop any file playback
     this.stop()
-    this.stopTestTone()
+    this.stopToneGenerator()
 
     // Create microphone input
     this.microphoneInput = new Tone.UserMedia()
@@ -758,7 +757,7 @@ class AudioEngine {
 
     // Stop any file playback
     this.stop()
-    this.stopTestTone()
+    this.stopToneGenerator()
 
     // Disable current input first
     this.disableLiveInput()
@@ -1043,7 +1042,7 @@ class AudioEngine {
 
     this.disableLiveInput()
     this.cleanupMediaStream()
-    this.stopTestTone()
+    this.stopToneGenerator()
     this.stop()
 
     this.player?.dispose()

@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { useAudioStore } from '@/stores'
 import { audioEngine } from '@/services/audioEngine'
-import type { TestToneFrequency, TestToneWaveform, WaveformData } from '@/types/audio'
+import type { ToneGeneratorWaveform, WaveformData } from '@/types/audio'
 
 interface UseAudioEngineReturn {
   initialize: () => Promise<void>
@@ -10,9 +10,9 @@ interface UseAudioEngineReturn {
   pause: () => void
   stop: () => void
   seek: (time: number) => void
-  startTestTone: (frequency: TestToneFrequency) => Promise<void>
-  stopTestTone: () => void
-  setTestToneFreq: (frequency: TestToneFrequency) => void
+  startToneGenerator: (frequency: number) => Promise<void>
+  stopToneGenerator: () => void
+  setToneGeneratorFrequency: (frequency: number) => void
   getWaveformData: () => WaveformData | null
 }
 
@@ -26,9 +26,9 @@ export function useAudioEngine(): UseAudioEngineReturn {
     setSource,
     bypassEffect,
     isLooping,
-    testToneActive,
-    testToneFrequency,
-    testToneWaveform,
+    toneGeneratorActive,
+    toneGeneratorFrequency,
+    toneGeneratorWaveform,
   } = useAudioStore()
 
   const isInitializedRef = useRef(false)
@@ -102,23 +102,23 @@ export function useAudioEngine(): UseAudioEngineReturn {
     audioEngine.seek(time)
   }, [])
 
-  // Test tone controls
-  const startTestTone = useCallback(
-    async (frequency: TestToneFrequency, waveform: TestToneWaveform = 'sine') => {
+  // Tone generator controls
+  const startToneGenerator = useCallback(
+    async (frequency: number, waveform: ToneGeneratorWaveform = 'sine') => {
       await initialize()
-      audioEngine.startTestTone(frequency, waveform)
+      audioEngine.startToneGenerator(frequency, waveform)
       setSource('tone')
     },
     [initialize, setSource]
   )
 
-  const stopTestTone = useCallback(() => {
-    audioEngine.stopTestTone()
+  const stopToneGenerator = useCallback(() => {
+    audioEngine.stopToneGenerator()
     setSource(null)
   }, [setSource])
 
-  const setTestToneFreq = useCallback((frequency: TestToneFrequency) => {
-    audioEngine.setTestToneFrequency(frequency)
+  const setToneGeneratorFrequency = useCallback((frequency: number) => {
+    audioEngine.setToneGeneratorFrequency(frequency)
   }, [])
 
   // Get waveform data
@@ -136,14 +136,20 @@ export function useAudioEngine(): UseAudioEngineReturn {
     audioEngine.setLooping(isLooping)
   }, [isLooping])
 
-  // Sync test tone state
+  // Sync tone generator state
   useEffect(() => {
-    if (testToneActive) {
-      void startTestTone(testToneFrequency, testToneWaveform)
+    if (toneGeneratorActive) {
+      void startToneGenerator(toneGeneratorFrequency, toneGeneratorWaveform)
     } else {
-      stopTestTone()
+      stopToneGenerator()
     }
-  }, [testToneActive, testToneFrequency, testToneWaveform, startTestTone, stopTestTone])
+  }, [
+    toneGeneratorActive,
+    toneGeneratorFrequency,
+    toneGeneratorWaveform,
+    startToneGenerator,
+    stopToneGenerator,
+  ])
 
   return {
     initialize,
@@ -152,9 +158,9 @@ export function useAudioEngine(): UseAudioEngineReturn {
     pause,
     stop,
     seek,
-    startTestTone,
-    stopTestTone,
-    setTestToneFreq,
+    startToneGenerator,
+    stopToneGenerator,
+    setToneGeneratorFrequency,
     getWaveformData,
   }
 }

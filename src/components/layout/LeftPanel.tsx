@@ -3,7 +3,7 @@ import { useEffectStore } from '@/stores/effectStore'
 import { useAudioStore } from '@/stores'
 import { api } from '@/services/api'
 import { toast } from '@/components/ui'
-import { TestToneGenerator } from '@/components/audio/TestToneGenerator'
+import { ToneGenerator } from '@/components/audio/ToneGenerator'
 import { FileUploader } from '@/components/audio/FileUploader'
 import { Waveform } from '@/components/audio/Waveform'
 import { Transport } from '@/components/audio/Transport'
@@ -370,12 +370,12 @@ export function LeftPanel(): React.JSX.Element {
           </div>
         </form>
 
-        {/* Test Tone Section */}
+        {/* Tone Generator Section */}
         <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-3">
           <h3 className="text-xs font-medium text-[--color-text-muted] mb-2 uppercase tracking-wide">
-            Test Tone
+            Tone Generator
           </h3>
-          <TestToneGenerator />
+          <ToneGenerator />
         </div>
 
         {/* Audio File Area - always visible unless live input */}

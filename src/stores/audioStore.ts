@@ -3,11 +3,11 @@ import type {
   AudioSourceType,
   AudioFileInfo,
   AudioLevels,
-  TestToneFrequency,
-  TestToneWaveform,
+  ToneGeneratorWaveform,
   AudioInputDevice,
   AudioOutputDevice,
 } from '@/types/audio'
+import { TONE_GENERATOR_FREQ_DEFAULT } from '@/types/audio'
 
 interface AudioState {
   // Source
@@ -26,10 +26,10 @@ interface AudioState {
   // Effect
   bypassEffect: boolean
 
-  // Test tone
-  testToneActive: boolean
-  testToneFrequency: TestToneFrequency
-  testToneWaveform: TestToneWaveform
+  // Tone generator
+  toneGeneratorActive: boolean
+  toneGeneratorFrequency: number
+  toneGeneratorWaveform: ToneGeneratorWaveform
 
   // Live input
   liveInputEnabled: boolean
@@ -64,9 +64,9 @@ interface AudioState {
   setLevels: (levels: AudioLevels) => void
   setBypassEffect: (bypass: boolean) => void
   toggleBypass: () => void
-  setTestToneActive: (active: boolean) => void
-  setTestToneFrequency: (freq: TestToneFrequency) => void
-  setTestToneWaveform: (waveform: TestToneWaveform) => void
+  setToneGeneratorActive: (active: boolean) => void
+  setToneGeneratorFrequency: (freq: number) => void
+  setToneGeneratorWaveform: (waveform: ToneGeneratorWaveform) => void
   setLiveInputEnabled: (enabled: boolean) => void
   setLiveInputError: (error: string | null) => void
   setInputGain: (gain: number) => void
@@ -98,9 +98,9 @@ const initialState = {
     outputRight: 0,
   },
   bypassEffect: false,
-  testToneActive: false,
-  testToneFrequency: 1000 as TestToneFrequency,
-  testToneWaveform: 'sine' as TestToneWaveform,
+  toneGeneratorActive: false,
+  toneGeneratorFrequency: TONE_GENERATOR_FREQ_DEFAULT,
+  toneGeneratorWaveform: 'sine' as ToneGeneratorWaveform,
   liveInputEnabled: false,
   liveInputError: null as string | null,
   inputGain: 1,
@@ -146,14 +146,14 @@ export const useAudioStore = create<AudioState>((set) => ({
   toggleBypass: () => {
     set((state) => ({ bypassEffect: !state.bypassEffect }))
   },
-  setTestToneActive: (testToneActive) => {
-    set({ testToneActive })
+  setToneGeneratorActive: (toneGeneratorActive) => {
+    set({ toneGeneratorActive })
   },
-  setTestToneFrequency: (testToneFrequency) => {
-    set({ testToneFrequency })
+  setToneGeneratorFrequency: (toneGeneratorFrequency) => {
+    set({ toneGeneratorFrequency })
   },
-  setTestToneWaveform: (testToneWaveform) => {
-    set({ testToneWaveform })
+  setToneGeneratorWaveform: (toneGeneratorWaveform) => {
+    set({ toneGeneratorWaveform })
   },
   setLiveInputEnabled: (liveInputEnabled) => {
     set({ liveInputEnabled, liveInputError: null })

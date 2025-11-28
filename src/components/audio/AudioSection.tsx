@@ -2,14 +2,14 @@ import { useAudioStore } from '@/stores'
 import { FileUploader } from './FileUploader'
 import { Waveform } from './Waveform'
 import { Transport } from './Transport'
-import { TestToneGenerator } from './TestToneGenerator'
+import { ToneGenerator } from './ToneGenerator'
 import { LiveInput } from './LiveInput'
 import { OutputControls } from './OutputControls'
 import { ExportAudio } from './ExportAudio'
 import { RecordingControls } from './RecordingControls'
 
 export function AudioSection(): React.JSX.Element {
-  const { source, fileInfo, testToneActive, liveInputEnabled } = useAudioStore()
+  const { source, fileInfo, toneGeneratorActive, liveInputEnabled } = useAudioStore()
 
   return (
     <section className="p-6 border-t border-[--color-border] bg-[--color-bg-secondary]">
@@ -26,10 +26,12 @@ export function AudioSection(): React.JSX.Element {
             <LiveInput />
           </div>
 
-          {/* Test Tone Generator */}
+          {/* Tone Generator */}
           <div className="bg-[--color-bg-panel] rounded-lg border border-[--color-border] p-4">
-            <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">Test Tone</h3>
-            <TestToneGenerator />
+            <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">
+              Tone Generator
+            </h3>
+            <ToneGenerator />
           </div>
         </div>
 
@@ -38,8 +40,8 @@ export function AudioSection(): React.JSX.Element {
           <h3 className="text-sm font-medium text-[--color-text-secondary] mb-3">
             {liveInputEnabled
               ? 'Live Input Active'
-              : testToneActive
-                ? 'Test Tone Active'
+              : toneGeneratorActive
+                ? 'Tone Generator Active'
                 : 'Audio File'}
           </h3>
           {liveInputEnabled ? (
@@ -54,14 +56,14 @@ export function AudioSection(): React.JSX.Element {
                 </p>
               </div>
             </div>
-          ) : testToneActive ? (
+          ) : toneGeneratorActive ? (
             <div className="h-24 bg-[--color-bg-tertiary] rounded-lg flex items-center justify-center">
               <div className="text-center">
                 <div className="flex items-center gap-2 text-blue-500">
                   <span className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
-                  <span className="text-sm font-medium">Test Tone Active</span>
+                  <span className="text-sm font-medium">Tone Generator Active</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Sine wave routed through effects</p>
+                <p className="text-xs text-gray-500 mt-1">Tone routed through effects</p>
               </div>
             </div>
           ) : fileInfo !== null ? (

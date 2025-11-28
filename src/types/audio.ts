@@ -19,13 +19,22 @@ export const AUDIO_CONFIG = {
   latencyHint: 'interactive' as const,
 } as const
 
-// Test tone frequencies
-export const TEST_TONE_FREQUENCIES = [100, 440, 1000, 10000] as const
-export type TestToneFrequency = (typeof TEST_TONE_FREQUENCIES)[number]
+// Tone generator frequency range (continuous 20Hz - 20kHz)
+export const TONE_GENERATOR_FREQ_MIN = 20
+export const TONE_GENERATOR_FREQ_MAX = 20000
+export const TONE_GENERATOR_FREQ_DEFAULT = 440
 
-// Test tone waveforms
-export const TEST_TONE_WAVEFORMS = ['sine', 'sawtooth', 'square', 'triangle'] as const
-export type TestToneWaveform = (typeof TEST_TONE_WAVEFORMS)[number]
+// Tone generator waveforms
+export const TONE_GENERATOR_WAVEFORMS = ['sine', 'sawtooth', 'square', 'triangle'] as const
+export type ToneGeneratorWaveform = (typeof TONE_GENERATOR_WAVEFORMS)[number]
+
+// Waveform display labels
+export const WAVEFORM_LABELS: Record<ToneGeneratorWaveform, string> = {
+  sine: 'Sin',
+  sawtooth: 'Saw',
+  square: 'Sqr',
+  triangle: 'Tri',
+}
 
 // Audio file info
 export interface AudioFileInfo {

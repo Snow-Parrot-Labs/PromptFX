@@ -14,7 +14,7 @@ export function AudioIOSection(): React.JSX.Element {
     setLiveInputEnabled,
     setLiveInputError,
     setSource,
-    setTestToneActive,
+    setToneGeneratorActive,
     setAudioInputDevices,
     setSelectedInputDeviceId,
     setAudioOutputDevices,
@@ -136,8 +136,8 @@ export function AudioIOSection(): React.JSX.Element {
       setSource(null)
     } else {
       try {
-        setTestToneActive(false)
-        audioEngine.stopTestTone()
+        setToneGeneratorActive(false)
+        audioEngine.stopToneGenerator()
 
         await audioEngine.enableLiveInputWithDevice(selectedInputDeviceId)
         setLiveInputEnabled(true)
@@ -156,7 +156,7 @@ export function AudioIOSection(): React.JSX.Element {
     setLiveInputEnabled,
     setLiveInputError,
     setSource,
-    setTestToneActive,
+    setToneGeneratorActive,
   ])
 
   return (
